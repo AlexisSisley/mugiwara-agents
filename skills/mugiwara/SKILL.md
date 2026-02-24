@@ -32,11 +32,16 @@ Attends la fin de l'exécution. Conserve l'output complet (User Stories,
 critères d'acceptation, risques).
 
 ### Étape 2 : Sanji - Architecture Technique
-Lance l'agent Sanji avec l'énoncé du problème et les User Stories clés de Zorro :
-/sanji $ARGUMENTS
+Lance l'agent Sanji avec l'énoncé du problème ET les éléments clés de l'analyse
+de Zorro pour qu'il puisse faire un choix de stack éclairé :
+/sanji $ARGUMENTS — Éléments clés de l'analyse de Zorro : [Inclus les User Stories prioritaires, les contraintes business/techniques identifiées, les NFRs et les risques majeurs extraits de l'output de Zorro]
 
-Attends la fin de l'exécution. Conserve l'output complet (stack, architecture,
-modèle de données, API).
+Sanji utilisera ces specs pour choisir la meilleure stack et délèguera
+automatiquement les détails d'implémentation à son sous-chef spécialisé
+(sanji-dotnet, sanji-flutter, sanji-python, sanji-ts, sanji-rust, sanji-go ou sanji-java).
+
+Attends la fin de l'exécution. Conserve l'output complet (choix de stack justifié,
+architecture, modèle de données, API, détails d'implémentation du sous-chef).
 
 ### Étape 3 : Nami - Stratégie de Validation
 Lance l'agent Nami avec l'énoncé du problème :

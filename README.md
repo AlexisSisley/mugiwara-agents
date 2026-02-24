@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 12 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment.
+**Mugiwara Agents** is a collection of 20 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment.
 
 ## The Crew
 
@@ -11,7 +11,7 @@
 | Agent | Command | Role | Specialty |
 |-------|---------|------|-----------|
 | **Zorro** | `/zorro` | Business Analyst | IREB/PSPO certified. Slices vague problems into rigorous functional specifications, user stories, and Gherkin acceptance criteria. |
-| **Sanji** | `/sanji` | Lead Developer / Architect | Polyglot expert (Rust, Go, Python, TS, Java). Cooks up the perfect technical architecture with stack trade-offs, data models, and API design. |
+| **Sanji** | `/sanji` | Architect & Tech Lead | Analyzes requirements, picks the optimal tech stack via comparison matrix, designs high-level architecture, then routes to the right specialist sous-chef for implementation details. |
 | **Nami** | `/nami` | QA Lead | ISTQB Expert. Navigates through test strategies, edge cases, BDD specs, and automation plans with surgical precision. |
 | **Luffy** | `/luffy` | Program Manager / Captain | Unifies Business (Zorro), Technical (Sanji), and Quality (Nami) into a strategic delivery roadmap with KPIs. |
 
@@ -26,6 +26,21 @@
 | **Usopp** | `/usopp` | DevOps & IaC Expert | SRE/DevOps engineer. Docker, Kubernetes, Terraform, GitHub Actions/GitLab CI. Shift Left Security and total automation. |
 | **Jinbe** | `/jinbe` | SecOps & Compliance Auditor | Cybersecurity and regulatory compliance expert (GDPR, SOC2, ISO27001). STRIDE threat modeling, OWASP audits, penetration testing strategy. |
 | **Yamato** | `/yamato` | Tech Intelligence & Dashboard | Strategic tech watch expert & Full-Stack developer. Scans tech trends, analyzes impact on current stacks, and generates live HTML/CSS dashboards with actionable modernization advice. |
+| **Vegapunk** | `/vegapunk` | Meta-Auditor & Agent Engineer | World's greatest scientist. Audits, evaluates, and improves all agent SKILL.md definitions. Detects weaknesses, gaps, and redundancies across the crew. Creates new specialized agents when needed. |
+
+### Sanji's Kitchen — Specialist Sous-Chefs
+
+Sanji automatically routes to the right sous-chef based on the chosen stack. Each sous-chef can also be called directly.
+
+| Agent | Command | Stack | Specialty |
+|-------|---------|-------|-----------|
+| **Patty** | `/sanji-dotnet` | C# / .NET | ASP.NET Core, Blazor, MAUI, Entity Framework, Azure. Clean Architecture with NuGet ecosystem. |
+| **Carne** | `/sanji-flutter` | Dart / Flutter | Cross-platform mobile/web/desktop. Riverpod, GoRouter, Freezed, pub.dev ecosystem. |
+| **Zeff** | `/sanji-python` | Python | FastAPI, Django, SQLAlchemy, pandas, PyTorch, scikit-learn. From web APIs to ML pipelines. |
+| **Cosette** | `/sanji-ts` | TypeScript / Node.js | React, Next.js, NestJS, tRPC, Prisma, Tailwind. Full-stack with monorepo (Turborepo). |
+| **Terracotta** | `/sanji-rust` | Rust | Axum, Tokio, sqlx, WebAssembly. Zero-cost abstractions and memory safety. |
+| **Lola** | `/sanji-go` | Go | Stdlib-first, Gin/Chi, gRPC, Kubernetes tooling. Simple and efficient microservices. |
+| **Streusen** | `/sanji-java` | Java / Kotlin | Spring Boot, Quarkus, JPA/Hibernate, GraalVM. Enterprise-grade JVM systems. |
 
 ### Orchestrator
 
@@ -70,8 +85,17 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 # Business Analysis - Zorro slices your problem into specs
 /zorro Our SaaS platform loses 30% of customers after 3 months of subscription
 
-# Technical Architecture - Sanji cooks the perfect stack
+# Technical Architecture - Sanji picks the best stack and routes to specialist
 /sanji A real-time collaborative document editor supporting 10K concurrent users
+
+# Direct specialist access - Skip Sanji's routing, go straight to the expert
+/sanji-dotnet Implement a multi-tenant SaaS API with ASP.NET Core
+/sanji-flutter Build a cross-platform fitness tracking app with offline sync
+/sanji-python Create a FastAPI service with ML-powered recommendation engine
+/sanji-ts Build a Next.js e-commerce platform with Stripe integration
+/sanji-rust High-performance WebSocket server for real-time gaming
+/sanji-go Kubernetes operator for automated database backups
+/sanji-java Spring Boot microservice with event sourcing and CQRS
 
 # QA Strategy - Nami navigates through test plans
 /nami A mobile banking app with biometric auth and instant transfers
@@ -100,6 +124,12 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 # Tech Intelligence - Yamato reads the tech world
 /yamato What are the latest trends in React and TypeScript?
 /yamato Generate a tech dashboard for our Node.js + React stack
+
+# Meta-Audit - Vegapunk audits the crew
+/vegapunk audit
+/vegapunk improve franky
+/vegapunk create "Performance Engineer & Load Tester"
+/vegapunk check nami
 ```
 
 ### Full Pipeline
@@ -114,7 +144,7 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 **Project Analysis Pipeline:**
 ```
 1. /zorro [problem]     -> Functional specifications
-2. /sanji [problem]     -> Technical architecture
+2. /sanji [problem]     -> Stack choice + architecture → auto-routes to sous-chef
 3. /nami  [problem]     -> Test & validation plan
 4. /luffy [summaries]   -> Strategic roadmap & KPIs
 ```
@@ -134,6 +164,13 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 3. /usopp [deploy]       -> Deploy with rollback strategy
 ```
 
+**Agent Quality Pipeline:**
+```
+1. /vegapunk audit       -> Full ecosystem health report
+2. /vegapunk improve X   -> Rewrite specific agent SKILL.md
+3. /vegapunk create X    -> Create new agent for identified gap
+```
+
 ## Agent Details
 
 ### Zorro - Business Analyst
@@ -143,13 +180,14 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Risk assessment matrix
 - Stakeholder map
 
-### Sanji - Lead Developer
-- Stack recommendation with trade-off tables
+### Sanji - Architect & Tech Lead
+- **Stack comparison matrix** (7 stacks scored on 5 criteria = /25)
 - System architecture (microservices, serverless, modular monolith)
 - Data model design (SQL/NoSQL)
 - API contracts (REST/GraphQL with JSON examples)
 - Security & scalability strategy
-- Test pyramid with CI/CD integration
+- **Automatic routing** to specialized sous-chef for implementation details
+- Combined output: high-level architecture + stack-specific implementation
 
 ### Nami - QA Lead
 - Testability analysis (5 dimensions)
@@ -216,6 +254,15 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Prioritized remediation plan (P0 to P3)
 - Penetration testing strategy (black/grey/white box)
 - Security score card (auth, encryption, injection, config, monitoring, compliance)
+
+### Vegapunk - Meta-Auditor & Agent Engineer
+- Full agent inventory and dependency graph
+- 6-dimension health matrix (Logic, Pragmatism, Innovation, Precision, Robustness, Efficiency)
+- Per-agent quality audit with conformity checklist
+- Improvement recommendations with prioritized diffs (P0-P3)
+- Gap analysis: coverage matrix, redundancy detection, orchestration chain review
+- New agent generation (complete SKILL.md following project conventions)
+- Integration validation for the mugiwara pipeline
 
 ### Yamato - Tech Intelligence & Dashboard
 - Multi-source tech curation (Hacker News, Dev.to, GitHub Trending, official releases)

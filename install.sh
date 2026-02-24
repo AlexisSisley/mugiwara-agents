@@ -35,10 +35,17 @@ fi
 mkdir -p "$SKILLS_DIR"
 
 # List of crew members
-CREW=(zorro sanji nami luffy franky robin chopper brook usopp jinbe yamato mugiwara)
+CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java nami luffy franky robin chopper brook usopp jinbe yamato vegapunk mugiwara)
 ROLES=(
     "Business Analyst"
-    "Lead Developer"
+    "Architect & Tech Lead"
+    "Sous-Chef C#/.NET"
+    "Sous-Chef Flutter/Dart"
+    "Sous-Chef Python"
+    "Sous-Chef TypeScript/Node.js"
+    "Sous-Chef Rust"
+    "Sous-Chef Go"
+    "Sous-Chef Java/Kotlin"
     "QA Lead"
     "Captain / Program Manager"
     "Code Reviewer"
@@ -48,6 +55,7 @@ ROLES=(
     "DevOps & IaC"
     "SecOps & Compliance"
     "Tech Intelligence & Dashboard"
+    "Meta-Auditor & Agent Engineer"
     "Full Pipeline"
 )
 
@@ -63,7 +71,7 @@ for i in "${!CREW[@]}"; do
 
     if [ ! -d "$SOURCE_DIR/$member" ]; then
         echo -e "  ${RED}[!]${NC} $member - source not found, skipping"
-        ((skipped++))
+        skipped=$((skipped + 1))
         continue
     fi
 
@@ -76,7 +84,7 @@ for i in "${!CREW[@]}"; do
     # Copy skill directory
     mkdir -p "$SKILLS_DIR/$member"
     cp -r "$SOURCE_DIR/$member/"* "$SKILLS_DIR/$member/"
-    ((installed++))
+    installed=$((installed + 1))
 done
 
 echo ""
