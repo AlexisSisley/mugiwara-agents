@@ -2,9 +2,11 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software project analysis pipeline.
+**Mugiwara Agents** is a collection of 11 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment.
 
 ## The Crew
+
+### Core Analysis Pipeline
 
 | Agent | Command | Role | Specialty |
 |-------|---------|------|-----------|
@@ -12,8 +14,23 @@
 | **Sanji** | `/sanji` | Lead Developer / Architect | Polyglot expert (Rust, Go, Python, TS, Java). Cooks up the perfect technical architecture with stack trade-offs, data models, and API design. |
 | **Nami** | `/nami` | QA Lead | ISTQB Expert. Navigates through test strategies, edge cases, BDD specs, and automation plans with surgical precision. |
 | **Luffy** | `/luffy` | Program Manager / Captain | Unifies Business (Zorro), Technical (Sanji), and Quality (Nami) into a strategic delivery roadmap with KPIs. |
+
+### Specialist Agents
+
+| Agent | Command | Role | Specialty |
+|-------|---------|------|-----------|
 | **Franky** | `/franky` | Code Reviewer & Log Analyst | Senior Architect + Cybersecurity Expert. Audits code for OWASP Top 10, SOLID violations, performance bottlenecks, and technical debt. |
-| **Mugiwara** | `/mugiwara` | Full Pipeline | Runs all 4 analysis agents in sequence from a single problem statement. The whole crew at once! |
+| **Robin** | `/robin` | System Cartographer | Reverse-engineering expert. Maps complex codebases, extracts business logic, identifies legacy risks, and produces Architecture Decision Records (ADRs). |
+| **Chopper** | `/chopper` | Debugger & Diagnostician | Root Cause Analysis (RCA) specialist. Analyzes stack traces, logs, and profiling reports with a scientific diagnostic approach. Recommends monitoring tools. |
+| **Brook** | `/brook` | Technical Writer | Transforms raw code and commits into elegant documentation: changelogs, onboarding guides, READMEs, and stakeholder communications. Uses the Diataxis framework. |
+| **Usopp** | `/usopp` | DevOps & IaC Expert | SRE/DevOps engineer. Docker, Kubernetes, Terraform, GitHub Actions/GitLab CI. Shift Left Security and total automation. |
+| **Jinbe** | `/jinbe` | SecOps & Compliance Auditor | Cybersecurity and regulatory compliance expert (GDPR, SOC2, ISO27001). STRIDE threat modeling, OWASP audits, penetration testing strategy. |
+
+### Orchestrator
+
+| Agent | Command | Role | Specialty |
+|-------|---------|------|-----------|
+| **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the 4 core analysis agents in sequence from a single problem statement. The whole crew at once! |
 
 ## Quick Start
 
@@ -22,7 +39,7 @@
 #### Automatic (recommended)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/mugiwara-agents.git
+git clone https://github.com/AlexisSisley/mugiwara-agents.git
 cd mugiwara-agents
 chmod +x install.sh
 ./install.sh
@@ -42,7 +59,7 @@ After installation, restart Claude Code or start a new session to load the skill
 
 ### Verify
 
-Type `/` in Claude Code and you should see `zorro`, `sanji`, `nami`, `luffy`, `franky`, and `mugiwara` in the autocomplete list.
+Type `/` in Claude Code and you should see all crew members in the autocomplete list.
 
 ## Usage
 
@@ -63,18 +80,33 @@ Type `/` in Claude Code and you should see `zorro`, `sanji`, `nami`, `luffy`, `f
 
 # Code Review - Franky audits your code
 /franky src/api/auth.ts
-/franky src/
+
+# System Cartography - Robin maps your codebase
+/robin src/
+
+# Debugging - Chopper diagnoses your bug
+/chopper "TypeError: Cannot read property 'id' of undefined at UserService.ts:42"
+
+# Documentation - Brook writes your docs
+/brook Write a changelog for the last 10 commits
+
+# DevOps - Usopp builds your infrastructure
+/usopp Set up a CI/CD pipeline with Docker + Kubernetes for a Node.js microservice
+
+# Security Audit - Jinbe guards your system
+/jinbe Audit the authentication module for OWASP Top 10 and GDPR compliance
 ```
 
 ### Full Pipeline
 
 ```bash
-# Run all 4 analysis agents in sequence
+# Run all 4 core analysis agents in sequence
 /mugiwara Build a marketplace connecting freelancers with SMBs
 ```
 
-### Recommended Workflow
+### Recommended Workflows
 
+**Project Analysis Pipeline:**
 ```
 1. /zorro [problem]     -> Functional specifications
 2. /sanji [problem]     -> Technical architecture
@@ -82,7 +114,20 @@ Type `/` in Claude Code and you should see `zorro`, `sanji`, `nami`, `luffy`, `f
 4. /luffy [summaries]   -> Strategic roadmap & KPIs
 ```
 
-Or just `/mugiwara [problem]` to run them all at once!
+**Code Quality Pipeline:**
+```
+1. /robin [codebase]    -> System cartography & legacy risks
+2. /franky [code]       -> Code review & optimizations
+3. /jinbe [code]        -> Security audit & compliance
+4. /brook [project]     -> Documentation update
+```
+
+**Incident Response:**
+```
+1. /chopper [logs/error] -> Root cause diagnosis
+2. /franky [fix]         -> Review the fix
+3. /usopp [deploy]       -> Deploy with rollback strategy
+```
 
 ## Agent Details
 
@@ -125,6 +170,47 @@ Or just `/mugiwara [problem]` to run them all at once!
 - Action plan by criticality (CRITICAL / HIGH / MEDIUM / LOW)
 - Refactored code for the most critical segment
 - Score card (security, performance, maintainability, testability, readability)
+
+### Robin - System Cartographer
+- High-level architecture mapping (ASCII diagrams)
+- Module dependency graph with coupling analysis
+- Business logic extraction from code
+- Legacy risk zones identification
+- Architecture Decision Records (ADRs) reconstruction
+- Technical documentation gap analysis
+
+### Chopper - Debugger & Diagnostician
+- Stack trace analysis (bottom-up, critical frame identification)
+- Log analysis (timeline, anomalies, correlation)
+- Hypothesis-driven diagnosis (3+ hypotheses ranked by probability)
+- Verification tests for each hypothesis
+- Corrective solution with explained fix
+- Performance profiling (memory leaks, bottlenecks)
+- Monitoring tool recommendations (Datadog, New Relic, Sentry, etc.)
+
+### Brook - Technical Writer
+- Changelogs (Keep a Changelog format: Features, Fixes, Breaking Changes)
+- README structure (badges, quick start, API reference)
+- Onboarding guides (step-by-step for new developers)
+- Technical documentation (Diataxis framework: tutorials, how-to, reference, explanation)
+- Stakeholder communication (non-technical, value-oriented)
+
+### Usopp - DevOps & IaC
+- Dockerfiles (multi-stage, non-root, optimized layers)
+- Kubernetes manifests (deployments, services, HPA, network policies)
+- Terraform modules (remote state, workspaces, validated variables)
+- CI/CD pipelines (GitHub Actions / GitLab CI with security scanning)
+- Secret management strategy (Vault, AWS SM, SOPS)
+- Rollback strategies (blue/green, canary, feature flags)
+- Monitoring & observability (metrics, logs, traces, alerting)
+
+### Jinbe - SecOps & Compliance
+- STRIDE threat modeling (per component analysis)
+- OWASP Top 10 compliance audit with proof and fixes
+- Regulatory compliance checks (GDPR, SOC2, ISO27001)
+- Prioritized remediation plan (P0 to P3)
+- Penetration testing strategy (black/grey/white box)
+- Security score card (auth, encryption, injection, config, monitoring, compliance)
 
 ## Configuration
 

@@ -35,13 +35,18 @@ fi
 mkdir -p "$SKILLS_DIR"
 
 # List of crew members
-CREW=(zorro sanji nami luffy franky mugiwara)
+CREW=(zorro sanji nami luffy franky robin chopper brook usopp jinbe mugiwara)
 ROLES=(
     "Business Analyst"
     "Lead Developer"
     "QA Lead"
     "Captain / Program Manager"
     "Code Reviewer"
+    "System Cartographer"
+    "Debugger & Diagnostician"
+    "Technical Writer"
+    "DevOps & IaC"
+    "SecOps & Compliance"
     "Full Pipeline"
 )
 
