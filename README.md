@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 11 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment.
+**Mugiwara Agents** is a collection of 12 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment.
 
 ## The Crew
 
@@ -25,6 +25,7 @@
 | **Brook** | `/brook` | Technical Writer | Transforms raw code and commits into elegant documentation: changelogs, onboarding guides, READMEs, and stakeholder communications. Uses the Diataxis framework. |
 | **Usopp** | `/usopp` | DevOps & IaC Expert | SRE/DevOps engineer. Docker, Kubernetes, Terraform, GitHub Actions/GitLab CI. Shift Left Security and total automation. |
 | **Jinbe** | `/jinbe` | SecOps & Compliance Auditor | Cybersecurity and regulatory compliance expert (GDPR, SOC2, ISO27001). STRIDE threat modeling, OWASP audits, penetration testing strategy. |
+| **Yamato** | `/yamato` | Tech Intelligence & Dashboard | Strategic tech watch expert & Full-Stack developer. Scans tech trends, analyzes impact on current stacks, and generates live HTML/CSS dashboards with actionable modernization advice. |
 
 ### Orchestrator
 
@@ -95,6 +96,10 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 
 # Security Audit - Jinbe guards your system
 /jinbe Audit the authentication module for OWASP Top 10 and GDPR compliance
+
+# Tech Intelligence - Yamato reads the tech world
+/yamato What are the latest trends in React and TypeScript?
+/yamato Generate a tech dashboard for our Node.js + React stack
 ```
 
 ### Full Pipeline
@@ -211,6 +216,15 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Prioritized remediation plan (P0 to P3)
 - Penetration testing strategy (black/grey/white box)
 - Security score card (auth, encryption, injection, config, monitoring, compliance)
+
+### Yamato - Tech Intelligence & Dashboard
+- Multi-source tech curation (Hacker News, Dev.to, GitHub Trending, official releases)
+- Impact analysis on current stacks (what changes, who's concerned, timeline)
+- Concrete code optimizations based on new trends (before/after examples)
+- Library & tool recommendations with maturity assessment
+- Modernization advice (quick wins, mid-term, long-term)
+- Auto-generated HTML/CSS responsive dashboard (dark mode, filters, tech radar)
+- Standalone dashboard file (open directly in browser, no build needed)
 
 ## Configuration
 
