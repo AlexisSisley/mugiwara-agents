@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 20 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment.
+**Mugiwara Agents** is a collection of 28 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment, with shortcut pipelines for common workflows.
 
 ## The Crew
 
@@ -27,6 +27,10 @@
 | **Jinbe** | `/jinbe` | SecOps & Compliance Auditor | Cybersecurity and regulatory compliance expert (GDPR, SOC2, ISO27001). STRIDE threat modeling, OWASP audits, penetration testing strategy. |
 | **Yamato** | `/yamato` | Tech Intelligence & Dashboard | Strategic tech watch expert & Full-Stack developer. Scans tech trends, analyzes impact on current stacks, and generates live HTML/CSS dashboards with actionable modernization advice. |
 | **Vegapunk** | `/vegapunk` | Meta-Auditor & Agent Engineer | World's greatest scientist. Audits, evaluates, and improves all agent SKILL.md definitions. Detects weaknesses, gaps, and redundancies across the crew. Creates new specialized agents when needed. |
+| **Shanks** | `/shanks` | Refactoring & Migration Expert | The mentor who guides transformation. Strangler Fig patterns, legacy migration, progressive refactoring, rollback strategies, and migration metrics. |
+| **Vivi** | `/vivi` | Product Manager & UX | The princess who understands her people. Market analysis, personas, user flows, wireframes, RICE prioritization, product metrics, and A/B experimentation. |
+| **Ace** | `/ace` | Performance Engineer | Fire Fist pushes systems to the max. Load testing (k6/Gatling/Locust), profiling, bottleneck analysis, capacity planning, SLO/SLI, and optimization. |
+| **Law** | `/law` | Data Engineer & Analytics | The Surgeon of Death dissects data. ETL/ELT pipelines, data warehousing (star/snowflake), dbt, Spark, Airflow/Dagster, data quality, and governance. |
 
 ### Sanji's Kitchen — Specialist Sous-Chefs
 
@@ -41,6 +45,17 @@ Sanji automatically routes to the right sous-chef based on the chosen stack. Eac
 | **Terracotta** | `/sanji-rust` | Rust | Axum, Tokio, sqlx, WebAssembly. Zero-cost abstractions and memory safety. |
 | **Lola** | `/sanji-go` | Go | Stdlib-first, Gin/Chi, gRPC, Kubernetes tooling. Simple and efficient microservices. |
 | **Streusen** | `/sanji-java` | Java / Kotlin | Spring Boot, Quarkus, JPA/Hibernate, GraalVM. Enterprise-grade JVM systems. |
+
+### Pipeline Shortcuts
+
+Pre-built orchestration pipelines that chain multiple agents for common workflows.
+
+| Pipeline | Command | Agents Chain | Use Case |
+|----------|---------|-------------|----------|
+| **Incident** | `/incident` | Chopper → Franky → Jinbe → Usopp | Production emergency response: diagnose, fix, secure, deploy |
+| **Pre-Launch** | `/pre-launch` | Nami → Franky → Jinbe → Usopp → Brook | Pre-production checklist: test, audit, secure, infra, docs |
+| **Onboard** | `/onboard` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
+| **Modernize** | `/modernize` | Yamato → Robin → Sanji → Usopp | Stack modernization: trends, current state, new architecture, migration |
 
 ### Orchestrator
 
@@ -130,6 +145,22 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 /vegapunk improve franky
 /vegapunk create "Performance Engineer & Load Tester"
 /vegapunk check nami
+
+# Refactoring - Shanks guides legacy migration
+/shanks Migrate our Express.js monolith to NestJS microservices
+/shanks Refactor the authentication module from session-based to JWT
+
+# Product & UX - Vivi understands users
+/vivi Design a SaaS onboarding flow for a project management tool
+/vivi Analyze the competitive landscape for a food delivery app
+
+# Performance - Ace pushes to the limit
+/ace Optimize our Node.js API that handles 50K requests/min with 500ms p99 latency
+/ace Capacity planning for Black Friday traffic (10x normal load)
+
+# Data Engineering - Law dissects data
+/law Design a data warehouse for our e-commerce analytics (orders, users, products)
+/law Build an ETL pipeline from PostgreSQL + Stripe to BigQuery with dbt
 ```
 
 ### Full Pipeline
@@ -137,6 +168,22 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 ```bash
 # Run all 4 core analysis agents in sequence
 /mugiwara Build a marketplace connecting freelancers with SMBs
+```
+
+### Pipeline Shortcuts
+
+```bash
+# Production incident? Get diagnosis → fix review → security check → deploy plan
+/incident "500 errors on /api/payments since 14:30, Stripe webhook timeout in logs"
+
+# Ready to ship? Full Go/No-Go checklist
+/pre-launch Our new billing module with Stripe integration
+
+# New team member? Generate a complete onboarding guide
+/onboard ./src
+
+# Stack getting old? Plan the modernization
+/modernize Our Express.js + MongoDB + jQuery stack deployed on Heroku
 ```
 
 ### Recommended Workflows
@@ -157,11 +204,36 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 4. /brook [project]     -> Documentation update
 ```
 
-**Incident Response:**
+**Incident Response (or use `/incident` shortcut):**
 ```
 1. /chopper [logs/error] -> Root cause diagnosis
 2. /franky [fix]         -> Review the fix
-3. /usopp [deploy]       -> Deploy with rollback strategy
+3. /jinbe [fix]          -> Security clearance
+4. /usopp [deploy]       -> Deploy with rollback strategy
+```
+
+**Pre-Launch Checklist (or use `/pre-launch` shortcut):**
+```
+1. /nami [release]       -> Test coverage & QA validation
+2. /franky [code]        -> Code audit & quality score
+3. /jinbe [system]       -> Security & compliance clearance
+4. /usopp [infra]        -> Infrastructure readiness
+5. /brook [release]      -> Runbook & documentation
+```
+
+**New Developer Onboarding (or use `/onboard` shortcut):**
+```
+1. /robin [codebase]     -> System cartography
+2. /franky [codebase]    -> Technical debt identification
+3. /brook [project]      -> Onboarding guide generation
+```
+
+**Stack Modernization (or use `/modernize` shortcut):**
+```
+1. /yamato [stack]       -> Tech trends & impact analysis
+2. /robin [system]       -> Current architecture mapping
+3. /sanji [system]       -> New architecture design
+4. /usopp [migration]    -> Infrastructure migration plan
 ```
 
 **Agent Quality Pipeline:**
@@ -263,6 +335,42 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Gap analysis: coverage matrix, redundancy detection, orchestration chain review
 - New agent generation (complete SKILL.md following project conventions)
 - Integration validation for the mugiwara pipeline
+
+### Shanks - Refactoring & Migration Expert
+- Legacy system reconnaissance (stack, patterns, coupling, tech debt)
+- Technical debt scoring per module (maintainability, testability, complexity)
+- Migration strategy selection (Strangler Fig, Branch by Abstraction, Big Bang)
+- Prioritized refactoring plan (effort/impact/risk matrix)
+- Before/After code transformation examples
+- Rollback strategy for each critical migration step
+- Success metrics and KPIs for migration tracking
+
+### Vivi - Product Manager & UX
+- Market & competitive analysis (benchmark, positioning, differentiators)
+- User personas (3-5 personas with needs, frustrations, goals)
+- User flow diagrams (ASCII diagrams of critical journeys)
+- Conceptual wireframes (structured text descriptions of key screens)
+- Feature prioritization (Impact/Effort matrix, RICE scoring)
+- Product metrics (North Star KPI, funnel, engagement, retention)
+- A/B experimentation plan (hypotheses, MVP scope, learning objectives)
+
+### Ace - Performance Engineer
+- Baseline metrics collection (latency, throughput, error rate, resource usage)
+- Profiling & bottleneck identification (CPU, memory, I/O, network, DB queries)
+- Load testing strategy (normal/peak/stress/soak scenarios with k6, Gatling, Locust)
+- Optimization plan (prioritized: quick wins vs deep refactoring)
+- Concrete implementation recommendations with code examples
+- Capacity planning (load projections, scaling triggers, cost estimation)
+- Monitoring & alerting (SLO/SLI definitions, dashboard specs, alerting rules)
+
+### Law - Data Engineer & Analytics
+- Data discovery (sources inventory, formats, volumes, frequency, quality)
+- Data modeling (star/snowflake/Data Vault schemas, SCD strategies)
+- Pipeline architecture (ETL vs ELT, batch vs streaming, orchestration)
+- Implementation (dbt models, Spark jobs, SQL transformations)
+- Data quality & governance (Great Expectations, dbt tests, lineage, catalog)
+- Performance optimization (partitioning, indexing, materialized views, query tuning)
+- Monitoring & observability (data freshness, pipeline health, anomaly detection)
 
 ### Yamato - Tech Intelligence & Dashboard
 - Multi-source tech curation (Hacker News, Dev.to, GitHub Trending, official releases)

@@ -35,7 +35,7 @@ fi
 mkdir -p "$SKILLS_DIR"
 
 # List of crew members
-CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java nami luffy franky robin chopper brook usopp jinbe yamato vegapunk mugiwara)
+CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law incident pre-launch onboard modernize mugiwara)
 ROLES=(
     "Business Analyst"
     "Architect & Tech Lead"
@@ -56,6 +56,14 @@ ROLES=(
     "SecOps & Compliance"
     "Tech Intelligence & Dashboard"
     "Meta-Auditor & Agent Engineer"
+    "Refactoring & Migration Expert"
+    "Product Manager & UX"
+    "Performance Engineer"
+    "Data Engineer & Analytics"
+    "Pipeline: Incident Response"
+    "Pipeline: Pre-Launch Checklist"
+    "Pipeline: Onboarding"
+    "Pipeline: Modernization"
     "Full Pipeline"
 )
 
