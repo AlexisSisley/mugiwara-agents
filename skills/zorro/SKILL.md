@@ -72,10 +72,44 @@ Identifie au moins 5 risques dans un tableau :
 Liste les dépendances externes et les parties prenantes clés avec leur niveau
 d'intérêt/influence.
 
-## Règles de Format
+---
+
+## Mode REFINEMENT (appele par Nami via le pipeline)
+
+Si `$ARGUMENTS` contient le mot-cle `REFINEMENT`, Nami a detecte des problemes
+dans les specs. Dans ce mode :
+
+1. **Ne refais PAS** l'analyse complete depuis zero
+2. Lis le feedback de Nami (erreurs de categorie SPEC)
+3. Pour chaque erreur SPEC :
+   - Identifie la User Story ou le critere concerne
+   - Reformule/precise la User Story avec des criteres non ambigus
+   - Ajoute les criteres d'acceptation manquants
+4. Produis un **DELTA** : uniquement les User Stories modifiees ou ajoutees
+
+### Output REFINEMENT
+
+```markdown
+## Corrections de Specs (Delta)
+
+| ID Erreur Nami | User Story Concernee | Avant | Apres | Justification |
+|----------------|---------------------|-------|-------|---------------|
+| E2 | US-3 "Paiement" | Critere ambigu | Critere precise avec montant et devise | Nami a releve l'ambiguite |
+
+## User Stories Ajoutees
+(nouvelles US si Nami a identifie des fonctionnalites non couvertes)
+
+| ID | En tant que... | Je veux... | Afin de... | MoSCoW | Story Points |
+|----|----------------|------------|------------|--------|-------------|
+```
+
+---
+
+## Regles de Format
 - Utilise des tableaux Markdown pour les User Stories et les Risques
-- Utilise des listes à puces pour les contraintes, hypothèses et dépendances
-- Utilise des blocs de code Gherkin pour les critères d'acceptation
-- Tout l'output doit être dans la même langue que le problème en entrée
-- Sois précis, évite les mots de remplissage, et justifie chaque recommandation
-- Sois concis, professionnel et évite le jargon inutile
+- Utilise des listes a puces pour les contraintes, hypotheses et dependances
+- Utilise des blocs de code Gherkin pour les criteres d'acceptation
+- Tout l'output doit etre dans la meme langue que le probleme en entree
+- Sois precis, evite les mots de remplissage, et justifie chaque recommandation
+- Sois concis, professionnel et evite le jargon inutile
+- En mode REFINEMENT, produis UNIQUEMENT le delta (pas l'analyse complete)

@@ -206,6 +206,38 @@ Pour chaque entite/feature dans DATA_MODEL :
    4. Swagger UI : http://localhost:8080/swagger-ui.html
    ```
 
+---
+
+## Mode FIX (appele par Sanji via le pipeline)
+
+Si `$ARGUMENTS` contient le mot-cle `FIX`, Nami a detecte des erreurs dans le
+code scaffold. Dans ce mode :
+
+1. **Ne refais PAS** le scaffolding depuis zero
+2. Lis le PROJECT_PATH et la liste des ERREURS fournis par Sanji
+3. Pour chaque erreur :
+   - **Read** le fichier concerne pour comprendre le probleme
+   - **Edit** le fichier pour corriger (import manquant, typo, logique)
+   - **Write** un nouveau fichier si manquant (test, config, composant)
+4. Apres toutes les corrections, relance la verification :
+   ```bash
+   cd "<PROJECT_PATH>" && mvn compile -q
+   ```
+   (ou `gradle compileJava` si Gradle)
+5. Produis le rapport de corrections :
+
+```markdown
+## Corrections Appliquees
+
+| ID Erreur | Fichier | Action | Description |
+|-----------|---------|--------|-------------|
+
+## Resultat Build
+[Output de mvn compile apres corrections]
+```
+
+---
+
 ## Regles de Format
 
 - **ACTION > CONSEIL** : chaque phase cree des fichiers concrets, pas des descriptions
@@ -214,3 +246,4 @@ Pour chaque entite/feature dans DATA_MODEL :
 - Spring conventions respectees (annotations, profiles, configuration)
 - Tout l'output doit etre dans la meme langue que l'input
 - Priorise : fiabilite > scalabilite > maintenabilite > performance brute
+- En mode FIX, corrige UNIQUEMENT les erreurs signalees (pas de refactoring general)

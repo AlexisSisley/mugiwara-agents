@@ -230,6 +230,37 @@ Pour chaque feature dans ARCHITECTURE et DATA_MODEL :
    4. `pnpm dev` pour lancer en developpement
    ```
 
+---
+
+## Mode FIX (appele par Sanji via le pipeline)
+
+Si `$ARGUMENTS` contient le mot-cle `FIX`, Nami a detecte des erreurs dans le
+code scaffold. Dans ce mode :
+
+1. **Ne refais PAS** le scaffolding depuis zero
+2. Lis le PROJECT_PATH et la liste des ERREURS fournis par Sanji
+3. Pour chaque erreur :
+   - **Read** le fichier concerne pour comprendre le probleme
+   - **Edit** le fichier pour corriger (import manquant, typo, logique)
+   - **Write** un nouveau fichier si manquant (test, config, composant)
+4. Apres toutes les corrections, relance la verification :
+   ```bash
+   cd "<PROJECT_PATH>" && npx tsc --noEmit
+   ```
+5. Produis le rapport de corrections :
+
+```markdown
+## Corrections Appliquees
+
+| ID Erreur | Fichier | Action | Description |
+|-----------|---------|--------|-------------|
+
+## Resultat Build
+[Output de tsc apres corrections]
+```
+
+---
+
 ## Regles de Format
 
 - **ACTION > CONSEIL** : chaque phase cree des fichiers concrets, pas des descriptions
@@ -238,3 +269,4 @@ Pour chaque feature dans ARCHITECTURE et DATA_MODEL :
 - React : functional components only, hooks, Server Components par defaut
 - Tout l'output doit etre dans la meme langue que l'input
 - Priorise : type safety > DX > performance > bundle size
+- En mode FIX, corrige UNIQUEMENT les erreurs signalees (pas de refactoring general)

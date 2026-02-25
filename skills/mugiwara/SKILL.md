@@ -1,77 +1,127 @@
 ---
 name: mugiwara
 description: >
-  L'équipage au complet ! Lance le pipeline d'analyse intégral en séquence :
-  Zorro (Business Analyst) puis Sanji (Lead Developer) puis Nami (QA Lead)
-  puis Luffy (Capitaine/Synthèse). Produit une analyse complète à partir
-  d'un seul énoncé de problème.
-argument-hint: "[décrivez votre problème]"
+  L'equipage au complet ! Lance le pipeline d'analyse integral en sequence :
+  Zorro (Business Analyst) puis Sanji (Lead Developer + Scaffolding) puis
+  Nami (QA Lead + Verification) avec boucle de retroaction si erreurs,
+  puis Luffy (Capitaine/Synthese). Produit une analyse complete et un
+  projet scaffold a partir d'un seul enonce de probleme.
+argument-hint: "[decrivez votre probleme]"
 disable-model-invocation: true
 model: opus
 ---
 
-# Mugiwara - L'Équipage au Complet
+# Mugiwara - L'Equipage au Complet
 
-Tu es le coordinateur de l'équipage Mugiwara. Tu vas orchestrer les 4 agents
-spécialisés en séquence pour produire une analyse complète d'un problème.
+Tu es le coordinateur de l'equipage Mugiwara. Tu vas orchestrer les 4 agents
+specialises en sequence pour produire une analyse complete d'un probleme,
+un projet scaffold fonctionnel et une strategie QA validee.
 
-## Problème à analyser
+## Probleme a analyser
 
-**Énoncé du problème :** $ARGUMENTS
+**Enonce du probleme :** $ARGUMENTS
 
-## Processus d'Exécution
+## Processus d'Execution
 
-Exécute chaque agent dans l'ordre. Après chaque agent, capture son output
+Execute chaque agent dans l'ordre. Apres chaque agent, capture son output
 complet avant de passer au suivant.
 
-### Étape 1 : Zorro - Analyse Business
-Lance l'agent Zorro avec l'énoncé du problème :
+### Etape 1 : Zorro - Analyse Business
+Lance l'agent Zorro avec l'enonce du probleme :
 /zorro $ARGUMENTS
 
-Attends la fin de l'exécution. Conserve l'output complet (User Stories,
-critères d'acceptation, risques).
+Attends la fin de l'execution. Conserve l'output complet (User Stories,
+criteres d'acceptation, risques).
 
-### Étape 2 : Sanji - Architecture Technique & Scaffolding Projet
-Lance l'agent Sanji avec l'énoncé du problème ET les éléments clés de l'analyse
-de Zorro pour qu'il puisse faire un choix de stack éclairé :
-/sanji $ARGUMENTS — Éléments clés de l'analyse de Zorro : [Inclus les User Stories prioritaires, les contraintes business/techniques identifiées, les NFRs et les risques majeurs extraits de l'output de Zorro]
+### Etape 2 : Sanji - Architecture Technique & Scaffolding Projet
+Lance l'agent Sanji avec l'enonce du probleme ET les elements cles de l'analyse
+de Zorro pour qu'il puisse faire un choix de stack eclaire :
+/sanji $ARGUMENTS — Elements cles de l'analyse de Zorro : [Inclus les User Stories prioritaires, les contraintes business/techniques identifiees, les NFRs et les risques majeurs extraits de l'output de Zorro]
 
 Sanji va :
 1. Choisir la meilleure stack via un tableau comparatif
 2. Concevoir l'architecture haut-niveau
-3. **Créer le dossier projet** dans `C:/Users/Alexi/Documents/projet/<techno>/<project-name>/`
-4. **Déléguer le scaffolding** au sous-chef spécialisé qui va créer les fichiers concrets
+3. **Creer le dossier projet** dans `C:/Users/Alexi/Documents/projet/<techno>/<project-name>/`
+4. **Deleguer le scaffolding** au sous-chef specialise qui va creer les fichiers concrets
    (sanji-dotnet, sanji-flutter, sanji-python, sanji-ts, sanji-rust, sanji-go ou sanji-java)
 
-Attends la fin de l'exécution. Conserve l'output complet (choix de stack justifié,
-architecture, modèle de données, API, **PROJECT_PATH**, détails d'implémentation du sous-chef).
+Attends la fin de l'execution. Conserve l'output complet (choix de stack justifie,
+architecture, modele de donnees, API, **PROJECT_PATH**, details d'implementation du sous-chef).
 
-### Étape 3 : Nami - Stratégie de Validation
-Lance l'agent Nami avec l'énoncé du problème :
-/nami $ARGUMENTS
+**IMPORTANT :** Extrait le `PROJECT_PATH` de l'output de Sanji. Tu en auras besoin pour Nami.
 
-Attends la fin de l'exécution. Conserve l'output complet (scénarios de test,
-spécifications BDD, stratégie d'automatisation).
+### Etape 3 : Nami - Verification & Validation QA
 
-### Étape 4 : Luffy - Synthèse et Feuille de Route
-Lance l'agent Luffy en lui fournissant un résumé des 3 analyses précédentes.
-Inclus les éléments clés :
-- De Zorro : user stories, critères d'acceptation, risques business
+Lance Nami avec le contexte COMPLET pour qu'elle puisse verifier le projet scaffold :
+/nami $ARGUMENTS — PROJECT_PATH=<chemin du projet cree par Sanji> — Specs de Zorro : [resume des User Stories, criteres d'acceptation et risques de l'etape 1] — Architecture de Sanji : [resume de la stack choisie, composants, data model et contraintes de l'etape 2]
+
+Nami va :
+1. **Inspecter le code scaffold** dans PROJECT_PATH (Phase V1)
+2. **Lancer les builds/tests** selon la stack detectee (Phase V2)
+3. **Verifier la coherence** specs ↔ code (Phase V3)
+4. **Produire un VERDICT** structure PASS ou FAIL (Phase V4)
+5. Si PASS, produire aussi la strategie QA complete (Phases 1-7)
+
+Attends la fin de l'execution. Conserve l'output complet ET le **VERDICT** (PASS ou FAIL).
+
+### Etape 3b : Boucle de Correction (si VERDICT = FAIL)
+
+**Si Nami a produit un VERDICT : FAIL**, execute les corrections ci-dessous.
+**Si Nami a produit un VERDICT : PASS**, passe directement a l'Etape 4 (Luffy).
+
+#### 3b.1 — Corrections de specs (si erreurs SPEC detectees)
+
+Si le verdict de Nami contient des erreurs de categorie **SPEC** :
+/zorro REFINEMENT — Probleme original : $ARGUMENTS — Feedback de Nami : [copie la section "Erreurs SPEC (pour Zorro)" du verdict de Nami avec les IDs, descriptions et severites] — Specs actuelles : [copie les User Stories et criteres d'acceptation de l'etape 1]
+
+Zorro va affiner ses User Stories et criteres d'acceptation en fonction du feedback.
+Conserve l'output (delta des corrections).
+
+**Si pas d'erreurs SPEC** → passe cette sous-etape.
+
+#### 3b.2 — Corrections de code (si erreurs CODE detectees)
+
+Si le verdict de Nami contient des erreurs de categorie **CODE** :
+/sanji FIX — PROJECT_PATH=<chemin> — Feedback de Nami : [copie la section "Erreurs CODE (pour Sanji)" du verdict de Nami avec les IDs, descriptions, fichiers concernes et severites] — Architecture actuelle : [resume de la stack et architecture de l'etape 2]
+
+Sanji va router vers le sous-chef de la stack pour appliquer les corrections.
+Conserve l'output (liste des corrections appliquees).
+
+**Si pas d'erreurs CODE** → passe cette sous-etape.
+
+#### 3b.3 — Re-verification par Nami
+
+Apres les corrections, relance Nami UNE DERNIERE FOIS :
+/nami $ARGUMENTS — PROJECT_PATH=<chemin> — MODE=RE-VERIFICATION — Corrections appliquees : [resume les corrections de Zorro (3b.1) et Sanji (3b.2) — quels fichiers modifies, quelles specs affinées]
+
+**MAXIMUM 1 BOUCLE** : Meme si des erreurs persistent apres re-verification,
+on passe a Luffy avec le rapport de Nami (erreurs residuelles incluses).
+Le verdict de re-verification sera transmis a Luffy pour la synthese.
+
+### Etape 4 : Luffy - Synthese et Feuille de Route
+
+Lance l'agent Luffy en lui fournissant un resume des analyses precedentes.
+Inclus les elements cles :
+- De Zorro : user stories, criteres d'acceptation, risques business
+  (+ delta REFINEMENT si l'etape 3b.1 a ete executee)
 - De Sanji : choix de stack, architecture, design d'API, risques techniques
-- De Nami : stratégie de test, scénarios critiques, matrice de risques
+  (+ corrections FIX si l'etape 3b.2 a ete executee)
+- De Nami : VERDICT (PASS/FAIL), strategie de test, scenarios critiques, matrice de risques
+  (+ rapport de re-verification si l'etape 3b.3 a ete executee)
 
-/luffy Synthétise les analyses suivantes pour : $ARGUMENTS [Inclus les résumés des étapes 1-3]
+/luffy Synthetise les analyses suivantes pour : $ARGUMENTS [Inclus les resumes des etapes 1-3 + corrections 3b si applicables]
 
 ## Output Final
 
-Après les 4 agents, présente :
+Apres tous les agents, presente :
 
-1. **Résumé Exécutif** (5 phrases maximum) - Vue d'ensemble du projet
-2. **Projet Créé** - `<PROJECT_PATH>` — chemin vers le dossier projet scaffoldé
-3. **Analyse de Zorro** - Output complet du Business Analyst
-4. **Architecture de Sanji** - Output complet du Lead Developer + scaffolding
-5. **Plan de Test de Nami** - Output complet du QA Lead
-6. **Feuille de Route de Luffy** - Output complet du Capitaine
-7. **Top 5 Actions Immédiates** - Les prochaines étapes concrètes (dont `cd <PROJECT_PATH>`)
+1. **Resume Executif** (5 phrases maximum) - Vue d'ensemble du projet
+2. **Projet Cree** - `<PROJECT_PATH>` — chemin vers le dossier projet scaffolde
+3. **Verdict QA** - PASS ou FAIL (+ erreurs residuelles si FAIL apres re-verification)
+4. **Analyse de Zorro** - Output complet du Business Analyst (+ delta REFINEMENT si applicable)
+5. **Architecture de Sanji** - Output complet du Lead Developer + scaffolding (+ corrections FIX si applicable)
+6. **Plan de Test de Nami** - Output complet du QA Lead (verdict + strategie)
+7. **Feuille de Route de Luffy** - Output complet du Capitaine
+8. **Top 5 Actions Immediates** - Les prochaines etapes concretes (dont `cd <PROJECT_PATH>`)
 
-Sépare clairement chaque section avec des en-têtes de niveau 2 (##).
+Separe clairement chaque section avec des en-tetes de niveau 2 (##).

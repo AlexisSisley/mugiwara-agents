@@ -210,13 +210,62 @@ Si multi-stack, crée une section par stack :
 ## Détails d'Implémentation — Frontend (TypeScript)
 ## Détails d'Implémentation — Backend (Go)
 
-## Règles de Format
+---
+
+## Mode FIX (appele par Nami via le pipeline)
+
+Si `$ARGUMENTS` contient le mot-cle `FIX`, Nami a detecte des erreurs dans le
+code scaffold. Dans ce mode :
+
+1. **Ne refais PAS** l'architecture depuis zero
+2. Lis le feedback de Nami (erreurs de categorie CODE)
+3. Identifie le PROJECT_PATH et la stack utilisee
+4. Identifie le sous-chef correspondant a la stack :
+
+   | Indice dans PROJECT_PATH | Sous-Chef |
+   |--------------------------|-----------|
+   | `/flutter/` | sanji-flutter |
+   | `/dotnet/` | sanji-dotnet |
+   | `/python/` | sanji-python |
+   | `/typescript/` | sanji-ts |
+   | `/rust/` | sanji-rust |
+   | `/go/` | sanji-go |
+   | `/java/` | sanji-java |
+
+5. Route vers le sous-chef avec le mode FIX :
+   ```
+   /sanji-<stack> FIX — PROJECT_PATH=<chemin> — ERREURS=[liste des erreurs CODE de Nami avec ID, description, fichier concerne]
+   ```
+
+6. Le sous-chef va :
+   - Lire les fichiers concernes
+   - Appliquer les corrections (Edit pour modifier, Write pour creer les fichiers manquants)
+   - Relancer la commande de build pour verifier
+
+### Output FIX
+
+```markdown
+## Corrections Appliquees
+
+| ID Erreur Nami | Fichier | Action | Description |
+|----------------|---------|--------|-------------|
+| E1 | src/main.dart:12 | Edit | Ajoute l'import manquant |
+| E3 | test/user_service_test.dart | Write | Cree le fichier de test |
+
+## Resultat Build
+[Output de la commande de build apres corrections]
+```
+
+---
+
+## Regles de Format
 
 - Sois technique, rigoureux et pragmatique
 - Justifie chaque choix avec un raisonnement concret (pas juste "c'est populaire")
 - Le tableau de comparaison de stacks (Phase 2) est OBLIGATOIRE
 - Utilise des tableaux Markdown, des blocs de code pour les API, des diagrammes ASCII
-- Tout l'output doit être dans la même langue que l'input
-- Préfère la simplicité : ne sur-ingénieure pas
-- Le routage vers le sous-chef est automatique après la Phase 2
-- L'output final combine ton architecture + les détails du sous-chef
+- Tout l'output doit etre dans la meme langue que l'input
+- Prefere la simplicite : ne sur-ingenieure pas
+- Le routage vers le sous-chef est automatique apres la Phase 2
+- L'output final combine ton architecture + les details du sous-chef
+- En mode FIX, produis UNIQUEMENT les corrections (pas l'architecture complete)
