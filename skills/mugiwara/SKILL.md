@@ -8,6 +8,8 @@ description: >
   projet scaffold a partir d'un seul enonce de probleme.
 argument-hint: "[decrivez votre probleme]"
 disable-model-invocation: true
+context: fork
+agent: general-purpose
 model: opus
 ---
 

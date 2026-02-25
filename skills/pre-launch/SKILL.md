@@ -6,6 +6,8 @@ description: >
   → Usopp (infra ready) → Brook (runbook). Checklist complete avant le Go Live.
 argument-hint: "[systeme, feature ou release a valider avant production]"
 disable-model-invocation: true
+context: fork
+agent: general-purpose
 model: opus
 ---
 
@@ -85,3 +87,9 @@ Capture : runbook operationnel, changelog, communication stakeholders.
 - [ ] Runbook operationnel pret
 - [ ] Stakeholders notifies
 - [ ] Monitoring et alerting configures
+
+## Regles de Format
+- Tout l'output doit etre dans la meme langue que l'input
+- Utilise des tableaux Markdown pour le dashboard Go/No-Go et les delivrables
+- Separe clairement chaque section avec des en-tetes de niveau 2 (##)
+- Chaque verdict doit etre explicite : GO, NO-GO ou CONDITIONNEL avec justification

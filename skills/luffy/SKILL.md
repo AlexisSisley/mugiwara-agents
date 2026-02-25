@@ -10,6 +10,7 @@ disable-model-invocation: true
 context: fork
 agent: general-purpose
 model: opus
+allowed-tools: Read, Glob, Grep
 ---
 
 # Luffy - Program Manager & Capitaine de l'Équipage

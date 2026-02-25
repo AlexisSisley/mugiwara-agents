@@ -6,6 +6,8 @@ description: >
   → Usopp (deploy + rollback). Pour quand ca casse en prod.
 argument-hint: "[erreur, logs, symptomes ou description de l'incident]"
 disable-model-invocation: true
+context: fork
+agent: general-purpose
 model: opus
 ---
 
@@ -61,3 +63,9 @@ Capture : plan de deploiement, strategie de rollback, monitoring post-deploy.
    - [ ] Communication envoyee aux stakeholders
    - [ ] Post-mortem planifie
    - [ ] Action items crees dans le backlog
+
+## Regles de Format
+- Tout l'output doit etre dans la meme langue que l'input
+- Utilise des tableaux Markdown pour les informations structurees
+- Separe clairement chaque section avec des en-tetes de niveau 2 (##)
+- Sois precis et factuel : chaque diagnostic et recommandation doit etre justifie

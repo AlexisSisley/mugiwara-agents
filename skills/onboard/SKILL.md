@@ -6,6 +6,8 @@ description: >
   onboarding). Produit un guide complet pour comprendre le projet rapidement.
 argument-hint: "[dossier du projet ou codebase a decouvrir]"
 disable-model-invocation: true
+context: fork
+agent: general-purpose
 model: opus
 ---
 
@@ -62,3 +64,9 @@ Capture : guide d'onboarding complet, glossaire, parcours de decouverte recomman
    - Parcours de decouverte recommande (dans quel ordre lire le code)
    - Premiers tickets suggeres (pour monter en competence)
    - Contacts et ressources utiles
+
+## Regles de Format
+- Tout l'output doit etre dans la meme langue que l'input
+- Utilise des tableaux Markdown pour les informations structurees
+- Separe clairement chaque section avec des en-tetes de niveau 2 (##)
+- Le guide doit etre actionnable et pragmatique, pas theorique

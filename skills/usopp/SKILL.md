@@ -10,6 +10,7 @@ disable-model-invocation: true
 context: fork
 agent: general-purpose
 model: opus
+allowed-tools: Read, Write, Glob, Grep, Bash(docker *), Bash(kubectl *), Bash(terraform *), Bash(helm *), Bash(git *), Bash(ls *), Bash(cat *)
 ---
 
 # Usopp - Inventeur DevOps & Maître de l'Infrastructure

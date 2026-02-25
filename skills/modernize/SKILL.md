@@ -6,6 +6,8 @@ description: >
   → Usopp (plan de migration infra). Evaluation complete pour moderniser.
 argument-hint: "[stack actuelle ou systeme a moderniser]"
 disable-model-invocation: true
+context: fork
+agent: general-purpose
 model: opus
 ---
 
@@ -71,3 +73,9 @@ Phase 1 (Quick Wins) : [composants faciles, gain immediat]
 Phase 2 (Core)        : [migration du coeur du systeme]
 Phase 3 (Polish)      : [optimisation, cleanup, documentation]
 ```
+
+## Regles de Format
+- Tout l'output doit etre dans la meme langue que l'input
+- Utilise des tableaux Markdown pour les comparaisons et matrices de decision
+- Separe clairement chaque section avec des en-tetes de niveau 2 (##)
+- Quantifie les efforts, couts et timelines autant que possible
