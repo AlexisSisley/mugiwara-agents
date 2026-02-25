@@ -31,17 +31,20 @@ Lance l'agent Zorro avec l'énoncé du problème :
 Attends la fin de l'exécution. Conserve l'output complet (User Stories,
 critères d'acceptation, risques).
 
-### Étape 2 : Sanji - Architecture Technique
+### Étape 2 : Sanji - Architecture Technique & Scaffolding Projet
 Lance l'agent Sanji avec l'énoncé du problème ET les éléments clés de l'analyse
 de Zorro pour qu'il puisse faire un choix de stack éclairé :
 /sanji $ARGUMENTS — Éléments clés de l'analyse de Zorro : [Inclus les User Stories prioritaires, les contraintes business/techniques identifiées, les NFRs et les risques majeurs extraits de l'output de Zorro]
 
-Sanji utilisera ces specs pour choisir la meilleure stack et délèguera
-automatiquement les détails d'implémentation à son sous-chef spécialisé
-(sanji-dotnet, sanji-flutter, sanji-python, sanji-ts, sanji-rust, sanji-go ou sanji-java).
+Sanji va :
+1. Choisir la meilleure stack via un tableau comparatif
+2. Concevoir l'architecture haut-niveau
+3. **Créer le dossier projet** dans `C:/Users/Alexi/Documents/projet/<techno>/<project-name>/`
+4. **Déléguer le scaffolding** au sous-chef spécialisé qui va créer les fichiers concrets
+   (sanji-dotnet, sanji-flutter, sanji-python, sanji-ts, sanji-rust, sanji-go ou sanji-java)
 
 Attends la fin de l'exécution. Conserve l'output complet (choix de stack justifié,
-architecture, modèle de données, API, détails d'implémentation du sous-chef).
+architecture, modèle de données, API, **PROJECT_PATH**, détails d'implémentation du sous-chef).
 
 ### Étape 3 : Nami - Stratégie de Validation
 Lance l'agent Nami avec l'énoncé du problème :
@@ -64,10 +67,11 @@ Inclus les éléments clés :
 Après les 4 agents, présente :
 
 1. **Résumé Exécutif** (5 phrases maximum) - Vue d'ensemble du projet
-2. **Analyse de Zorro** - Output complet du Business Analyst
-3. **Architecture de Sanji** - Output complet du Lead Developer
-4. **Plan de Test de Nami** - Output complet du QA Lead
-5. **Feuille de Route de Luffy** - Output complet du Capitaine
-6. **Top 5 Actions Immédiates** - Les prochaines étapes concrètes
+2. **Projet Créé** - `<PROJECT_PATH>` — chemin vers le dossier projet scaffoldé
+3. **Analyse de Zorro** - Output complet du Business Analyst
+4. **Architecture de Sanji** - Output complet du Lead Developer + scaffolding
+5. **Plan de Test de Nami** - Output complet du QA Lead
+6. **Feuille de Route de Luffy** - Output complet du Capitaine
+7. **Top 5 Actions Immédiates** - Les prochaines étapes concrètes (dont `cd <PROJECT_PATH>`)
 
 Sépare clairement chaque section avec des en-têtes de niveau 2 (##).
