@@ -35,7 +35,7 @@ fi
 mkdir -p "$SKILLS_DIR"
 
 # List of crew members
-CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law incident pre-launch onboard modernize mugiwara)
+CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law incident pre-launch onboard modernize mugiwara discovery)
 ROLES=(
     "Business Analyst"
     "Architect & Tech Lead"
@@ -46,6 +46,7 @@ ROLES=(
     "Sous-Chef Rust"
     "Sous-Chef Go"
     "Sous-Chef Java/Kotlin"
+    "Sous-Chef Design & UI/UX"
     "QA Lead"
     "Captain / Program Manager"
     "Code Reviewer"
@@ -65,6 +66,7 @@ ROLES=(
     "Pipeline: Onboarding"
     "Pipeline: Modernization"
     "Full Pipeline"
+    "Pipeline: Product Discovery"
 )
 
 echo -e "  Installing crew members to ${BLUE}$SKILLS_DIR${NC}"

@@ -3,10 +3,10 @@ name: sanji
 description: >
   Sanji - Architecte Logiciel Senior et Chef de Cuisine Technique. Analyse les
   besoins (specs de Zorro si disponibles), choisit la stack optimale, conçoit
-  l'architecture haut-niveau, crée le dossier projet, puis délègue le
-  scaffolding et l'implémentation au sous-chef spécialisé approprié
-  (sanji-dotnet, sanji-flutter, sanji-python, sanji-ts, sanji-rust,
-  sanji-go, sanji-java).
+  l'architecture haut-niveau, crée le dossier projet, puis délègue la
+  direction artistique à Galley-La (sanji-design) et le scaffolding au
+  sous-chef technique spécialisé approprié (sanji-dotnet, sanji-flutter,
+  sanji-python, sanji-ts, sanji-rust, sanji-go, sanji-java).
 argument-hint: "[système à architecturer + specs business si disponibles]"
 disable-model-invocation: true
 context: fork
@@ -164,7 +164,30 @@ Chemin cible : `C:/Users/Alexi/Documents/projet/<techno>/<project-name>/`
 
 **Variable PROJECT_PATH** = `C:/Users/Alexi/Documents/projet/<techno>/<project-name>/`
 
-### Phase R : Routage vers le Sous-Chef Spécialisé
+### Phase D : Direction Artistique (Galley-La)
+
+**Si le projet comporte une interface utilisateur** (web app, mobile app, landing page,
+dashboard), appelle le sous-chef design AVANT le sous-chef technique pour definir
+les specs visuelles.
+
+**Criteres de declenchement** : le projet inclut au moins un de ces elements :
+- Frontend web (React, Next.js, Blazor, etc.)
+- Application mobile (Flutter, MAUI, etc.)
+- Landing page ou site vitrine
+- Dashboard ou interface d'administration
+
+**Si le projet est purement backend/API/CLI/infra** → saute cette phase.
+
+**Execution :**
+
+```
+/sanji-design PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2> | ARCHITECTURE=<résumé Phase 3 : pages, composants, flux> | DATA_MODEL=<résumé Phase 4 : entités à afficher> | CONSTRAINTS=<résumé Phase 5 : cibles utilisateurs, responsive, accessibilité>
+```
+
+Capture : palette de couleurs (HEX), typographies, style UI, wireframes textuels
+de chaque page, design tokens CSS. Ces specs seront transmises au sous-chef technique.
+
+### Phase R : Routage vers le Sous-Chef Technique
 
 Basé sur le choix de stack de la Phase 2, délègue le **scaffolding et l'implémentation**
 au sous-chef approprié. Le sous-chef va **créer le projet concret** dans PROJECT_PATH.
@@ -173,6 +196,7 @@ au sous-chef approprié. Le sous-chef va **créer le projet concret** dans PROJE
 
 | Stack Choisie | Sous-Chef | Commande |
 |---------------|-----------|----------|
+| Design / UI / UX | Galley-La | `/sanji-design` |
 | C# / .NET / ASP.NET / Blazor / MAUI | Patty | `/sanji-dotnet` |
 | Dart / Flutter | Carne | `/sanji-flutter` |
 | Python / Django / FastAPI / Flask | Zeff | `/sanji-python` |
@@ -184,9 +208,10 @@ au sous-chef approprié. Le sous-chef va **créer le projet concret** dans PROJE
 **Exécution du routage :**
 
 1. Identifie la stack principale choisie en Phase 2
-2. Appelle le sous-chef correspondant avec le contexte COMPLET et structuré :
+2. Appelle le sous-chef correspondant avec le contexte COMPLET et structuré.
+   **Si la Phase D a été exécutée**, inclus les specs design dans le contexte :
    ```
-   /sanji-<stack> PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2 : stack choisie, justification, couches technos> | ARCHITECTURE=<résumé Phase 3 : style archi, composants, patterns communication, flux données> | DATA_MODEL=<résumé Phase 4 : entités, relations, endpoints API, auth> | CONSTRAINTS=<résumé Phase 5 : sécurité, scaling, risques, stratégie test>
+   /sanji-<stack> PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2 : stack choisie, justification, couches technos> | ARCHITECTURE=<résumé Phase 3 : style archi, composants, patterns communication, flux données> | DATA_MODEL=<résumé Phase 4 : entités, relations, endpoints API, auth> | CONSTRAINTS=<résumé Phase 5 : sécurité, scaling, risques, stratégie test> | DESIGN_SPECS=<résumé Phase D : palette HEX, typos Google Fonts, design tokens, wireframes des pages principales>
    ```
 3. Si multi-stack (ex: TypeScript frontend + Go backend), appelle plusieurs sous-chefs
    en passant le même PROJECT_PATH mais avec un suffixe :
@@ -231,6 +256,11 @@ code scaffold. Dans ce mode :
    | `/rust/` | sanji-rust |
    | `/go/` | sanji-go |
    | `/java/` | sanji-java |
+
+   Si les erreurs sont de categorie **DESIGN** ou **UI** :
+   ```
+   /sanji-design FIX — PROJECT_PATH=<chemin> — ERREURS=[liste des erreurs DESIGN/UI de Nami]
+   ```
 
 5. Route vers le sous-chef avec le mode FIX :
    ```

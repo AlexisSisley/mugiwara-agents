@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 28 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from business analysis to deployment, with shortcut pipelines for common workflows.
+**Mugiwara Agents** is a collection of 30 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows.
 
 ## The Crew
 
@@ -45,6 +45,7 @@ Sanji automatically routes to the right sous-chef based on the chosen stack. Eac
 | **Terracotta** | `/sanji-rust` | Rust | Axum, Tokio, sqlx, WebAssembly. Zero-cost abstractions and memory safety. |
 | **Lola** | `/sanji-go` | Go | Stdlib-first, Gin/Chi, gRPC, Kubernetes tooling. Simple and efficient microservices. |
 | **Streusen** | `/sanji-java` | Java / Kotlin | Spring Boot, Quarkus, JPA/Hibernate, GraalVM. Enterprise-grade JVM systems. |
+| **Galley-La** | `/sanji-design` | Design UI/UX | Direction Artistique, moodboards, palettes couleurs, typographie, wireframes textuels, design tokens. Called before tech sous-chef for UI projects. |
 
 ### Pipeline Shortcuts
 
@@ -56,6 +57,7 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 | **Pre-Launch** | `/pre-launch` | Nami → Franky → Jinbe → Usopp → Brook | Pre-production checklist: test, audit, secure, infra, docs |
 | **Onboard** | `/onboard` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
 | **Modernize** | `/modernize` | Yamato → Robin → Sanji → Usopp | Stack modernization: trends, current state, new architecture, migration |
+| **Discovery** | `/discovery` | Vivi → Zorro → Mugiwara | Product discovery to scaffold: user research, specs, full pipeline |
 
 ### Orchestrator
 
@@ -111,6 +113,7 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 /sanji-rust High-performance WebSocket server for real-time gaming
 /sanji-go Kubernetes operator for automated database backups
 /sanji-java Spring Boot microservice with event sourcing and CQRS
+/sanji-design Design a modern SaaS dashboard for a project management tool
 
 # QA Strategy - Nami navigates through test plans
 /nami A mobile banking app with biometric auth and instant transfers
@@ -184,6 +187,9 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 
 # Stack getting old? Plan the modernization
 /modernize Our Express.js + MongoDB + jQuery stack deployed on Heroku
+
+# Product discovery to scaffold in one call
+/discovery A SaaS tool for freelancers to track time and generate invoices
 ```
 
 ### Recommended Workflows
@@ -371,6 +377,16 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Data quality & governance (Great Expectations, dbt tests, lineage, catalog)
 - Performance optimization (partitioning, indexing, materialized views, query tuning)
 - Monitoring & observability (data freshness, pipeline health, anomaly detection)
+
+### Galley-La - Design UI/UX (Sanji Sous-Chef)
+- Moodboard textuel with brand personality analysis
+- Color palette with HEX codes (primary, secondary, semantic, dark mode)
+- Typography system (Google Fonts, heading/body pairs, size scale)
+- UI component style guide (buttons, cards, inputs, spacing, shadows)
+- User Journey mapping with friction points and micro-interactions
+- Detailed textual wireframes (section-by-section with spatial layout)
+- Design tokens (CSS custom properties, ready for implementation)
+- Called automatically by Sanji before tech sous-chef for UI projects
 
 ### Yamato - Tech Intelligence & Dashboard
 - Multi-source tech curation (Hacker News, Dev.to, GitHub Trending, official releases)
