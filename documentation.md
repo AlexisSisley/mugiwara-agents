@@ -13,7 +13,7 @@
 
 ### Qu'est-ce que Mugiwara Agents ?
 
-Mugiwara Agents est un ecosysteme de **30 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
+Mugiwara Agents est un ecosysteme de **32 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
 Le projet ne contient aucun code executable. Il s'agit d'une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
@@ -25,7 +25,7 @@ Le projet repose sur trois principes fondateurs :
 Chaque agent possede une mission unique et bien delimitee. Zorro ne fait que de l'analyse business, Sanji ne fait que de l'architecture technique, Nami ne fait que de la QA. Cette separation permet d'obtenir des outputs de haute qualite car chaque prompt est optimise pour une tache specifique.
 
 **2. Orchestration par pipelines**
-Les agents peuvent etre chaines entre eux. Le pipeline `mugiwara` orchestre les 4 agents core en sequence : Zorro (specs) -> Sanji (architecture + scaffolding) -> Nami (verification + QA) -> Luffy (synthese). Cinq pipelines pre-configures couvrent les workflows courants : incident response, pre-launch, onboarding, modernisation, et discovery produit.
+Les agents peuvent etre chaines entre eux. Le pipeline `mugiwara` orchestre les 4 agents core en sequence : Zorro (specs) -> Sanji (architecture + scaffolding) -> Nami (verification + QA) -> Luffy (synthese). Sept pipelines pre-configures couvrent les workflows courants : incident response, pre-launch, onboarding, modernisation, discovery produit, et doc-hunt. Le routeur intelligent `one_piece` analyse n'importe quelle demande et dispatche vers le bon agent ou pipeline.
 
 **3. Boucle de retroaction (feedback loop)**
 Le pipeline principal integre un mecanisme de correction automatique. Apres le scaffolding par Sanji, Nami inspecte le code genere, lance les builds/tests, et produit un verdict PASS/FAIL. En cas de FAIL, Zorro et/ou Sanji sont rappeles en mode correctif (REFINEMENT/FIX) avant une re-verification. Maximum 1 boucle pour eviter les cycles infinis.
@@ -44,6 +44,12 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 ### Architecture de l'ecosysteme
 
 ```
+                          SMART ROUTER
+                    ┌──────────────────────────┐
+                    │  /one_piece               │
+                    │  Analyse → Route → Execute│
+                    └────────────┬─────────────┘
+                                 │ dispatche vers
                               PIPELINES
                     ┌──────────────────────────┐
                     │  /mugiwara (full)         │
@@ -52,6 +58,7 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
                     │  /pre-launch (go-live)    │
                     │  /onboard (nouveau dev)   │
                     │  /modernize (migration)   │
+                    │  /doc-hunt (doc externe)  │
                     └────────────┬─────────────┘
                                  │ orchestre
                     ┌────────────▼─────────────┐
@@ -81,6 +88,8 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 ### Graphe de dependances inter-agents
 
 ```
+/one_piece ──→ (analyse l'intent) ──→ route vers n'importe quel agent ou pipeline ci-dessous
+
 /discovery ──→ /vivi ──→ /mugiwara
 /mugiwara  ──→ /zorro ──→ /sanji ──→ /sanji-design (si UI) ──→ /sanji-<stack>
            ──→ /nami (verification + feedback loop)
@@ -90,6 +99,7 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 /pre-launch──→ /nami ──→ /franky ──→ /jinbe ──→ /usopp ──→ /ace ──→ /brook
 /onboard   ──→ /robin ──→ /franky ──→ /brook
 /modernize ──→ /yamato ──→ /robin ──→ /law ──→ /sanji ──→ /shanks ──→ /usopp
+/doc-hunt  ──→ /yamato ──→ /brook
 ```
 
 ---
@@ -150,6 +160,13 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 | 28 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
 | 29 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
 | 30 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
+| 31 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+
+### 2.5b Smart Router
+
+| # | Agent | Commande | Role | Tools autorises |
+|---|-------|----------|------|-----------------|
+| 32 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
 
 ### 2.6 Configuration commune
 
@@ -191,6 +208,7 @@ mugiwara-agents/
     ├── brook/SKILL.md            # Technical Writer
     ├── chopper/SKILL.md          # Debugger & Diagnostician
     ├── discovery/SKILL.md        # Pipeline: Product Discovery
+    ├── doc-hunt/SKILL.md         # Pipeline: Documentation Hunting
     ├── franky/SKILL.md           # Code Reviewer
     ├── incident/SKILL.md         # Pipeline: Incident Response
     ├── jinbe/SKILL.md            # SecOps & Compliance
@@ -200,6 +218,7 @@ mugiwara-agents/
     ├── mugiwara/SKILL.md         # Pipeline: Full Analysis
     ├── nami/SKILL.md             # QA Lead
     ├── onboard/SKILL.md          # Pipeline: Onboarding
+    ├── one_piece/SKILL.md        # Smart Router
     ├── pre-launch/SKILL.md       # Pipeline: Pre-Launch
     ├── robin/SKILL.md            # System Cartographer
     ├── sanji/SKILL.md            # Architect & Tech Lead
@@ -232,7 +251,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Le script copie les 30 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+Le script copie les 32 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
 
 ### Etape 2 : Redemarrer Claude Code
 
@@ -340,6 +359,26 @@ Vivi explore le besoin utilisateur (personas, user flows, RICE), puis Mugiwara p
 /vegapunk improve franky # Reecrire le SKILL.md de Franky
 /vegapunk create "MLOps Engineer"  # Creer un nouvel agent
 /vegapunk check nami     # Diagnostic rapide d'un agent
+```
+
+### Comment utiliser One Piece comme point d'entree universel
+
+Vous ne savez pas quel agent appeler ? Decrivez simplement votre probleme :
+
+```
+/one_piece Notre API de paiement retourne des 500 en production depuis ce matin
+```
+
+One Piece analyse votre demande et route automatiquement vers le bon agent ou pipeline :
+- **Probleme en prod** → route vers `/incident` (Chopper → Franky → Jinbe → Usopp)
+- **Nouvelle idee de projet** → route vers `/discovery` (Vivi → Mugiwara)
+- **Code a auditer** → route vers `/franky`
+- **Stack a moderniser** → route vers `/modernize`
+
+Si One Piece hesite entre plusieurs options, il vous presente un tableau de choix et vous laisse decider. Vous pouvez aussi nommer directement un agent :
+
+```
+/one_piece Lance Chopper sur cette stack trace : TypeError at line 42
 ```
 
 ### Comment desinstaller les agents

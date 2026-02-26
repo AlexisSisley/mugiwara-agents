@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 30 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows.
+**Mugiwara Agents** is a collection of 32 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -64,6 +64,7 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 
 | Agent | Command | Role | Specialty |
 |-------|---------|------|-----------|
+| **One Piece** | `/one_piece` | Smart Router | Intelligent dispatcher. Describe any problem and it automatically routes to the best agent(s) or pipeline(s). No need to know the crew — just describe your need. |
 | **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the 4 core analysis agents in sequence from a single problem statement. The whole crew at once! |
 
 ## Quick Start
@@ -172,6 +173,22 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 ```bash
 # Run all 4 core analysis agents in sequence
 /mugiwara Build a marketplace connecting freelancers with SMBs
+```
+
+### Smart Router (don't know which agent to call? Start here!)
+
+```bash
+# Just describe your problem — One Piece finds the right crew member
+/one_piece Our payment API returns 500 errors in production since this morning
+
+# Exploring a new idea? One Piece routes to Discovery
+/one_piece I want to build a SaaS tool for freelancers to manage invoices
+
+# Need help but don't know which agent? Just ask
+/one_piece I have a legacy Express.js codebase and I want to modernize everything
+
+# Direct agent call also works — One Piece recognizes agent names
+/one_piece Run Franky on src/api/auth.ts
 ```
 
 ### Pipeline Shortcuts
