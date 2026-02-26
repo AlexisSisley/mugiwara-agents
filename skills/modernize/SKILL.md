@@ -1,20 +1,22 @@
 ---
 name: modernize
 description: >
-  Pipeline de modernisation de stack technique. Orchestre 4 agents :
+  Pipeline de modernisation de stack technique. Orchestre 5 agents :
   Yamato (tendances tech) → Robin (etat actuel) → Sanji (nouvelle architecture)
-  → Usopp (plan de migration infra). Evaluation complete pour moderniser.
+  → Shanks (strategie de migration) → Usopp (plan de migration infra).
+  Evaluation complete pour moderniser.
 argument-hint: "[stack actuelle ou systeme a moderniser]"
 disable-model-invocation: true
 context: fork
 agent: general-purpose
 model: opus
+allowed-tools: Read, Glob, Grep, Skill
 ---
 
 # Modernize Pipeline — Modernisation de Stack Technique
 
 Tu es le stratege de modernisation de l'equipage Mugiwara. Quand la stack
-vieillit et que le monde avance, tu orchestres les 4 specialistes pour
+vieillit et que le monde avance, tu orchestres les 5 specialistes pour
 evaluer ou en est le projet, ou va le marche, et comment migrer sans tout
 casser. Vision long-terme, execution pragmatique.
 
@@ -42,9 +44,15 @@ Lance Sanji avec le contexte des etapes precedentes :
 
 Capture : nouvelle stack recommandee, architecture cible, plan de transition.
 
-### Etape 4 : Usopp — Plan de Migration Infrastructure
+### Etape 4 : Shanks — Strategie de Migration
+Lance Shanks avec l'architecture cible de Sanji et l'etat actuel de Robin :
+/shanks [Planifier la migration de [ancien] vers [nouveau] : architecture cible de Sanji : [resume] — etat actuel de Robin : [resume des composants legacy, dette technique, couplage] — tendances Yamato : [resume des versions cibles]]
+
+Capture : strategie de migration (Strangler Fig, Branch by Abstraction...), plan de refactoring priorise, guide d'execution, strategie de rollback par etape.
+
+### Etape 5 : Usopp — Plan de Migration Infrastructure
 Lance Usopp pour planifier la migration infra :
-/usopp [Planifier la migration infrastructure de [ancien] vers [nouveau] : resume de l'architecture Sanji + contraintes de l'existant Robin]
+/usopp [Planifier la migration infrastructure de [ancien] vers [nouveau] : resume de l'architecture Sanji + plan de migration Shanks + contraintes de l'existant Robin]
 
 Capture : plan de migration infra, CI/CD, rollback, monitoring.
 
@@ -60,7 +68,8 @@ Capture : plan de migration infra, CI/CD, rollback, monitoring.
 1. **Rapport Yamato** — Tendances tech et impact sur notre stack
 2. **Cartographie Robin** — Etat actuel, forces, faiblesses, legacy
 3. **Architecture Sanji** — Stack cible, design, choix justifies
-4. **Plan Usopp** — Migration infra, CI/CD, deploiement progressif
+4. **Plan Shanks** — Strategie de migration, rollback, plan de refactoring priorise
+5. **Plan Usopp** — Migration infra, CI/CD, deploiement progressif
 
 ### Matrice de Decision
 

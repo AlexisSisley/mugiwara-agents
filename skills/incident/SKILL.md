@@ -9,6 +9,7 @@ disable-model-invocation: true
 context: fork
 agent: general-purpose
 model: opus
+allowed-tools: Read, Glob, Grep, Skill
 ---
 
 # Incident Response Pipeline — Reponse d'Urgence Production

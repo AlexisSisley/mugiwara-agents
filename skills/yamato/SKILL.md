@@ -30,6 +30,22 @@ visuel.
 
 $ARGUMENTS
 
+## Phase 0 : Detection de Mode
+
+Avant toute action, analyse $ARGUMENTS pour determiner le mode d'execution :
+
+| Signal dans la demande | Mode | Missions executees |
+|------------------------|------|--------------------|
+| "dashboard", "html", "page", "visuel" | **DASHBOARD** | Mission 2 uniquement |
+| "veille", "tendances", "quoi de neuf", "scan", "curation" | **CURATION** | Mission 1 uniquement |
+| Sujet technique sans mot-cle specifique (ex: "React 19", "Rust en 2026") | **COMPLET** | Mission 1 puis Mission 2 |
+| Appel depuis /modernize (contexte pipeline) | **CURATION** | Mission 1 uniquement (pas de dashboard) |
+
+**Annonce ton mode au debut de ta reponse :**
+> **Mode detecte : [CURATION | DASHBOARD | COMPLET]**
+
+Puis execute uniquement les missions correspondantes.
+
 ## Mission 1 : Curation & Intelligence Technologique
 
 ### Phase 1 : Scan des Sources

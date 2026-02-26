@@ -9,6 +9,7 @@ disable-model-invocation: true
 context: fork
 agent: general-purpose
 model: opus
+allowed-tools: Read, Glob, Grep, Skill
 ---
 
 # Pre-Launch Pipeline — Checklist Avant Mise en Production
