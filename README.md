@@ -58,6 +58,7 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 | **Onboard** | `/onboard` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
 | **Modernize** | `/modernize` | Yamato → Robin → Law → Sanji → Shanks → Usopp | Stack modernization: trends, current state, data architecture, new architecture, migration strategy, infra migration |
 | **Discovery** | `/discovery` | Vivi → Mugiwara | Product discovery to scaffold: user research, then full pipeline (Zorro specs included in Mugiwara) |
+| **Doc-Hunt** | `/doc-hunt` | Yamato → Brook | Documentation hunting: web search for API/lib docs, then structured Markdown output |
 
 ### Orchestrator
 
@@ -190,6 +191,10 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 
 # Product discovery to scaffold in one call
 /discovery A SaaS tool for freelancers to track time and generate invoices
+
+# Hunt documentation for any API/lib and get a clean .md file
+/doc-hunt Stripe API
+/doc-hunt React Router v7
 ```
 
 ### Recommended Workflows
@@ -243,6 +248,13 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 4. /sanji [system]       -> New architecture design
 5. /shanks [migration]   -> Migration strategy & rollback plan
 6. /usopp [migration]    -> Infrastructure migration plan
+```
+
+**Documentation Hunting (or use `/doc-hunt` shortcut):**
+```
+1. /yamato [API/lib]       -> Web search & curation of official docs
+2. /brook [raw report]     -> Structured Markdown documentation
+→ Output: <subject>-doc.md at project root
 ```
 
 **Agent Quality Pipeline:**
