@@ -56,8 +56,8 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 | **Incident** | `/incident` | Chopper → Franky → Jinbe → Usopp | Production emergency response: diagnose, fix, secure, deploy |
 | **Pre-Launch** | `/pre-launch` | Nami → Franky → Jinbe → Usopp → Brook | Pre-production checklist: test, audit, secure, infra, docs |
 | **Onboard** | `/onboard` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
-| **Modernize** | `/modernize` | Yamato → Robin → Sanji → Usopp | Stack modernization: trends, current state, new architecture, migration |
-| **Discovery** | `/discovery` | Vivi → Zorro → Mugiwara | Product discovery to scaffold: user research, specs, full pipeline |
+| **Modernize** | `/modernize` | Yamato → Robin → Sanji → Shanks → Usopp | Stack modernization: trends, current state, new architecture, migration strategy, infra migration |
+| **Discovery** | `/discovery` | Vivi → Mugiwara | Product discovery to scaffold: user research, then full pipeline (Zorro specs included in Mugiwara) |
 
 ### Orchestrator
 
@@ -239,7 +239,8 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 1. /yamato [stack]       -> Tech trends & impact analysis
 2. /robin [system]       -> Current architecture mapping
 3. /sanji [system]       -> New architecture design
-4. /usopp [migration]    -> Infrastructure migration plan
+4. /shanks [migration]   -> Migration strategy & rollback plan
+5. /usopp [migration]    -> Infrastructure migration plan
 ```
 
 **Agent Quality Pipeline:**
@@ -403,10 +404,11 @@ All agents use these defaults:
 
 | Parameter | Value | Why |
 |-----------|-------|-----|
-| `context: fork` | Yes (individual agents) | Isolated execution, clean context |
+| `context: fork` | Yes (all agents) | Isolated execution, clean context |
 | `agent: general-purpose` | Yes | Full reasoning tool access |
 | `model: opus` | Yes | Best quality for complex analysis |
 | `disable-model-invocation: true` | Yes | Manual invocation only via `/command` |
+| `allowed-tools` | Yes (all agents) | Role-specific tool restrictions (e.g., `Read, Glob, Grep` for analysts; `Read, Write, Edit, ...` for builders; `Read, Glob, Grep, Skill` for pipeline orchestrators) |
 
 ## Language Support
 
