@@ -1,9 +1,9 @@
 ---
 name: pre-launch
 description: >
-  Pipeline de verification avant mise en production. Orchestre 5 agents :
+  Pipeline de verification avant mise en production. Orchestre 6 agents :
   Nami (couverture tests) → Franky (audit code) → Jinbe (securite/compliance)
-  → Usopp (infra ready) → Brook (runbook). Checklist complete avant le Go Live.
+  → Usopp (infra ready) → Ace (performance) → Brook (runbook). Checklist complete avant le Go Live.
 argument-hint: "[systeme, feature ou release a valider avant production]"
 disable-model-invocation: true
 context: fork
@@ -15,7 +15,7 @@ allowed-tools: Read, Glob, Grep, Skill
 # Pre-Launch Pipeline — Checklist Avant Mise en Production
 
 Tu es le responsable qualite de l'equipage Mugiwara. Avant chaque mise en
-production, tu orchestres les 5 specialistes pour valider que tout est pret.
+production, tu orchestres les 6 specialistes pour valider que tout est pret.
 Aucun deploiement sans feu vert de toute la chaine.
 
 ## Cible du lancement
@@ -51,9 +51,15 @@ Lance Usopp pour valider l'infrastructure :
 
 Capture : checklist infra, pipeline CI/CD, scaling, monitoring, rollback plan.
 
-### Etape 5 : Brook — Documentation Operationnelle
+### Etape 5 : Ace — Validation Performance
+Lance Ace pour valider la performance du systeme avant le go-live :
+/ace [Valider la performance pour le deploiement de : resume de la release + SLOs attendus + resultats infra Usopp]
+
+Capture : resultats load testing, analyse des bottlenecks, validation SLOs, capacity planning, recommandations d'optimisation.
+
+### Etape 6 : Brook — Documentation Operationnelle
 Lance Brook pour preparer la documentation de lancement :
-/brook [Generer le runbook et la documentation de release pour : resume de la release]
+/brook [Generer le runbook et la documentation de release pour : resume de la release + resultats de performance Ace]
 
 Capture : runbook operationnel, changelog, communication stakeholders.
 
@@ -67,8 +73,9 @@ Capture : runbook operationnel, changelog, communication stakeholders.
 | Code Quality | Franky | 🟢/🟡/🔴 | [liste] | /10 |
 | Securite | Jinbe | 🟢/🟡/🔴 | [liste] | /10 |
 | Infrastructure | Usopp | 🟢/🟡/🔴 | [liste] | /10 |
+| Performance | Ace | 🟢/🟡/🔴 | [liste] | /10 |
 | Documentation | Brook | 🟢/🟡/🔴 | [liste] | /10 |
-| **GLOBAL** | | **🟢/🔴** | | **/50** |
+| **GLOBAL** | | **🟢/🔴** | | **/60** |
 
 **Decision : GO / NO-GO**
 
@@ -77,13 +84,16 @@ Capture : runbook operationnel, changelog, communication stakeholders.
 2. **Rapport Franky** — Audit code et score qualite
 3. **Rapport Jinbe** — Clearance securite et compliance
 4. **Rapport Usopp** — Validation infra et plan de deploiement
-5. **Documentation Brook** — Runbook, changelog, communication
+5. **Rapport Ace** — Load testing, SLOs, capacity planning
+6. **Documentation Brook** — Runbook, changelog, communication
 
 ### Checklist Pre-Deploiement
 - [ ] Tous les tests passent (CI vert)
 - [ ] Code review approuvee
 - [ ] Securite clearee (pas de vuln critique)
 - [ ] Infra provisionnee et scalable
+- [ ] SLOs valides sous charge (load testing OK)
+- [ ] Capacity planning confirme
 - [ ] Rollback plan teste
 - [ ] Runbook operationnel pret
 - [ ] Stakeholders notifies

@@ -54,9 +54,9 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 | Pipeline | Command | Agents Chain | Use Case |
 |----------|---------|-------------|----------|
 | **Incident** | `/incident` | Chopper → Franky → Jinbe → Usopp | Production emergency response: diagnose, fix, secure, deploy |
-| **Pre-Launch** | `/pre-launch` | Nami → Franky → Jinbe → Usopp → Brook | Pre-production checklist: test, audit, secure, infra, docs |
+| **Pre-Launch** | `/pre-launch` | Nami → Franky → Jinbe → Usopp → Ace → Brook | Pre-production checklist: test, audit, secure, infra, performance, docs |
 | **Onboard** | `/onboard` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
-| **Modernize** | `/modernize` | Yamato → Robin → Sanji → Shanks → Usopp | Stack modernization: trends, current state, new architecture, migration strategy, infra migration |
+| **Modernize** | `/modernize` | Yamato → Robin → Law → Sanji → Shanks → Usopp | Stack modernization: trends, current state, data architecture, new architecture, migration strategy, infra migration |
 | **Discovery** | `/discovery` | Vivi → Mugiwara | Product discovery to scaffold: user research, then full pipeline (Zorro specs included in Mugiwara) |
 
 ### Orchestrator
@@ -224,7 +224,8 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 2. /franky [code]        -> Code audit & quality score
 3. /jinbe [system]       -> Security & compliance clearance
 4. /usopp [infra]        -> Infrastructure readiness
-5. /brook [release]      -> Runbook & documentation
+5. /ace [system]         -> Performance validation & load testing
+6. /brook [release]      -> Runbook & documentation
 ```
 
 **New Developer Onboarding (or use `/onboard` shortcut):**
@@ -238,9 +239,10 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 ```
 1. /yamato [stack]       -> Tech trends & impact analysis
 2. /robin [system]       -> Current architecture mapping
-3. /sanji [system]       -> New architecture design
-4. /shanks [migration]   -> Migration strategy & rollback plan
-5. /usopp [migration]    -> Infrastructure migration plan
+3. /law [system]         -> Data architecture analysis
+4. /sanji [system]       -> New architecture design
+5. /shanks [migration]   -> Migration strategy & rollback plan
+6. /usopp [migration]    -> Infrastructure migration plan
 ```
 
 **Agent Quality Pipeline:**

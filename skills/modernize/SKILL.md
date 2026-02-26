@@ -1,10 +1,10 @@
 ---
 name: modernize
 description: >
-  Pipeline de modernisation de stack technique. Orchestre 5 agents :
-  Yamato (tendances tech) → Robin (etat actuel) → Sanji (nouvelle architecture)
-  → Shanks (strategie de migration) → Usopp (plan de migration infra).
-  Evaluation complete pour moderniser.
+  Pipeline de modernisation de stack technique. Orchestre 6 agents :
+  Yamato (tendances tech) → Robin (etat actuel) → Law (architecture data)
+  → Sanji (nouvelle architecture) → Shanks (strategie de migration)
+  → Usopp (plan de migration infra). Evaluation complete pour moderniser.
 argument-hint: "[stack actuelle ou systeme a moderniser]"
 disable-model-invocation: true
 context: fork
@@ -16,7 +16,7 @@ allowed-tools: Read, Glob, Grep, Skill
 # Modernize Pipeline — Modernisation de Stack Technique
 
 Tu es le stratege de modernisation de l'equipage Mugiwara. Quand la stack
-vieillit et que le monde avance, tu orchestres les 5 specialistes pour
+vieillit et que le monde avance, tu orchestres les 6 specialistes pour
 evaluer ou en est le projet, ou va le marche, et comment migrer sans tout
 casser. Vision long-terme, execution pragmatique.
 
@@ -38,21 +38,27 @@ Lance Robin pour analyser le systeme actuel :
 
 Capture : architecture actuelle, dependances, couplage, legacy zones, forces et faiblesses.
 
-### Etape 3 : Sanji — Nouvelle Architecture
+### Etape 3 : Law — Architecture Data
+Lance Law pour analyser la couche data existante :
+/law [Analyser l'architecture data du systeme : $ARGUMENTS — Cartographie Robin : [resume des sources de donnees, schemas, flux, dependances data]]
+
+Capture : inventaire des sources de donnees, schemas et modeles, pipelines ETL/ELT, qualite des donnees, risques de migration data, recommandations.
+
+### Etape 4 : Sanji — Nouvelle Architecture
 Lance Sanji avec le contexte des etapes precedentes :
-/sanji [Proposer une architecture modernisee pour : $ARGUMENTS — Tendances identifiees par Yamato : [resume] — Etat actuel par Robin : [resume des forces/faiblesses/contraintes]]
+/sanji [Proposer une architecture modernisee pour : $ARGUMENTS — Tendances identifiees par Yamato : [resume] — Etat actuel par Robin : [resume des forces/faiblesses/contraintes] — Architecture data par Law : [resume des schemas, pipelines, contraintes data]]
 
 Capture : nouvelle stack recommandee, architecture cible, plan de transition.
 
-### Etape 4 : Shanks — Strategie de Migration
+### Etape 5 : Shanks — Strategie de Migration
 Lance Shanks avec l'architecture cible de Sanji et l'etat actuel de Robin :
-/shanks [Planifier la migration de [ancien] vers [nouveau] : architecture cible de Sanji : [resume] — etat actuel de Robin : [resume des composants legacy, dette technique, couplage] — tendances Yamato : [resume des versions cibles]]
+/shanks [Planifier la migration de [ancien] vers [nouveau] : architecture cible de Sanji : [resume] — etat actuel de Robin : [resume des composants legacy, dette technique, couplage] — architecture data de Law : [resume des contraintes data et migration] — tendances Yamato : [resume des versions cibles]]
 
 Capture : strategie de migration (Strangler Fig, Branch by Abstraction...), plan de refactoring priorise, guide d'execution, strategie de rollback par etape.
 
-### Etape 5 : Usopp — Plan de Migration Infrastructure
+### Etape 6 : Usopp — Plan de Migration Infrastructure
 Lance Usopp pour planifier la migration infra :
-/usopp [Planifier la migration infrastructure de [ancien] vers [nouveau] : resume de l'architecture Sanji + plan de migration Shanks + contraintes de l'existant Robin]
+/usopp [Planifier la migration infrastructure de [ancien] vers [nouveau] : resume de l'architecture Sanji + plan de migration Shanks + contraintes data Law + contraintes de l'existant Robin]
 
 Capture : plan de migration infra, CI/CD, rollback, monitoring.
 
@@ -67,9 +73,10 @@ Capture : plan de migration infra, CI/CD, rollback, monitoring.
 ### Delivrables Detailles
 1. **Rapport Yamato** — Tendances tech et impact sur notre stack
 2. **Cartographie Robin** — Etat actuel, forces, faiblesses, legacy
-3. **Architecture Sanji** — Stack cible, design, choix justifies
-4. **Plan Shanks** — Strategie de migration, rollback, plan de refactoring priorise
-5. **Plan Usopp** — Migration infra, CI/CD, deploiement progressif
+3. **Rapport Law** — Architecture data, schemas, pipelines, qualite, risques de migration
+4. **Architecture Sanji** — Stack cible, design, choix justifies
+5. **Plan Shanks** — Strategie de migration, rollback, plan de refactoring priorise
+6. **Plan Usopp** — Migration infra, CI/CD, deploiement progressif
 
 ### Matrice de Decision
 
