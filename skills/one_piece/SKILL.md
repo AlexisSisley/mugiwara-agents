@@ -64,6 +64,7 @@ le meilleur match.
 | Data engineering | "ETL", "data warehouse", "dbt", "pipeline de donnees", "data quality", "Spark", "analytics" | `/law` |
 | Meta-audit agents | "vegapunk", "auditer les agents", "ameliorer un agent", "creer un agent", "ecosysteme mugiwara" | `/vegapunk` |
 | Design UI/UX | "moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design" | `/sanji-design` |
+| Traduction / i18n | "traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "traduire", "langue", "multilangue" | `/sanji-i18n` |
 
 ### Routage direct si agent nomme
 

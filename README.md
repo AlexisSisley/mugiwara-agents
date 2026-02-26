@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 32 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of 33 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -46,6 +46,7 @@ Sanji automatically routes to the right sous-chef based on the chosen stack. Eac
 | **Lola** | `/sanji-go` | Go | Stdlib-first, Gin/Chi, gRPC, Kubernetes tooling. Simple and efficient microservices. |
 | **Streusen** | `/sanji-java` | Java / Kotlin | Spring Boot, Quarkus, JPA/Hibernate, GraalVM. Enterprise-grade JVM systems. |
 | **Galley-La** | `/sanji-design` | Design UI/UX | Direction Artistique, moodboards, palettes couleurs, typographie, wireframes textuels, design tokens. Called before tech sous-chef for UI projects. |
+| **Wan Shotto** | `/sanji-i18n` | Traduction & i18n | Expert en traduction localisee et contextuelle. Audite les fichiers de traduction, genere les cles manquantes, produit des traductions culturellement adaptees (i18next, react-intl, Flutter intl, .NET resx, gettext, etc.). |
 
 ### Pipeline Shortcuts
 
@@ -116,6 +117,7 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 /sanji-go Kubernetes operator for automated database backups
 /sanji-java Spring Boot microservice with event sourcing and CQRS
 /sanji-design Design a modern SaaS dashboard for a project management tool
+/sanji-i18n Audit and complete French/English/Spanish translations for our Next.js app
 
 # QA Strategy - Nami navigates through test plans
 /nami A mobile banking app with biometric auth and instant transfers
@@ -419,6 +421,16 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Detailed textual wireframes (section-by-section with spatial layout)
 - Design tokens (CSS custom properties, ready for implementation)
 - Called automatically by Sanji before tech sous-chef for UI projects
+
+### Wan Shotto - Traduction & i18n (Sanji Sous-Chef)
+- i18n framework auto-detection (i18next, react-intl, vue-i18n, Flutter intl, .NET resx, gettext)
+- Translation file audit and coverage analysis across all languages
+- Missing key detection with contextual translation generation
+- Cultural adaptation (idioms, tone, formality level per locale)
+- Pluralization rules (CLDR-compliant) and placeholder preservation
+- Direct text translation with context analysis and localization notes
+- Project glossary generation for consistent terminology
+- Quality validation (technical checks + linguistic coherence)
 
 ### Yamato - Tech Intelligence & Dashboard
 - Multi-source tech curation (Hacker News, Dev.to, GitHub Trending, official releases)

@@ -4,9 +4,10 @@ description: >
   Sanji - Architecte Logiciel Senior et Chef de Cuisine Technique. Analyse les
   besoins (specs de Zorro si disponibles), choisit la stack optimale, conçoit
   l'architecture haut-niveau, crée le dossier projet, puis délègue la
-  direction artistique à Galley-La (sanji-design) et le scaffolding au
-  sous-chef technique spécialisé approprié (sanji-dotnet, sanji-flutter,
-  sanji-python, sanji-ts, sanji-rust, sanji-go, sanji-java).
+  direction artistique à Galley-La (sanji-design), la traduction/i18n à
+  Wan Shotto (sanji-i18n) et le scaffolding au sous-chef technique
+  spécialisé approprié (sanji-dotnet, sanji-flutter, sanji-python,
+  sanji-ts, sanji-rust, sanji-go, sanji-java).
 argument-hint: "[système à architecturer + specs business si disponibles]"
 disable-model-invocation: true
 context: fork
@@ -197,6 +198,7 @@ au sous-chef approprié. Le sous-chef va **créer le projet concret** dans PROJE
 | Stack Choisie | Sous-Chef | Commande |
 |---------------|-----------|----------|
 | Design / UI / UX | Galley-La | `/sanji-design` |
+| Traduction / i18n / l10n | Wan Shotto | `/sanji-i18n` |
 | C# / .NET / ASP.NET / Blazor / MAUI | Patty | `/sanji-dotnet` |
 | Dart / Flutter | Carne | `/sanji-flutter` |
 | Python / Django / FastAPI / Flask | Zeff | `/sanji-python` |
