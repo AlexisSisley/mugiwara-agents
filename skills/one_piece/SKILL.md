@@ -42,6 +42,7 @@ le meilleur match.
 | Onboarding | "nouveau dev", "comprendre le code", "onboarding", "decouvrir la codebase", "nouvel arrivant" | `/onboard` |
 | Modernisation globale | "legacy", "migrer stack", "upgrade global", "moderniser l'ensemble", "dette technique globale", "refonte" | `/modernize` |
 | Documentation externe | "documenter [API/lib]", "trouver la doc de", "doc-hunt", "chercher la doc officielle" | `/doc-hunt` |
+| API → Postman + E2E | "analyser API et generer postman", "bartholomew perona", "api-postman", "collection postman depuis le code", "du code a postman", "tests E2E postman", "tests end-to-end API" | `/api-postman` |
 
 ### Matrice de Routage — Agents individuels
 
@@ -65,6 +66,9 @@ le meilleur match.
 | Meta-audit agents | "vegapunk", "auditer les agents", "ameliorer un agent", "creer un agent", "ecosysteme mugiwara" | `/vegapunk` |
 | Design UI/UX | "moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design" | `/sanji-design` |
 | Traduction / i18n | "traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "traduire", "langue", "multilangue" | `/sanji-i18n` |
+| Analyse d'API locale | "analyser API", "endpoints", "routes API", "extraire documentation API", "cartographie API", "swagger", "openapi", "lire les routes", "documentation API locale" | `/bartholomew` |
+| Collection Postman | "postman", "collection postman", "generer postman", "import postman", "tester API", "requetes API", "JSON postman", "collection JSON" | `/perona` |
+| Tests E2E Postman | "tests E2E", "end-to-end postman", "tests d'integration API", "collection E2E", "newman", "workflow E2E", "chaining postman", "tests bout en bout" | `/senor-pink` |
 
 ### Routage direct si agent nomme
 
@@ -106,6 +110,9 @@ Quand deux routes semblent possibles, applique ces regles :
 4. **Modernize vs Shanks** : si la modernisation est globale (toute la stack) → `/modernize` ; si c'est cible (un module, un pattern) → `/shanks`
 5. **Discovery vs Mugiwara** : si le besoin est encore flou (exploration, ideation) → `/discovery` ; si les specs sont deja claires (on sait ce qu'on veut) → `/mugiwara`
 6. **Brook vs Doc-Hunt** : si on veut ecrire/generer de la doc interne (changelog, README, guide) → `/brook` ; si on cherche la doc officielle d'une API/lib externe → `/doc-hunt`
+7. **Robin vs Bartholomew** : si on veut cartographier un systeme entier (architecture, modules, dependances, ADR) → `/robin` ; si on veut analyser specifiquement les endpoints/routes d'une API locale → `/bartholomew`
+8. **Bartholomew + Perona + Senor Pink** : si l'utilisateur veut a la fois analyser une API ET generer une collection Postman (avec ou sans tests E2E), route vers le pipeline `/api-postman` qui orchestre les trois agents en sequence
+9. **Perona vs Senor Pink** : si l'utilisateur veut une collection Postman basique (requetes individuelles, import rapide) → `/perona` ; si l'utilisateur veut des tests E2E (workflows chainees, assertions avancees, chaining, Newman, CI/CD) → `/senor-pink`
 
 ## Phase 3 — Execution
 

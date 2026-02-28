@@ -13,7 +13,7 @@
 
 ### Qu'est-ce que Mugiwara Agents ?
 
-Mugiwara Agents est un ecosysteme de **33 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
+Mugiwara Agents est un ecosysteme de **35 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
 Le projet ne contient aucun code executable. Il s'agit d'une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
@@ -83,6 +83,8 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
   └────────────────┘  │ vivi           │
                       │ ace            │
                       │ law            │
+                      │ bartholomew    │
+                      │ perona         │
                       └────────────────┘
 ```
 
@@ -101,6 +103,9 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 /onboard   ──→ /robin ──→ /franky ──→ /brook
 /modernize ──→ /yamato ──→ /robin ──→ /law ──→ /sanji ──→ /shanks ──→ /usopp
 /doc-hunt  ──→ /yamato ──→ /brook
+
+Chaine ad-hoc recommandee :
+/bartholomew ──→ /perona  (analyse API locale → collection Postman)
 ```
 
 ---
@@ -145,30 +150,32 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 | 22 | Vivi | `/vivi` | Product Manager & UX | Read, Glob, Grep, WebSearch, WebFetch |
 | 23 | Ace | `/ace` | Performance Engineer | Read, Glob, Grep, Bash(cat/wc/file) |
 | 24 | Law | `/law` | Data Engineer & Analytics | Read, Glob, Grep, Bash(cat/wc/file) |
+| 25 | Bartholomew | `/bartholomew` | Local API Analyzer | Read, Glob, Grep, Bash(cat/wc/file/ls/tree) |
+| 26 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 
 ### 2.4 Meta-Agent
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 25 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
+| 27 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
 
 ### 2.5 Pipelines (Orchestrateurs)
 
 | # | Pipeline | Commande | Chaine d'agents | Tools autorises |
 |---|----------|---------|-----------------|-----------------|
-| 26 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
-| 27 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
-| 28 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
-| 29 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
-| 30 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
-| 31 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
-| 32 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+| 28 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
+| 29 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
+| 30 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
+| 31 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
+| 32 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
+| 33 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
+| 34 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
 
 ### 2.5b Smart Router
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 33 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+| 35 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
 
 ### 2.6 Configuration commune
 
@@ -207,6 +214,7 @@ mugiwara-agents/
 ├── documentation.md              # Documentation technique (ce fichier)
 └── skills/
     ├── ace/SKILL.md              # Performance Engineer
+    ├── bartholomew/SKILL.md      # Local API Analyzer
     ├── brook/SKILL.md            # Technical Writer
     ├── chopper/SKILL.md          # Debugger & Diagnostician
     ├── discovery/SKILL.md        # Pipeline: Product Discovery
@@ -221,6 +229,7 @@ mugiwara-agents/
     ├── nami/SKILL.md             # QA Lead
     ├── onboard/SKILL.md          # Pipeline: Onboarding
     ├── one_piece/SKILL.md        # Smart Router
+    ├── perona/SKILL.md           # Postman Collection Creator
     ├── pre-launch/SKILL.md       # Pipeline: Pre-Launch
     ├── robin/SKILL.md            # System Cartographer
     ├── sanji/SKILL.md            # Architect & Tech Lead
@@ -254,7 +263,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Le script copie les 33 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+Le script copie les 35 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
 
 ### Etape 2 : Redemarrer Claude Code
 

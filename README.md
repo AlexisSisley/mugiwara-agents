@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 33 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of 35 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -31,6 +31,8 @@
 | **Vivi** | `/vivi` | Product Manager & UX | The princess who understands her people. Market analysis, personas, user flows, wireframes, RICE prioritization, product metrics, and A/B experimentation. |
 | **Ace** | `/ace` | Performance Engineer | Fire Fist pushes systems to the max. Load testing (k6/Gatling/Locust), profiling, bottleneck analysis, capacity planning, SLO/SLI, and optimization. |
 | **Law** | `/law` | Data Engineer & Analytics | The Surgeon of Death dissects data. ETL/ELT pipelines, data warehousing (star/snowflake), dbt, Spark, Airflow/Dagster, data quality, and governance. |
+| **Bartholomew** | `/bartholomew` | Local API Analyzer | The Tyrant extracts all knowledge from API code. Reads source files (Node.js, Python, PHP, Go, Java, .NET, Rust) to produce structured API documentation: routes, methods, parameters, payloads, responses, auth, security analysis. |
+| **Perona** | `/perona` | Postman Collection Creator | The Ghost Princess creates perfect API replicas. Generates complete Postman Collection JSON v2.1.0 from API specs, Bartholomew analysis, or Swagger/OpenAPI. Ready-to-import with variables, headers, bodies, and automated tests. |
 
 ### Sanji's Kitchen — Specialist Sous-Chefs
 
@@ -168,6 +170,15 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 # Data Engineering - Law dissects data
 /law Design a data warehouse for our e-commerce analytics (orders, users, products)
 /law Build an ETL pipeline from PostgreSQL + Stripe to BigQuery with dbt
+
+# API Analysis - Bartholomew extracts API documentation from code
+/bartholomew src/api/
+/bartholomew src/routes/
+/bartholomew Analyze my Express.js API in the src/ folder
+
+# Postman Collection - Perona generates ready-to-import collections
+/perona Generate a Postman collection from the Bartholomew analysis above
+/perona Create a Postman collection for a REST API with users, posts, and comments
 ```
 
 ### Full Pipeline
@@ -274,6 +285,13 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 1. /yamato [API/lib]       -> Web search & curation of official docs
 2. /brook [raw report]     -> Structured Markdown documentation
 → Output: <subject>-doc.md at project root
+```
+
+**API Documentation & Testing Pipeline:**
+```
+1. /bartholomew [codebase]  -> Extract API documentation from source code
+2. /perona [analysis]       -> Generate Postman collection from Bartholomew's output
+-> Output: Ready-to-import Postman Collection JSON + Environment file
 ```
 
 **Agent Quality Pipeline:**
@@ -411,6 +429,29 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Data quality & governance (Great Expectations, dbt tests, lineage, catalog)
 - Performance optimization (partitioning, indexing, materialized views, query tuning)
 - Monitoring & observability (data freshness, pipeline health, anomaly detection)
+
+### Bartholomew - Local API Analyzer
+- Project reconnaissance (stack detection, framework identification, routing pattern)
+- Global API summary (name, stack, type, base URL, endpoint count, auth mechanism)
+- Complete route cartography table (method, route, controller, description, auth, middlewares)
+- Detailed endpoint documentation (URL params, query strings, body schema, validation, headers, responses)
+- Security & authentication analysis (JWT, sessions, API keys, OAuth2, security middlewares)
+- Vulnerability detection (passwords in clear, missing input validation, exposed secrets, permissive CORS)
+- Data model analysis (entities, fields, relations, validation rules)
+- Recommendations & best practices (security, performance, maintainability, documentation)
+- API quality score card (completeness, validation, error handling, security, documentation)
+
+### Perona - Postman Collection Creator
+- Multi-source specification extraction (Bartholomew output, Swagger/OpenAPI, raw code, text description)
+- Logical collection architecture (grouped by resource, ordered CRUD operations)
+- Postman Collection v2.1.0 JSON generation (strict schema compliance)
+- Automatic variable management ({{base_url}}, {{auth_token}}, dynamic IDs)
+- Standard headers injection (Content-Type, Accept, Authorization for authenticated routes)
+- Realistic body examples (plausible values, not generic placeholders)
+- Automated test scripts per request (status code verification, JSON validation, token capture)
+- Environment file generation (base_url, auth_token, ready for local/staging/prod)
+- Collection summary table with statistics
+- Chain-ready with Bartholomew: uses Bartholomew's output directly as structured input
 
 ### Galley-La - Design UI/UX (Sanji Sous-Chef)
 - Moodboard textuel with brand personality analysis
