@@ -69,6 +69,7 @@ le meilleur match.
 | Analyse d'API locale | "analyser API", "endpoints", "routes API", "extraire documentation API", "cartographie API", "swagger", "openapi", "lire les routes", "documentation API locale" | `/bartholomew` |
 | Collection Postman | "postman", "collection postman", "generer postman", "import postman", "tester API", "requetes API", "JSON postman", "collection JSON" | `/perona` |
 | Tests E2E Postman | "tests E2E", "end-to-end postman", "tests d'integration API", "collection E2E", "newman", "workflow E2E", "chaining postman", "tests bout en bout" | `/senor-pink` |
+| Easter eggs & secrets | "easter egg", "secret", "surprise", "konami", "clin d'oeil", "hidden", "cache dans le code", "mini-jeu cache", "bon-clay", "bon clay" | `/bon-clay` |
 
 ### Routage direct si agent nomme
 

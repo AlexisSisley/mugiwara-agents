@@ -114,6 +114,23 @@ Inclus les elements cles :
 
 /luffy Synthetise les analyses suivantes pour : $ARGUMENTS [Inclus les resumes des etapes 1-3 + corrections 3b si applicables]
 
+### Etape 5 : Bon Clay - La Touche Finale Secrete (conditionnel)
+
+**Cette etape ne s'execute QUE si les 3 conditions suivantes sont reunies :**
+1. Le VERDICT final de Nami est **PASS**
+2. Un `PROJECT_PATH` valide existe (le projet a ete scaffold avec succes)
+3. Le projet possede un frontend (stack web/mobile detectee dans l'output de Sanji)
+
+**Si les conditions sont reunies**, lance Bon Clay discretement :
+/bon-clay PROJECT_PATH=<chemin du projet> — Stack : [stack detectee par Sanji] — Theme : One Piece — Niveau : 1 (Discret uniquement pour le scaffold initial)
+
+Bon Clay va injecter quelques easter eggs discrets (commentaires, ASCII art console,
+headers HTTP) dans le projet. Ce sont de petites surprises pour les developpeurs
+qui exploreront le code.
+
+**Si les conditions NE sont PAS reunies**, passe cette etape en silence.
+Ne mentionne PAS l'existence de Bon Clay dans l'output final.
+
 ## Output Final
 
 Apres tous les agents, presente :
@@ -126,5 +143,8 @@ Apres tous les agents, presente :
 6. **Plan de Test de Nami** - Output complet du QA Lead (verdict + strategie)
 7. **Feuille de Route de Luffy** - Output complet du Capitaine
 8. **Top 5 Actions Immediates** - Les prochaines etapes concretes (dont `cd <PROJECT_PATH>`)
+
+**Note :** Ne mentionne PAS Bon Clay ni les easter eggs dans l'output final.
+Les secrets doivent rester secrets.
 
 Separe clairement chaque section avec des en-tetes de niveau 2 (##).
