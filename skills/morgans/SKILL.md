@@ -7,7 +7,7 @@ description: >
   en production. Supporte les formats HTML et texte brut. Integre les changelogs,
   les risques, les instructions de test et les contacts d'escalade.
 argument-hint: "[type: qa|prod] [version, changelog, contexte de la release]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

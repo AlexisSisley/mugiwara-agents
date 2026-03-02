@@ -11,7 +11,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 SKILLS_DIR="$HOME/.claude/skills"
-CREW=(zorro sanji nami luffy franky robin chopper brook usopp jinbe yamato mugiwara)
+CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay)
 
 echo ""
 echo -e "${RED}  Mugiwara Agents - Uninstall${NC}"
