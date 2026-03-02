@@ -2,7 +2,7 @@
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 35 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of 40 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -33,6 +33,9 @@
 | **Law** | `/law` | Data Engineer & Analytics | The Surgeon of Death dissects data. ETL/ELT pipelines, data warehousing (star/snowflake), dbt, Spark, Airflow/Dagster, data quality, and governance. |
 | **Bartholomew** | `/bartholomew` | Local API Analyzer | The Tyrant extracts all knowledge from API code. Reads source files (Node.js, Python, PHP, Go, Java, .NET, Rust) to produce structured API documentation: routes, methods, parameters, payloads, responses, auth, security analysis. |
 | **Perona** | `/perona` | Postman Collection Creator | The Ghost Princess creates perfect API replicas. Generates complete Postman Collection JSON v2.1.0 from API specs, Bartholomew analysis, or Swagger/OpenAPI. Ready-to-import with variables, headers, bodies, and automated tests. |
+| **Senor Pink** | `/senor-pink` | E2E Test Collection Creator | Hard-Boiled tests that make you cry. Generates chained Postman E2E test collections with workflow sequencing, dynamic variable chaining, advanced assertions, and Newman/CI-CD integration. |
+| **Law-SQL** | `/law-sql` | SQL Specialist & Doc-to-SQL | The Surgeon of Death operates on data with surgical SQL precision. Converts documents (Excel, Word, CSV, specs) into SQL scripts, optimizes queries, migrates between SQL dialects (PostgreSQL, MySQL, SQL Server, Oracle, SQLite). |
+| **Morgans** | `/morgans` | Release Email Generator | Big News Morgans broadcasts every release. Generates professional release emails for QA (test-oriented) and Production (stakeholder-oriented) deployments, with changelog classification, test perimeters, rollback plans, and post-deployment checklists. |
 
 ### Sanji's Kitchen — Specialist Sous-Chefs
 
@@ -62,6 +65,7 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 | **Modernize** | `/modernize` | Yamato → Robin → Law → Sanji → Shanks → Usopp | Stack modernization: trends, current state, data architecture, new architecture, migration strategy, infra migration |
 | **Discovery** | `/discovery` | Vivi → Mugiwara | Product discovery to scaffold: user research, then full pipeline (Zorro specs included in Mugiwara) |
 | **Doc-Hunt** | `/doc-hunt` | Yamato → Brook | Documentation hunting: web search for API/lib docs, then structured Markdown output |
+| **Api-Postman** | `/api-postman` | Bartholomew → Perona → Senor Pink | API to Postman pipeline: analyze API code, generate Postman collection, add E2E tests |
 
 ### Orchestrator
 
@@ -179,6 +183,17 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 # Postman Collection - Perona generates ready-to-import collections
 /perona Generate a Postman collection from the Bartholomew analysis above
 /perona Create a Postman collection for a REST API with users, posts, and comments
+
+# E2E Tests - Senor Pink creates chained test workflows
+/senor-pink Generate E2E test collection with workflow chaining for our user API
+
+# SQL Specialist - Law-SQL converts documents to SQL
+/law-sql Convert this Excel spec file to a PostgreSQL migration script
+/law-sql Optimize this slow query that takes 30s on our users table
+
+# Release Communication - Morgans generates release emails
+/morgans qa v2.3.0 - New billing module with Stripe integration
+/morgans prod v2.3.0 - Production deployment of billing module
 ```
 
 ### Full Pipeline
@@ -225,6 +240,9 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 # Hunt documentation for any API/lib and get a clean .md file
 /doc-hunt Stripe API
 /doc-hunt React Router v7
+
+# Analyze API code → Generate Postman collection → Add E2E tests (full pipeline)
+/api-postman src/api/
 ```
 
 ### Recommended Workflows
@@ -287,11 +305,18 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 → Output: <subject>-doc.md at project root
 ```
 
-**API Documentation & Testing Pipeline:**
+**API Documentation & Testing Pipeline (or use `/api-postman` shortcut):**
 ```
 1. /bartholomew [codebase]  -> Extract API documentation from source code
 2. /perona [analysis]       -> Generate Postman collection from Bartholomew's output
--> Output: Ready-to-import Postman Collection JSON + Environment file
+3. /senor-pink [collection] -> Add E2E tests with workflow chaining
+-> Output: Ready-to-import Postman Collection JSON + Environment file + E2E tests
+```
+
+**Release Communication:**
+```
+1. /morgans qa [version]    -> Generate QA release email (test-oriented)
+2. /morgans prod [version]  -> Generate production release email (stakeholder-oriented)
 ```
 
 **Agent Quality Pipeline:**
@@ -452,6 +477,34 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Environment file generation (base_url, auth_token, ready for local/staging/prod)
 - Collection summary table with statistics
 - Chain-ready with Bartholomew: uses Bartholomew's output directly as structured input
+
+### Senor Pink - E2E Test Collection Creator
+- Chained workflow design (authentication → CRUD → cleanup sequences)
+- Dynamic variable extraction and injection between requests
+- Advanced assertions (status codes, JSON schema, response time, data integrity)
+- Newman CLI integration for CI/CD pipelines
+- Environment-aware configuration (local, staging, production)
+- Pre/post-request scripts with error handling
+- Test result reporting and coverage summary
+
+### Law-SQL - SQL Specialist & Doc-to-SQL Converter
+- Multi-source document parsing (Excel, Word, CSV, text specs)
+- SQL script generation (DDL: CREATE, ALTER, DROP; DML: INSERT, UPDATE, DELETE)
+- Multi-dialect support (PostgreSQL, MySQL, SQL Server, Oracle, SQLite)
+- Query optimization with execution plan analysis
+- Stored procedure and function generation
+- Dialect migration (convert between SQL flavors)
+- Data type mapping and constraint generation
+- Index and performance recommendations
+
+### Morgans - Release Email Generator
+- Automatic git context extraction (tags, logs, changelogs)
+- Change classification (Features, Fixes, Security, Performance, Breaking, Tech Debt)
+- QA release emails (test-oriented, with recommended test perimeters and scenarios)
+- Production release emails (stakeholder-oriented, with impact metrics and rollback plans)
+- Dual generation mode (both QA + Prod emails when type is not specified)
+- Placeholder management for missing information
+- Language adaptation (matches input language)
 
 ### Galley-La - Design UI/UX (Sanji Sous-Chef)
 - Moodboard textuel with brand personality analysis

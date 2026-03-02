@@ -18,7 +18,8 @@ Suivi des evolutions du projet. Chaque section documente les ajouts, modificatio
 Idees et taches a venir (non priorisees) :
 
 - [ ] Ajouter des MCP servers recommandes (GitHub, Context7, Playwright, etc.)
-- [ ] Agent `law-sql` — specialiste SQL (en cours)
+- [x] Agent `law-sql` — specialiste SQL (done v1.2)
+- [x] Agent `morgans` — generateur d'emails de release QA & Prod (done v1.2)
 - [ ] Hooks Claude Code pour automatiser des workflows post-agent
 - [ ] Tests automatises de chaque agent (smoke tests)
 - [ ] Plugin system — packaging des agents en `.mcpb` ou plugin Claude Code

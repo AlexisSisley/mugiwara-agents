@@ -13,7 +13,7 @@
 
 ### Qu'est-ce que Mugiwara Agents ?
 
-Mugiwara Agents est un ecosysteme de **38 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
+Mugiwara Agents est un ecosysteme de **40 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
 Le projet ne contient aucun code executable. Il s'agit d'une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
@@ -85,9 +85,11 @@ Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) o
   │ sanji-i18n     │  │ vivi           │
   └────────────────┘  │ ace            │
                       │ law            │
+                      │ law-sql        │
                       │ bartholomew    │
                       │ perona         │
                       │ senor-pink     │
+                      │ morgans        │
                       └────────────────┘
 ```
 
@@ -155,35 +157,37 @@ Chaine ad-hoc recommandee :
 | 22 | Vivi | `/vivi` | Product Manager & UX | Read, Glob, Grep, WebSearch, WebFetch |
 | 23 | Ace | `/ace` | Performance Engineer | Read, Glob, Grep, Bash(cat/wc/file/npm/npx/node/python/go/cargo/dotnet/k6/ab/curl) |
 | 24 | Law | `/law` | Data Engineer & Analytics | Read, Glob, Grep, Bash(cat/wc/file/python/dbt/psql/mysql/sqlite3/spark-submit) |
-| 25 | Bartholomew | `/bartholomew` | Local API Analyzer | Read, Glob, Grep, Bash(cat/wc/file/ls/tree) |
-| 26 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
-| 27 | Senor Pink | `/senor-pink` | E2E Test Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
+| 25 | Law-SQL | `/law-sql` | SQL Specialist & Doc-to-SQL Converter | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
+| 26 | Bartholomew | `/bartholomew` | Local API Analyzer | Read, Glob, Grep, Bash(cat/wc/file/ls/tree) |
+| 27 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
+| 28 | Senor Pink | `/senor-pink` | E2E Test Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
+| 29 | Morgans | `/morgans` | Release Email Generator (QA & Prod) | Read, Glob, Grep, Bash(git log/diff/tag/show/ls) |
 
 ### 2.4 Meta-Agent
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 28 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
-| 29 | Bon-Clay | `/bon-clay` | Easter Egg Architect (secret) | Read, Write, Edit, Glob, Grep, Bash(cat/ls/file) |
+| 30 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
+| 31 | Bon-Clay | `/bon-clay` | Easter Egg Architect (secret) | Read, Write, Edit, Glob, Grep, Bash(cat/ls/file) |
 
 ### 2.5 Pipelines (Orchestrateurs)
 
 | # | Pipeline | Commande | Chaine d'agents | Tools autorises |
 |---|----------|---------|-----------------|-----------------|
-| 30 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
-| 31 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
-| 32 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
-| 33 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
-| 34 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
-| 35 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
-| 36 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
-| 37 | Api-Postman | `/api-postman` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
+| 32 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
+| 33 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
+| 34 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
+| 35 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
+| 36 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
+| 37 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
+| 38 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+| 39 | Api-Postman | `/api-postman` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
 
 ### 2.5b Smart Router
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 38 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+| 40 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
 
 ### 2.6 Configuration commune
 
@@ -231,8 +235,10 @@ mugiwara-agents/
     ├── incident/SKILL.md         # Pipeline: Incident Response
     ├── jinbe/SKILL.md            # SecOps & Compliance
     ├── law/SKILL.md              # Data Engineer
+    ├── law-sql/SKILL.md          # SQL Specialist & Doc-to-SQL Converter
     ├── luffy/SKILL.md            # Program Manager
     ├── modernize/SKILL.md        # Pipeline: Modernization
+    ├── morgans/SKILL.md          # Release Email Generator (QA & Prod)
     ├── mugiwara/SKILL.md         # Pipeline: Full Analysis
     ├── nami/SKILL.md             # QA Lead
     ├── onboard/SKILL.md          # Pipeline: Onboarding
@@ -274,7 +280,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Le script copie les 38 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+Le script copie les 40 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
 
 ### Etape 2 : Redemarrer Claude Code
 
@@ -397,6 +403,30 @@ Pour juste analyser l'API sans generer de collection :
 ```
 /bartholomew src/api/
 ```
+
+### Comment generer un email de release
+
+```
+/morgans qa v2.3.0 - Nouveau module de facturation avec integration Stripe
+```
+
+Morgans collecte le contexte de release (version, changelog, git log), classifie les changements, et genere un email structure pret a envoyer a l'equipe QA avec les zones de test recommandees.
+
+Pour un email de mise en production :
+
+```
+/morgans prod v2.3.0 - Deploiement du module facturation
+```
+
+Si le type n'est pas specifie, Morgans genere les deux emails (QA + Production).
+
+### Comment convertir un document en SQL
+
+```
+/law-sql Convertir ce fichier Excel de specs en script SQL PostgreSQL
+```
+
+Law-SQL analyse les fichiers sources (Excel, Word, CSV, specs texte) et genere des scripts SQL adaptes au dialecte cible. Il peut aussi optimiser des requetes existantes ou migrer entre dialectes SQL.
 
 ### Comment utiliser One Piece comme point d'entree universel
 
