@@ -5,7 +5,7 @@ description: >
   Robin (cartographie systeme) → Franky (dette technique) → Brook (documentation
   onboarding). Produit un guide complet pour comprendre le projet rapidement.
 argument-hint: "[dossier du projet ou codebase a decouvrir]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -25,21 +25,23 @@ en quelques heures, pas en quelques semaines.
 
 ## Processus d'Execution
 
+**IMPORTANT :** Pour invoquer chaque agent, utilise l'outil `Skill` avec le
+parametre `skill` (nom de l'agent) et `args` (les arguments). N'ecris PAS
+simplement `/agent` en texte — tu dois appeler l'outil Skill programmatiquement.
+
 ### Etape 1 : Robin — Cartographie du Systeme
-Lance Robin pour mapper le systeme :
-/robin $ARGUMENTS
+Lance Robin via l'outil Skill avec `skill: "robin"` et `args: "$ARGUMENTS"` :
 
 Capture : architecture, modules, dependances, business logic, legacy zones.
 
 ### Etape 2 : Franky — Identification de la Dette Technique
-Lance Franky pour identifier les zones a risque :
-/franky $ARGUMENTS
+Lance Franky via l'outil Skill avec `skill: "franky"` et `args: "$ARGUMENTS"` :
 
 Capture : score qualite, anti-patterns, zones de dette, risques pour le nouveau dev.
 
 ### Etape 3 : Brook — Guide d'Onboarding
-Lance Brook avec les outputs de Robin et Franky :
-/brook [Generer un guide d'onboarding pour un nouveau developpeur : resume de la cartographie de Robin + zones de dette identifiees par Franky + instructions de setup]
+Lance Brook via l'outil Skill avec `skill: "brook"` et `args` contenant les outputs de Robin et Franky :
+args: "Generer un guide d'onboarding pour un nouveau developpeur : resume de la cartographie de Robin + zones de dette identifiees par Franky + instructions de setup"
 
 Capture : guide d'onboarding complet, glossaire, parcours de decouverte recommande.
 

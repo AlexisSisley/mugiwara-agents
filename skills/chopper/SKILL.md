@@ -6,11 +6,11 @@ description: >
   de logs et profiling CPU/Mémoire. Approche scientifique : symptômes,
   hypothèses, vérification, solution. Suggère des outils de monitoring adaptés.
 argument-hint: "[bug, stack trace, logs ou problème de performance]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git blame *)
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git blame *)
 ---
 
 # Chopper - Médecin Urgentiste du Code

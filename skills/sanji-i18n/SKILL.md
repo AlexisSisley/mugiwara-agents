@@ -7,7 +7,7 @@ description: >
   de nouvelles traductions, audite la couverture linguistique et adapte
   le contenu au contexte culturel cible. Appelable par Sanji ou independamment.
 argument-hint: "[fichiers/textes a traduire + langue(s) cible(s) + contexte]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

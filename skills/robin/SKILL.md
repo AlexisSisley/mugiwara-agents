@@ -6,7 +6,7 @@ description: >
   extrait la logique métier. Maîtrise les ADR (Architecture Decision Records)
   pour expliquer le 'pourquoi' derrière le code.
 argument-hint: "[fichier, dossier ou système à cartographier]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

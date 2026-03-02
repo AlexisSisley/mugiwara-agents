@@ -6,7 +6,7 @@ description: >
   Applique le Shift Left Security et l'automatisation totale. Produit du YAML et
   du Terraform optimisé avec gestion des secrets et stratégies de rollback.
 argument-hint: "[infrastructure, pipeline ou besoin DevOps à concevoir]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

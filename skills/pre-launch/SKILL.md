@@ -5,7 +5,7 @@ description: >
   Nami (couverture tests) → Franky (audit code) → Jinbe (securite/compliance)
   → Usopp (infra ready) → Ace (performance) → Brook (runbook). Checklist complete avant le Go Live.
 argument-hint: "[systeme, feature ou release a valider avant production]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -24,42 +24,43 @@ Aucun deploiement sans feu vert de toute la chaine.
 
 ## Processus d'Execution
 
-Execute chaque agent dans l'ordre. Un feu rouge a n'importe quelle etape
-bloque le lancement.
+Execute chaque agent dans l'ordre via l'outil `Skill`. Un feu rouge a n'importe
+quelle etape bloque le lancement.
+
+**IMPORTANT :** Pour invoquer chaque agent, utilise l'outil `Skill` avec le
+parametre `skill` (nom de l'agent) et `args` (les arguments). N'ecris PAS
+simplement `/agent` en texte — tu dois appeler l'outil Skill programmatiquement.
 
 ### Etape 1 : Nami — Validation Tests & QA
-Lance Nami pour evaluer la couverture de tests :
-/nami $ARGUMENTS
+Lance Nami via l'outil Skill avec `skill: "nami"` et `args: "$ARGUMENTS"` :
 
 Capture : couverture de tests, scenarios critiques valides, risques QA residuels.
 
 ### Etape 2 : Franky — Audit de Code
-Lance Franky pour auditer le code de la release :
-/franky [Code/dossiers de la release a deployer]
+Lance Franky via l'outil Skill avec `skill: "franky"` et `args` contenant le code/dossiers de la release a deployer :
 
 Capture : score qualite, failles detectees, dette technique, recommandations.
 
 ### Etape 3 : Jinbe — Securite & Compliance
-Lance Jinbe pour verifier la securite et la compliance :
-/jinbe $ARGUMENTS
+Lance Jinbe via l'outil Skill avec `skill: "jinbe"` et `args: "$ARGUMENTS"` :
 
 Capture : audit OWASP, compliance GDPR/SOC2, vulnerabilites, clearance.
 
 ### Etape 4 : Usopp — Infrastructure Ready
-Lance Usopp pour valider l'infrastructure :
-/usopp [Valider infra pour le deploiement de : resume de la release + requirements]
+Lance Usopp via l'outil Skill avec `skill: "usopp"` et `args` contenant :
+args: "Valider infra pour le deploiement de : resume de la release + requirements"
 
 Capture : checklist infra, pipeline CI/CD, scaling, monitoring, rollback plan.
 
 ### Etape 5 : Ace — Validation Performance
-Lance Ace pour valider la performance du systeme avant le go-live :
-/ace [Valider la performance pour le deploiement de : resume de la release + SLOs attendus + resultats infra Usopp]
+Lance Ace via l'outil Skill avec `skill: "ace"` et `args` contenant :
+args: "Valider la performance pour le deploiement de : resume de la release + SLOs attendus + resultats infra Usopp"
 
 Capture : resultats load testing, analyse des bottlenecks, validation SLOs, capacity planning, recommandations d'optimisation.
 
 ### Etape 6 : Brook — Documentation Operationnelle
-Lance Brook pour preparer la documentation de lancement :
-/brook [Generer le runbook et la documentation de release pour : resume de la release + resultats de performance Ace]
+Lance Brook via l'outil Skill avec `skill: "brook"` et `args` contenant :
+args: "Generer le runbook et la documentation de release pour : resume de la release + resultats de performance Ace"
 
 Capture : runbook operationnel, changelog, communication stakeholders.
 

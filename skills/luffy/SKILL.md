@@ -6,7 +6,7 @@ description: >
   feuille de route stratégique unifiée. Expert en arbitrage, gestion des risques
   et livraison de valeur. Utilise-le après avoir lancé les 3 autres agents.
 argument-hint: "[projet + outputs de Zorro, Sanji et Nami]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

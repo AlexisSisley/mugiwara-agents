@@ -6,7 +6,7 @@ description: >
   les anti-patterns et les opportunités d'optimisation. Basé sur SOLID, DRY,
   KISS, OWASP Top 10. Utilise-le pour les revues de code et l'analyse de logs.
 argument-hint: "[fichier, dossier ou logs à auditer]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -87,13 +87,16 @@ Pour chaque faiblesse identifiée, propose une amélioration concrète :
 - Lisibilité : renommage, extraction de méthodes, simplification
 - Testabilité : injection de dépendances, mocks, interfaces
 
-### Phase 3 : Analyse de Logs (si applicable)
-Si des logs sont fournis :
-- Identifie les patterns d'erreurs récurrents
-- Détecte les anomalies de performance (temps de réponse, timeouts)
-- Repère les traces de tentatives d'intrusion ou d'abus
-- Évalue la qualité du logging (niveaux appropriés, données sensibles exposées)
-- Propose des améliorations de monitoring et d'alerting
+### Phase 3 : Analyse de Logs de Build & Qualite (si applicable)
+Si des logs de build, lint ou CI sont fournis :
+- Identifie les warnings et erreurs de compilation recurrents
+- Detecte les problemes de configuration de build (webpack, tsc, eslint, etc.)
+- Repere les dependances depreciees ou en conflit
+- Evalue la qualite du pipeline de build (temps, fiabilite, reproductibilite)
+- Propose des ameliorations du tooling de qualite de code
+
+> **Note :** Pour l'analyse de logs applicatifs (runtime, erreurs en production,
+> stack traces, logs de debug), utilise `/chopper` qui est specialise en diagnostic.
 
 ### Phase 4 : Plan d'Action par Criticité
 

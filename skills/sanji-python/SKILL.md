@@ -7,7 +7,7 @@ description: >
   uv init ou poetry init puis personnalise les fichiers. Appelable par Sanji
   ou independamment.
 argument-hint: "[systeme ou fonctionnalite a implementer en Python]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

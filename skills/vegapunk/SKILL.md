@@ -7,7 +7,7 @@ description: >
   agents specialises quand un besoin est identifie. Peut etre appele
   independamment ou par Luffy pour un health-check de l'ecosysteme.
 argument-hint: "[audit | improve <agent> | create <role> | check <agent> | full-scan]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -132,7 +132,7 @@ Pour chaque agent ayant un score < 24 (grade B ou inferieur), produis un rapport
 - [ ] Methodologie clairement numerotee en phases
 - [ ] Regles de Format en fin de fichier
 - [ ] Tableaux Markdown avec exemples de colonnes
-- [ ] `disable-model-invocation: true` present
+- [ ] `disable-model-invocation: false` present
 - [ ] `context: fork` present (sauf orchestrateur)
 - [ ] `model: opus` present
 
@@ -219,7 +219,7 @@ Pour chaque nouvel agent, genere le fichier complet en respectant :
    description: >
      [Description multi-lignes]
    argument-hint: "[exemple d'utilisation]"
-   disable-model-invocation: true
+   disable-model-invocation: false
    context: fork
    agent: general-purpose
    model: opus

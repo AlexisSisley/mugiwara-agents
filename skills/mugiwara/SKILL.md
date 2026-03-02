@@ -7,7 +7,7 @@ description: >
   puis Luffy (Capitaine/Synthese). Produit une analyse complete et un
   projet scaffold a partir d'un seul enonce de probleme.
 argument-hint: "[decrivez votre probleme]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -26,20 +26,23 @@ un projet scaffold fonctionnel et une strategie QA validee.
 
 ## Processus d'Execution
 
-Execute chaque agent dans l'ordre. Apres chaque agent, capture son output
-complet avant de passer au suivant.
+Execute chaque agent dans l'ordre via l'outil `Skill`. Apres chaque agent,
+capture son output complet avant de passer au suivant.
+
+**IMPORTANT :** Pour invoquer chaque agent, utilise l'outil `Skill` avec le
+parametre `skill` (nom de l'agent) et `args` (les arguments). N'ecris PAS
+simplement `/agent` en texte — tu dois appeler l'outil Skill programmatiquement.
 
 ### Etape 1 : Zorro - Analyse Business
-Lance l'agent Zorro avec l'enonce du probleme :
-/zorro $ARGUMENTS
+Lance l'agent Zorro via l'outil Skill avec `skill: "zorro"` et `args: "$ARGUMENTS"` :
 
 Attends la fin de l'execution. Conserve l'output complet (User Stories,
 criteres d'acceptation, risques).
 
 ### Etape 2 : Sanji - Architecture Technique & Scaffolding Projet
-Lance l'agent Sanji avec l'enonce du probleme ET les elements cles de l'analyse
-de Zorro pour qu'il puisse faire un choix de stack eclaire :
-/sanji $ARGUMENTS — Elements cles de l'analyse de Zorro : [Inclus les User Stories prioritaires, les contraintes business/techniques identifiees, les NFRs et les risques majeurs extraits de l'output de Zorro]
+Lance l'agent Sanji via l'outil Skill avec `skill: "sanji"` et `args` contenant
+l'enonce du probleme ET les elements cles de l'analyse de Zorro :
+args: "$ARGUMENTS — Elements cles de l'analyse de Zorro : [Inclus les User Stories prioritaires, les contraintes business/techniques identifiees, les NFRs et les risques majeurs extraits de l'output de Zorro]"
 
 Sanji va :
 1. Choisir la meilleure stack via un tableau comparatif
@@ -55,8 +58,8 @@ architecture, modele de donnees, API, **PROJECT_PATH**, details d'implementation
 
 ### Etape 3 : Nami - Verification & Validation QA
 
-Lance Nami avec le contexte COMPLET pour qu'elle puisse verifier le projet scaffold :
-/nami $ARGUMENTS — PROJECT_PATH=<chemin du projet cree par Sanji> — Specs de Zorro : [resume des User Stories, criteres d'acceptation et risques de l'etape 1] — Architecture de Sanji : [resume de la stack choisie, composants, data model et contraintes de l'etape 2]
+Lance Nami via l'outil Skill avec `skill: "nami"` et `args` contenant le contexte COMPLET :
+args: "$ARGUMENTS — PROJECT_PATH=<chemin du projet cree par Sanji> — Specs de Zorro : [resume des User Stories, criteres d'acceptation et risques de l'etape 1] — Architecture de Sanji : [resume de la stack choisie, composants, data model et contraintes de l'etape 2]"
 
 Nami va :
 1. **Inspecter le code scaffold** dans PROJECT_PATH (Phase V1)
@@ -74,8 +77,8 @@ Attends la fin de l'execution. Conserve l'output complet ET le **VERDICT** (PASS
 
 #### 3b.1 — Corrections de specs (si erreurs SPEC detectees)
 
-Si le verdict de Nami contient des erreurs de categorie **SPEC** :
-/zorro REFINEMENT — Probleme original : $ARGUMENTS — Feedback de Nami : [copie la section "Erreurs SPEC (pour Zorro)" du verdict de Nami avec les IDs, descriptions et severites] — Specs actuelles : [copie les User Stories et criteres d'acceptation de l'etape 1]
+Si le verdict de Nami contient des erreurs de categorie **SPEC**, lance Zorro via l'outil Skill avec `skill: "zorro"` et `args` contenant :
+args: "REFINEMENT — Probleme original : $ARGUMENTS — Feedback de Nami : [copie la section 'Erreurs SPEC (pour Zorro)' du verdict de Nami avec les IDs, descriptions et severites] — Specs actuelles : [copie les User Stories et criteres d'acceptation de l'etape 1]"
 
 Zorro va affiner ses User Stories et criteres d'acceptation en fonction du feedback.
 Conserve l'output (delta des corrections).
@@ -84,8 +87,8 @@ Conserve l'output (delta des corrections).
 
 #### 3b.2 — Corrections de code (si erreurs CODE detectees)
 
-Si le verdict de Nami contient des erreurs de categorie **CODE** :
-/sanji FIX — PROJECT_PATH=<chemin> — Feedback de Nami : [copie la section "Erreurs CODE (pour Sanji)" du verdict de Nami avec les IDs, descriptions, fichiers concernes et severites] — Architecture actuelle : [resume de la stack et architecture de l'etape 2]
+Si le verdict de Nami contient des erreurs de categorie **CODE**, lance Sanji via l'outil Skill avec `skill: "sanji"` et `args` contenant :
+args: "FIX — PROJECT_PATH=<chemin> — Feedback de Nami : [copie la section 'Erreurs CODE (pour Sanji)' du verdict de Nami avec les IDs, descriptions, fichiers concernes et severites] — Architecture actuelle : [resume de la stack et architecture de l'etape 2]"
 
 Sanji va router vers le sous-chef de la stack pour appliquer les corrections.
 Conserve l'output (liste des corrections appliquees).
@@ -94,8 +97,8 @@ Conserve l'output (liste des corrections appliquees).
 
 #### 3b.3 — Re-verification par Nami
 
-Apres les corrections, relance Nami UNE DERNIERE FOIS :
-/nami $ARGUMENTS — PROJECT_PATH=<chemin> — MODE=RE-VERIFICATION — Corrections appliquees : [resume les corrections de Zorro (3b.1) et Sanji (3b.2) — quels fichiers modifies, quelles specs affinées]
+Apres les corrections, relance Nami UNE DERNIERE FOIS via l'outil Skill avec `skill: "nami"` et `args` contenant :
+args: "$ARGUMENTS — PROJECT_PATH=<chemin> — MODE=RE-VERIFICATION — Corrections appliquees : [resume les corrections de Zorro (3b.1) et Sanji (3b.2) — quels fichiers modifies, quelles specs affinées]"
 
 **MAXIMUM 1 BOUCLE** : Meme si des erreurs persistent apres re-verification,
 on passe a Luffy avec le rapport de Nami (erreurs residuelles incluses).
@@ -112,7 +115,8 @@ Inclus les elements cles :
 - De Nami : VERDICT (PASS/FAIL), strategie de test, scenarios critiques, matrice de risques
   (+ rapport de re-verification si l'etape 3b.3 a ete executee)
 
-/luffy Synthetise les analyses suivantes pour : $ARGUMENTS [Inclus les resumes des etapes 1-3 + corrections 3b si applicables]
+Lance Luffy via l'outil Skill avec `skill: "luffy"` et `args` contenant :
+args: "Synthetise les analyses suivantes pour : $ARGUMENTS [Inclus les resumes des etapes 1-3 + corrections 3b si applicables]"
 
 ### Etape 5 : Bon Clay - La Touche Finale Secrete (conditionnel)
 
@@ -121,8 +125,8 @@ Inclus les elements cles :
 2. Un `PROJECT_PATH` valide existe (le projet a ete scaffold avec succes)
 3. Le projet possede un frontend (stack web/mobile detectee dans l'output de Sanji)
 
-**Si les conditions sont reunies**, lance Bon Clay discretement :
-/bon-clay PROJECT_PATH=<chemin du projet> — Stack : [stack detectee par Sanji] — Theme : One Piece — Niveau : 1 (Discret uniquement pour le scaffold initial)
+**Si les conditions sont reunies**, lance Bon Clay discretement via l'outil Skill avec `skill: "bon-clay"` et `args` contenant :
+args: "PROJECT_PATH=<chemin du projet> — Stack : [stack detectee par Sanji] — Theme : One Piece — Niveau : 1 (Discret uniquement pour le scaffold initial)"
 
 Bon Clay va injecter quelques easter eggs discrets (commentaires, ASCII art console,
 headers HTTP) dans le projet. Ce sont de petites surprises pour les developpeurs

@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(bash:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(node:*)",
+      "WebSearch",
+      "WebFetch(domain:mcpcat.io)"
     ]
   }
 }

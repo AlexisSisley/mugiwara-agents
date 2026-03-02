@@ -13,7 +13,7 @@
 
 ### Qu'est-ce que Mugiwara Agents ?
 
-Mugiwara Agents est un ecosysteme de **35 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
+Mugiwara Agents est un ecosysteme de **38 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
 Le projet ne contient aucun code executable. Il s'agit d'une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
@@ -29,6 +29,9 @@ Les agents peuvent etre chaines entre eux. Le pipeline `mugiwara` orchestre les 
 
 **3. Boucle de retroaction (feedback loop)**
 Le pipeline principal integre un mecanisme de correction automatique. Apres le scaffolding par Sanji, Nami inspecte le code genere, lance les builds/tests, et produit un verdict PASS/FAIL. En cas de FAIL, Zorro et/ou Sanji sont rappeles en mode correctif (REFINEMENT/FIX) avant une re-verification. Maximum 1 boucle pour eviter les cycles infinis.
+
+**4. Agents actionnables**
+Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) ont aussi les outils Write/Edit pour appliquer directement les corrections ou produire les livrables. Les agents d'execution (Ace, Law) disposent des outils de build/run necessaires a leur mission (benchmarks, scripts data). Jinbe peut scanner l'historique git et les dependances pour detecter les secrets et vulnerabilites.
 
 ### Choix techniques
 
@@ -79,12 +82,12 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
   │ sanji-go       │  │ jinbe          │
   │ sanji-java     │  │ yamato         │
   │ sanji-design   │  │ shanks         │
-  │ sanji-i18n     │  │                │
-  └────────────────┘  │ vivi           │
-                      │ ace            │
+  │ sanji-i18n     │  │ vivi           │
+  └────────────────┘  │ ace            │
                       │ law            │
                       │ bartholomew    │
                       │ perona         │
+                      │ senor-pink     │
                       └────────────────┘
 ```
 
@@ -103,6 +106,8 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 /onboard   ──→ /robin ──→ /franky ──→ /brook
 /modernize ──→ /yamato ──→ /robin ──→ /law ──→ /sanji ──→ /shanks ──→ /usopp
 /doc-hunt  ──→ /yamato ──→ /brook
+
+/api-postman──→ /bartholomew ──→ /perona ──→ /senor-pink
 
 Chaine ad-hoc recommandee :
 /bartholomew ──→ /perona  (analyse API locale → collection Postman)
@@ -141,41 +146,44 @@ Chaine ad-hoc recommandee :
 |---|-------|----------|------|-----------------|
 | 14 | Franky | `/franky` | Code Reviewer & Log Analyst | Read, Glob, Grep, Bash(cat/wc/file) |
 | 15 | Robin | `/robin` | System Cartographer | Read, Glob, Grep, Bash(cat/wc/file/tree/git log) |
-| 16 | Chopper | `/chopper` | Debugger & Diagnostician | Read, Glob, Grep, Bash(cat/wc/file/git log/git blame) |
-| 17 | Brook | `/brook` | Technical Writer | Read, Glob, Grep, Bash(git log/diff/tag/show) |
+| 16 | Chopper | `/chopper` | Debugger & Diagnostician | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/git log/git blame) |
+| 17 | Brook | `/brook` | Technical Writer | Read, Write, Glob, Grep, Bash(git log/diff/tag/show) |
 | 18 | Usopp | `/usopp` | DevOps & IaC | Read, Write, Glob, Grep, Bash(docker/kubectl/terraform/helm/git/ls/cat) |
-| 19 | Jinbe | `/jinbe` | SecOps & Compliance | Read, Glob, Grep, Bash(cat/wc/file) |
+| 19 | Jinbe | `/jinbe` | SecOps & Compliance | Read, Glob, Grep, Bash(cat/wc/file/git log/git diff/npm audit/pip audit/trivy/gitleaks) |
 | 20 | Yamato | `/yamato` | Tech Intelligence & Dashboard | Read, Write, Glob, Grep, Bash(curl/cat/date), WebSearch, WebFetch |
-| 21 | Shanks | `/shanks` | Refactoring & Migration | Read, Glob, Grep, Bash(cat/wc/file/git log/git diff) |
+| 21 | Shanks | `/shanks` | Refactoring & Migration | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/git log/git diff) |
 | 22 | Vivi | `/vivi` | Product Manager & UX | Read, Glob, Grep, WebSearch, WebFetch |
-| 23 | Ace | `/ace` | Performance Engineer | Read, Glob, Grep, Bash(cat/wc/file) |
-| 24 | Law | `/law` | Data Engineer & Analytics | Read, Glob, Grep, Bash(cat/wc/file) |
+| 23 | Ace | `/ace` | Performance Engineer | Read, Glob, Grep, Bash(cat/wc/file/npm/npx/node/python/go/cargo/dotnet/k6/ab/curl) |
+| 24 | Law | `/law` | Data Engineer & Analytics | Read, Glob, Grep, Bash(cat/wc/file/python/dbt/psql/mysql/sqlite3/spark-submit) |
 | 25 | Bartholomew | `/bartholomew` | Local API Analyzer | Read, Glob, Grep, Bash(cat/wc/file/ls/tree) |
 | 26 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
+| 27 | Senor Pink | `/senor-pink` | E2E Test Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 
 ### 2.4 Meta-Agent
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 27 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
+| 28 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
+| 29 | Bon-Clay | `/bon-clay` | Easter Egg Architect (secret) | Read, Write, Edit, Glob, Grep, Bash(cat/ls/file) |
 
 ### 2.5 Pipelines (Orchestrateurs)
 
 | # | Pipeline | Commande | Chaine d'agents | Tools autorises |
 |---|----------|---------|-----------------|-----------------|
-| 28 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
-| 29 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
-| 30 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
-| 31 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
-| 32 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
-| 33 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
-| 34 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+| 30 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
+| 31 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
+| 32 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
+| 33 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
+| 34 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
+| 35 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
+| 36 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+| 37 | Api-Postman | `/api-postman` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
 
 ### 2.5b Smart Router
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 35 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+| 38 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
 
 ### 2.6 Configuration commune
 
@@ -230,6 +238,9 @@ mugiwara-agents/
     ├── onboard/SKILL.md          # Pipeline: Onboarding
     ├── one_piece/SKILL.md        # Smart Router
     ├── perona/SKILL.md           # Postman Collection Creator
+    ├── senor-pink/SKILL.md       # E2E Test Collection Creator
+    ├── api-postman/SKILL.md      # Pipeline: API → Postman → E2E
+    ├── bon-clay/SKILL.md         # Easter Egg Architect (secret)
     ├── pre-launch/SKILL.md       # Pipeline: Pre-Launch
     ├── robin/SKILL.md            # System Cartographer
     ├── sanji/SKILL.md            # Architect & Tech Lead
@@ -263,7 +274,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Le script copie les 35 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+Le script copie les 38 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
 
 ### Etape 2 : Redemarrer Claude Code
 
@@ -371,6 +382,20 @@ Vivi explore le besoin utilisateur (personas, user flows, RICE), puis Mugiwara p
 /vegapunk improve franky # Reecrire le SKILL.md de Franky
 /vegapunk create "MLOps Engineer"  # Creer un nouvel agent
 /vegapunk check nami     # Diagnostic rapide d'un agent
+```
+
+### Comment analyser une API et generer une collection Postman
+
+```
+/api-postman src/api/
+```
+
+Le pipeline orchestre trois agents en sequence : Bartholomew analyse les endpoints et produit une documentation structuree, Perona genere une collection Postman importable, et Senor Pink ajoute des tests E2E chaines avec assertions.
+
+Pour juste analyser l'API sans generer de collection :
+
+```
+/bartholomew src/api/
 ```
 
 ### Comment utiliser One Piece comme point d'entree universel

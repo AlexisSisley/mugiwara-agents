@@ -6,11 +6,11 @@ description: >
   benchmarking, SLO/SLI et optimisation de bout en bout. Analyse les goulots
   d'etranglement et fournit des plans d'optimisation concrets.
 argument-hint: "[systeme, service ou fonctionnalite a optimiser / profiler]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *)
+allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(npm *), Bash(npx *), Bash(node *), Bash(python *), Bash(go *), Bash(cargo *), Bash(dotnet *), Bash(k6 *), Bash(ab *), Bash(curl *)
 ---
 
 # Ace - Performance Engineer

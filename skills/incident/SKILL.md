@@ -5,7 +5,7 @@ description: >
   Chopper (diagnostic RCA) → Franky (review du fix) → Jinbe (check securite)
   → Usopp (deploy + rollback). Pour quand ca casse en prod.
 argument-hint: "[erreur, logs, symptomes ou description de l'incident]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -24,30 +24,30 @@ corriger, securiser et deployer le fix. Pas de panique, juste de la methode.
 
 ## Processus d'Execution
 
-Execute chaque agent dans l'ordre. Capture l'output complet avant de passer
-au suivant. Chaque etape informe la suivante.
+Execute chaque agent dans l'ordre via l'outil `Skill`. Capture l'output complet
+avant de passer au suivant. Chaque etape informe la suivante.
+
+**IMPORTANT :** Pour invoquer chaque agent, utilise l'outil `Skill` avec le
+parametre `skill` (nom de l'agent) et `args` (les arguments). N'ecris PAS
+simplement `/agent` en texte — tu dois appeler l'outil Skill programmatiquement.
 
 ### Etape 1 : Chopper — Diagnostic & Root Cause Analysis
-Lance Chopper pour diagnostiquer l'incident :
-/chopper $ARGUMENTS
+Lance Chopper en invoquant l'outil Skill avec `skill: "chopper"` et `args: "$ARGUMENTS"` :
 
 Capture : hypotheses de cause racine, logs critiques, timeline de l'incident.
 
 ### Etape 2 : Franky — Review du Fix Propose
-Lance Franky pour auditer le correctif propose par Chopper :
-/franky [Code du fix propose par Chopper + fichiers impactes]
+Lance Franky via l'outil Skill avec `skill: "franky"` et `args` contenant le code du fix propose par Chopper + fichiers impactes :
 
 Capture : validation du fix, risques de regression, optimisations.
 
 ### Etape 3 : Jinbe — Clearance Securite
-Lance Jinbe pour verifier que le fix n'introduit pas de vulnerabilite :
-/jinbe [Fix valide par Franky + contexte de l'incident securite]
+Lance Jinbe via l'outil Skill avec `skill: "jinbe"` et `args` contenant le fix valide par Franky + contexte de l'incident securite :
 
 Capture : clearance securite, compliance OK, pas de faille introduite.
 
 ### Etape 4 : Usopp — Plan de Deploiement & Rollback
-Lance Usopp pour preparer le deploiement du hotfix :
-/usopp [Deployer le hotfix suivant avec rollback : resume du fix + infra concernee]
+Lance Usopp via l'outil Skill avec `skill: "usopp"` et `args` contenant : "Deployer le hotfix suivant avec rollback : resume du fix + infra concernee" :
 
 Capture : plan de deploiement, strategie de rollback, monitoring post-deploy.
 

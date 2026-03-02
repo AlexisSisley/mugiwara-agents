@@ -7,7 +7,7 @@ description: >
   verdict structure PASS/FAIL. Rappelle Zorro et Sanji si corrections necessaires.
   Utilisable aussi en mode conseil pour les plans de validation et strategies QA.
 argument-hint: "[fonctionnalite ou systeme a tester + PROJECT_PATH si disponible]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

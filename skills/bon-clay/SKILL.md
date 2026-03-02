@@ -7,7 +7,7 @@ description: >
   invisible, modulaire et non-intrusive. Intervient uniquement quand le
   projet est stable et le sprint termine.
 argument-hint: "[PROJECT_PATH et/ou description du projet — stack, theme, niveau de complexite]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

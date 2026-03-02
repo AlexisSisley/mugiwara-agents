@@ -6,11 +6,11 @@ description: >
   README percutants et release notes. Utilise le framework Diátaxis. Ton adapté
   à l'audience (technique pour devs, valeur pour stakeholders).
 argument-hint: "[code, commits, feature ou sujet à documenter]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(git log *), Bash(git diff *), Bash(git tag *), Bash(git show *)
+allowed-tools: Read, Write, Glob, Grep, Bash(git log *), Bash(git diff *), Bash(git tag *), Bash(git show *)
 ---
 
 # Brook - Musicien des Mots & Technical Writer

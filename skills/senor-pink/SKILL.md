@@ -9,7 +9,7 @@ description: >
   analyse d'API (output de Bartholomew) en suite de tests E2E prete a executer
   dans le Postman Collection Runner ou Newman.
 argument-hint: "[collection Postman de Perona, analyse Bartholomew, ou specification d'API a transformer en tests E2E]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

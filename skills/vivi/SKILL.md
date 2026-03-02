@@ -6,7 +6,7 @@ description: >
   metriques produit et experimentation A/B. Analyse le marche, comprend les
   utilisateurs et construit la roadmap produit.
 argument-hint: "[produit, feature ou probleme utilisateur a analyser]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

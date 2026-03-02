@@ -6,7 +6,7 @@ description: >
   avec dotnet new puis personnalise les fichiers. Clean Architecture avec
   packages NuGet. Appelable par Sanji ou independamment.
 argument-hint: "[systeme ou fonctionnalite a implementer en C#/.NET]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

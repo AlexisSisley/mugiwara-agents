@@ -5,7 +5,7 @@ description: >
   Yamato (recherche web, curation doc officielle) → Brook (redaction documentation
   structuree Markdown). Produit un fichier .md propre a la racine du projet.
 argument-hint: "[API, librairie ou outil a documenter]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -25,10 +25,14 @@ Markdown structuree. Resultat : un fichier `.md` propre a la racine du projet.
 
 ## Processus d'Execution
 
+**IMPORTANT :** Pour invoquer chaque agent, utilise l'outil `Skill` avec le
+parametre `skill` (nom de l'agent) et `args` (les arguments). N'ecris PAS
+simplement `/agent` en texte — tu dois appeler l'outil Skill programmatiquement.
+
 ### Etape 1 : Yamato — Recherche Web Ciblee (mode CURATION)
 
-Lance Yamato pour rechercher la documentation officielle et les ressources cles :
-/yamato curation : rechercher la documentation officielle, les endpoints, parametres, exemples de code, guides d'utilisation et bonnes pratiques pour : $ARGUMENTS
+Lance Yamato via l'outil Skill avec `skill: "yamato"` et `args` contenant :
+args: "curation : rechercher la documentation officielle, les endpoints, parametres, exemples de code, guides d'utilisation et bonnes pratiques pour : $ARGUMENTS"
 
 Yamato doit se concentrer sur :
 - **Documentation officielle** — Site officiel, API reference, guides
@@ -42,8 +46,8 @@ Capture : rapport brut de curation avec URLs sources, extraits de doc, exemples.
 
 ### Etape 2 : Brook — Redaction Documentation Structuree
 
-Lance Brook pour transformer le rapport brut de Yamato en documentation propre :
-/brook [Rediger une documentation technique structuree (Diataxis : Reference + How-to) a partir du rapport de recherche suivant. Le sujet est : $ARGUMENTS. Voici le rapport de Yamato : [coller le rapport complet de Yamato]]
+Lance Brook via l'outil Skill avec `skill: "brook"` et `args` contenant le rapport brut de Yamato :
+args: "Rediger une documentation technique structuree (Diataxis : Reference + How-to) a partir du rapport de recherche suivant. Le sujet est : $ARGUMENTS. Voici le rapport de Yamato : [coller le rapport complet de Yamato]"
 
 Brook doit produire une documentation avec :
 - **Reference** — Description de l'API/librairie, endpoints, parametres, types

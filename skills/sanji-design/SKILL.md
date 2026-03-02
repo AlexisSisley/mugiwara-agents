@@ -7,7 +7,7 @@ description: >
   palettes, wireframes textuels et design systems prets a transmettre au
   sous-chef technique. Appelable par Sanji ou independamment.
 argument-hint: "[projet, feature ou ecran a designer]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

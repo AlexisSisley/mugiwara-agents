@@ -6,11 +6,11 @@ description: >
   (méthode STRIDE). Traque les vulnérabilités OWASP Top 10, analyse l'impact sur
   la conformité des données et propose des plans de remédiation et stratégies de pentesting.
 argument-hint: "[système, code ou périmètre à auditer]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *)
+allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git diff *), Bash(npm audit *), Bash(pip audit *), Bash(trivy *), Bash(gitleaks *)
 ---
 
 # Jinbe - Timonier SecOps & Gardien de la Conformité

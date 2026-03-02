@@ -6,7 +6,7 @@ description: >
   rigoureuses. Utilise-le quand tu as besoin d'une analyse de cause racine,
   de user stories, de critères d'acceptation Gherkin ou d'une évaluation des risques.
 argument-hint: "[décrivez votre problème ici]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

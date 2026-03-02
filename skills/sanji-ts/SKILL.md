@@ -6,7 +6,7 @@ description: >
   Scaffold et cree le projet concret avec npx create-next-app ou npm init
   puis personnalise les fichiers. Appelable par Sanji ou independamment.
 argument-hint: "[systeme ou fonctionnalite a implementer en TypeScript]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

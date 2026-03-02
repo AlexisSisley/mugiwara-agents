@@ -9,11 +9,11 @@ description: >
   spécialisé approprié (sanji-dotnet, sanji-flutter, sanji-python,
   sanji-ts, sanji-rust, sanji-go, sanji-java).
 argument-hint: "[système à architecturer + specs business si disponibles]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(mkdir *), Bash(ls *), Bash(test *)
+allowed-tools: Read, Glob, Grep, Skill, Bash(mkdir *), Bash(ls *), Bash(test *)
 ---
 
 # Sanji - Architecte Logiciel Senior & Chef de la Cuisine Technique
@@ -181,9 +181,8 @@ les specs visuelles.
 
 **Execution :**
 
-```
-/sanji-design PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2> | ARCHITECTURE=<résumé Phase 3 : pages, composants, flux> | DATA_MODEL=<résumé Phase 4 : entités à afficher> | CONSTRAINTS=<résumé Phase 5 : cibles utilisateurs, responsive, accessibilité>
-```
+Invoque le sous-chef design via l'outil `Skill` avec `skill: "sanji-design"` et `args` contenant :
+args: "PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2> | ARCHITECTURE=<résumé Phase 3 : pages, composants, flux> | DATA_MODEL=<résumé Phase 4 : entités à afficher> | CONSTRAINTS=<résumé Phase 5 : cibles utilisateurs, responsive, accessibilité>"
 
 Capture : palette de couleurs (HEX), typographies, style UI, wireframes textuels
 de chaque page, design tokens CSS. Ces specs seront transmises au sous-chef technique.
@@ -209,14 +208,18 @@ au sous-chef approprié. Le sous-chef va **créer le projet concret** dans PROJE
 
 **Exécution du routage :**
 
+**IMPORTANT :** Pour invoquer chaque sous-chef, utilise l'outil `Skill` avec le
+parametre `skill` (nom du sous-chef, ex: "sanji-ts", "sanji-python") et `args`
+(les arguments). N'ecris PAS simplement `/sanji-<stack>` en texte — tu dois
+appeler l'outil Skill programmatiquement.
+
 1. Identifie la stack principale choisie en Phase 2
-2. Appelle le sous-chef correspondant avec le contexte COMPLET et structuré.
+2. Appelle le sous-chef correspondant via l'outil Skill avec le contexte COMPLET et structuré.
    **Si la Phase D a été exécutée**, inclus les specs design dans le contexte :
-   ```
-   /sanji-<stack> PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2 : stack choisie, justification, couches technos> | ARCHITECTURE=<résumé Phase 3 : style archi, composants, patterns communication, flux données> | DATA_MODEL=<résumé Phase 4 : entités, relations, endpoints API, auth> | CONSTRAINTS=<résumé Phase 5 : sécurité, scaling, risques, stratégie test> | DESIGN_SPECS=<résumé Phase D : palette HEX, typos Google Fonts, design tokens, wireframes des pages principales>
-   ```
+   Invoque l'outil Skill avec `skill: "sanji-<stack>"` (ex: "sanji-ts", "sanji-dotnet") et `args` contenant :
+   args: "PROJECT_PATH=<chemin complet> | PROJET=<project-name> | STACK_DECISIONS=<résumé Phase 2 : stack choisie, justification, couches technos> | ARCHITECTURE=<résumé Phase 3 : style archi, composants, patterns communication, flux données> | DATA_MODEL=<résumé Phase 4 : entités, relations, endpoints API, auth> | CONSTRAINTS=<résumé Phase 5 : sécurité, scaling, risques, stratégie test> | DESIGN_SPECS=<résumé Phase D : palette HEX, typos Google Fonts, design tokens, wireframes des pages principales>"
 3. Si multi-stack (ex: TypeScript frontend + Go backend), appelle plusieurs sous-chefs
-   en passant le même PROJECT_PATH mais avec un suffixe :
+   via des appels Skill successifs en passant le même PROJECT_PATH mais avec un suffixe :
    - `PROJECT_PATH/frontend/` pour le sous-chef frontend
    - `PROJECT_PATH/backend/` pour le sous-chef backend
 4. Intègre l'output du/des sous-chef(s) dans la section "Détails d'Implémentation"
@@ -260,14 +263,11 @@ code scaffold. Dans ce mode :
    | `/java/` | sanji-java |
 
    Si les erreurs sont de categorie **DESIGN** ou **UI** :
-   ```
-   /sanji-design FIX — PROJECT_PATH=<chemin> — ERREURS=[liste des erreurs DESIGN/UI de Nami]
-   ```
+   Invoque l'outil Skill avec `skill: "sanji-design"` et `args` contenant :
+   args: "FIX — PROJECT_PATH=<chemin> — ERREURS=[liste des erreurs DESIGN/UI de Nami]"
 
-5. Route vers le sous-chef avec le mode FIX :
-   ```
-   /sanji-<stack> FIX — PROJECT_PATH=<chemin> — ERREURS=[liste des erreurs CODE de Nami avec ID, description, fichier concerne]
-   ```
+5. Route vers le sous-chef via l'outil Skill avec `skill: "sanji-<stack>"` et `args` contenant le mode FIX :
+   args: "FIX — PROJECT_PATH=<chemin> — ERREURS=[liste des erreurs CODE de Nami avec ID, description, fichier concerne]"
 
 6. Le sous-chef va :
    - Lire les fichiers concernes

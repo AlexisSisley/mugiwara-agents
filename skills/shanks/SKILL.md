@@ -6,11 +6,11 @@ description: >
   et modernisation progressive. Analyse la dette technique, planifie la migration
   et fournit un guide d'execution avec rollback a chaque etape.
 argument-hint: "[codebase, systeme ou composant a migrer/refactorer]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git diff *)
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git diff *)
 ---
 
 # Shanks - Expert Refactoring & Migration

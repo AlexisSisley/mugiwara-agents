@@ -7,7 +7,7 @@ description: >
   actionnable. Utilise-le pour la curation tech, les dashboards de veille et
   les conseils de modernisation.
 argument-hint: "[sujet de veille, stack à surveiller ou 'dashboard']"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

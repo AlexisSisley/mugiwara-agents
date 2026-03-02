@@ -6,7 +6,7 @@ description: >
   zero-cost abstractions. Scaffold et cree le projet concret avec cargo init
   puis personnalise les fichiers. Appelable par Sanji ou independamment.
 argument-hint: "[systeme ou fonctionnalite a implementer en Rust]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

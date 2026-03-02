@@ -7,7 +7,7 @@ description: >
   specifications d'API, d'analyses Bartholomew, ou de fichiers Swagger/OpenAPI.
   Collections pretes a l'import avec variables, headers, bodies et tests.
 argument-hint: "[specifications d'API, analyse Bartholomew, ou fichier Swagger/OpenAPI]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

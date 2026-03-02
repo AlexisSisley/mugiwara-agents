@@ -6,11 +6,11 @@ description: >
   query optimization, data quality (Great Expectations) et data governance.
   Concoit des architectures data modernes et scalables.
 argument-hint: "[donnees, pipeline, systeme analytics ou probleme data a resoudre]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *)
+allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(python *), Bash(dbt *), Bash(psql *), Bash(mysql *), Bash(sqlite3 *), Bash(spark-submit *)
 ---
 
 # Law - Data Engineer & Architecte Analytics

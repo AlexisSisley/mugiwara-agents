@@ -6,7 +6,7 @@ description: >
   Pas besoin de connaitre l'equipage : decrivez votre probleme, One Piece
   trouve le bon nakama.
 argument-hint: "[decrivez votre probleme, besoin ou situation]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -63,6 +63,7 @@ le meilleur match.
 | Product / UX | "personas", "user flow", "wireframes", "product discovery", "RICE", "UX research", "A/B test" | `/vivi` |
 | Performance | "performance", "load test", "latence", "optimiser", "p99", "throughput", "capacity planning" | `/ace` |
 | Data engineering | "ETL", "data warehouse", "dbt", "pipeline de donnees", "data quality", "Spark", "analytics" | `/law` |
+| SQL specialist | "requete SQL", "SQL", "script SQL", "procedure stockee", "DDL", "convertir en SQL", "doc to SQL", "excel to SQL", "docx to SQL", "csv to SQL", "optimiser requete", "migration SQL", "dialecte SQL" | `/law-sql` |
 | Meta-audit agents | "vegapunk", "auditer les agents", "ameliorer un agent", "creer un agent", "ecosysteme mugiwara" | `/vegapunk` |
 | Design UI/UX | "moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design" | `/sanji-design` |
 | Traduction / i18n | "traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "traduire", "langue", "multilangue" | `/sanji-i18n` |
@@ -114,8 +115,25 @@ Quand deux routes semblent possibles, applique ces regles :
 7. **Robin vs Bartholomew** : si on veut cartographier un systeme entier (architecture, modules, dependances, ADR) → `/robin` ; si on veut analyser specifiquement les endpoints/routes d'une API locale → `/bartholomew`
 8. **Bartholomew + Perona + Senor Pink** : si l'utilisateur veut a la fois analyser une API ET generer une collection Postman (avec ou sans tests E2E), route vers le pipeline `/api-postman` qui orchestre les trois agents en sequence
 9. **Perona vs Senor Pink** : si l'utilisateur veut une collection Postman basique (requetes individuelles, import rapide) → `/perona` ; si l'utilisateur veut des tests E2E (workflows chainees, assertions avancees, chaining, Newman, CI/CD) → `/senor-pink`
+10. **Bon-Clay** : ne jamais router vers `/bon-clay` sauf si l'utilisateur mentionne explicitement "easter egg", "surprise", "secret cache", "konami" ou "bon-clay". Ce n'est pas un agent de travail, c'est un agent fun.
+11. **Law vs Law-SQL** : si le besoin concerne l'architecture data (ETL, dbt, warehouse, pipeline, orchestration) -> `/law` ; si le besoin concerne des requetes SQL brutes, la conversion de fichiers doc/excel en SQL, l'optimisation de requetes, ou la migration de dialecte SQL -> `/law-sql`
 
 ## Phase 3 — Execution
+
+**IMPORTANT — Comment invoquer un agent :**
+Tu disposes de l'outil `Skill` dans tes `allowed-tools`. Pour router vers un agent,
+tu DOIS utiliser l'outil `Skill` avec les parametres `skill` (nom de l'agent) et
+`args` (les arguments a transmettre). N'ecris PAS simplement `/agent` en texte brut
+dans ta reponse — cela ne lance rien. Tu dois appeler l'outil programmatiquement.
+
+Exemples concrets d'invocation :
+- Pour router vers Chopper : appel Skill avec `skill: "chopper"` et `args: "<description du probleme>"`
+- Pour router vers Franky : appel Skill avec `skill: "franky"` et `args: "<code a auditer>"`
+- Pour router vers le pipeline incident : appel Skill avec `skill: "incident"` et `args: "<description de l'incident>"`
+
+La notation `/agent` dans les matrices de routage ci-dessus represente le nom
+de la skill a passer au parametre `skill` (sans le `/`). Par exemple, `/chopper`
+signifie `skill: "chopper"`.
 
 ### Route simple (1 agent ou pipeline)
 
@@ -123,10 +141,9 @@ Annonce en 2-3 lignes maximum :
 - Quel agent/pipeline est choisi et pourquoi
 - Ce que l'utilisateur peut attendre comme output
 
-Puis execute :
-```
-/agent $ARGUMENTS
-```
+Puis invoque l'outil Skill avec :
+- `skill` = le nom de l'agent (ex: "chopper", "franky", "incident", "mugiwara")
+- `args` = $ARGUMENTS (la demande originale de l'utilisateur, avec du contexte additionnel si pertinent)
 
 ### Chaine ad-hoc (2-3 agents max)
 
@@ -134,9 +151,9 @@ Si aucun pipeline existant ne matche mais que le besoin couvre clairement 2-3
 agents complementaires, compose une chaine ad-hoc :
 
 1. Annonce la chaine et la raison
-2. Execute le premier agent, capture l'output
-3. Execute le deuxieme agent en lui passant le contexte du premier
-4. (Optionnel) Execute un troisieme agent
+2. Invoque le premier agent via l'outil Skill, capture l'output
+3. Invoque le deuxieme agent via l'outil Skill en lui passant le contexte du premier dans `args`
+4. (Optionnel) Invoque un troisieme agent via l'outil Skill
 
 **Limite stricte : 3 agents maximum.** Au-dela, recommande un pipeline existant
 ou suggere a l'utilisateur de lancer les agents un par un.
@@ -155,6 +172,58 @@ Si la demande ne concerne pas l'ingenierie logicielle (ex: "ecris-moi un poeme",
 > L'equipage Mugiwara est specialise en ingenierie logicielle — de la discovery
 > produit au deploiement en production. Pour ce type de demande, tu peux
 > interroger Claude directement sans passer par un agent.
+
+### Demande d'aide / liste des agents
+Si l'utilisateur demande de l'aide, la liste des agents, ou ce que l'equipage sait
+faire (ex: "aide", "help", "qu'est-ce que tu sais faire ?", "liste les agents",
+"quels agents sont disponibles ?"), affiche un tableau recapitulatif :
+
+| Categorie | Agent | Commande | Role |
+|-----------|-------|----------|------|
+| **Routeur** | One Piece | `/one_piece` | Point d'entree universel — analyse et dispatche |
+| **Core** | Zorro | `/zorro` | Business Analyst (specs, user stories, Gherkin) |
+| | Sanji | `/sanji` | Architecte & Tech Lead (architecture, scaffolding) |
+| | Nami | `/nami` | QA Lead (tests, verification, feedback loop) |
+| | Luffy | `/luffy` | Capitaine / Program Manager (synthese, roadmap) |
+| **Sous-Chefs** | sanji-dotnet | `/sanji-dotnet` | Scaffold C# / .NET |
+| | sanji-flutter | `/sanji-flutter` | Scaffold Flutter / Dart |
+| | sanji-python | `/sanji-python` | Scaffold Python |
+| | sanji-ts | `/sanji-ts` | Scaffold TypeScript / Node.js |
+| | sanji-rust | `/sanji-rust` | Scaffold Rust |
+| | sanji-go | `/sanji-go` | Scaffold Go |
+| | sanji-java | `/sanji-java` | Scaffold Java / Kotlin |
+| | sanji-design | `/sanji-design` | Direction Artistique & UI/UX |
+| | sanji-i18n | `/sanji-i18n` | Traduction & i18n |
+| **Specialistes** | Franky | `/franky` | Code Reviewer & Audit qualite |
+| | Robin | `/robin` | Cartographe systeme |
+| | Chopper | `/chopper` | Debug & Diagnostic |
+| | Brook | `/brook` | Technical Writer |
+| | Usopp | `/usopp` | DevOps & IaC |
+| | Jinbe | `/jinbe` | SecOps & Compliance |
+| | Yamato | `/yamato` | Tech Intelligence & Veille |
+| | Shanks | `/shanks` | Refactoring & Migration |
+| | Vivi | `/vivi` | Product Manager & UX |
+| | Ace | `/ace` | Performance Engineer |
+| | Law | `/law` | Data Engineer & Analytics |
+| | Law-SQL | `/law-sql` | SQL Specialist & Doc-to-SQL |
+| | Bartholomew | `/bartholomew` | Analyse d'API locale |
+| | Perona | `/perona` | Collection Postman |
+| | Senor Pink | `/senor-pink` | Tests E2E Postman |
+| | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer |
+| **Pipelines** | Mugiwara | `/mugiwara` | Pipeline complet (Zorro → Sanji → Nami → Luffy) |
+| | Discovery | `/discovery` | Product Discovery (Vivi → Mugiwara) |
+| | Incident | `/incident` | Incident Response (Chopper → Franky → Jinbe → Usopp) |
+| | Pre-Launch | `/pre-launch` | Checklist pre-deploiement |
+| | Onboard | `/onboard` | Onboarding nouveau dev |
+| | Modernize | `/modernize` | Modernisation de stack |
+| | Doc-Hunt | `/doc-hunt` | Recherche de documentation externe |
+| | Api-Postman | `/api-postman` | Analyse API → Collection Postman → Tests E2E |
+
+Ajoute un message d'invitation :
+> Decris ton probleme et je trouverai le bon nakama ! Tu peux aussi appeler
+> directement un agent par sa commande `/nom`.
+
+Ne lance aucun agent. Attends que l'utilisateur decrive son besoin.
 
 ### Demande trop vague
 Si la demande manque de contexte pour router (ex: "aide-moi", "j'ai un probleme"),

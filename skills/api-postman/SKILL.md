@@ -8,7 +8,7 @@ description: >
   workflows chainees, assertions avancees et scripts Newman).
   Du code source a la collection testable avec tests E2E en une seule commande.
 argument-hint: "[fichier, dossier ou specification d'API a analyser et transformer en collection Postman avec tests E2E]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
@@ -35,15 +35,17 @@ avec workflows chainees, assertions avancees et scripts de CI/CD.
 
 ## Processus d'Execution
 
-Execute chaque agent dans l'ordre. Capture l'output complet de chaque agent avant
-de passer au suivant. L'output de Bartholomew est la matiere premiere de Perona,
-et les outputs de Bartholomew + Perona alimentent Senor Pink.
+Execute chaque agent dans l'ordre via l'outil `Skill`. Capture l'output complet
+de chaque agent avant de passer au suivant. L'output de Bartholomew est la matiere
+premiere de Perona, et les outputs de Bartholomew + Perona alimentent Senor Pink.
+
+**IMPORTANT :** Pour invoquer chaque agent, utilise l'outil `Skill` avec le
+parametre `skill` (nom de l'agent) et `args` (les arguments). N'ecris PAS
+simplement `/agent` en texte — tu dois appeler l'outil Skill programmatiquement.
 
 ### Etape 1 : Bartholomew — Analyse de l'API Locale
 
-Lance Bartholomew pour analyser le code source et extraire la documentation
-complete de l'API :
-/bartholomew $ARGUMENTS
+Lance Bartholomew via l'outil Skill avec `skill: "bartholomew"` et `args: "$ARGUMENTS"` :
 
 Bartholomew va :
 1. Detecter la stack et le framework utilise
@@ -57,8 +59,8 @@ endpoints, securite, modeles de donnees, recommandations).
 
 ### Etape 2 : Perona — Generation de la Collection Postman
 
-Lance Perona en lui passant l'analyse complete de Bartholomew :
-/perona Genere une Collection Postman v2.1.0 a partir de l'analyse suivante : [coller l'output complet de Bartholomew — tableau des routes, detail des endpoints, securite, authentification, modeles de donnees]
+Lance Perona via l'outil Skill avec `skill: "perona"` et `args` contenant l'analyse complete de Bartholomew :
+args: "Genere une Collection Postman v2.1.0 a partir de l'analyse suivante : [coller l'output complet de Bartholomew — tableau des routes, detail des endpoints, securite, authentification, modeles de donnees]"
 
 Perona va :
 1. Extraire les specifications de chaque endpoint depuis l'analyse de Bartholomew
@@ -71,8 +73,8 @@ recapitulatif.
 
 ### Etape 3 : Senor Pink — Generation des Tests End-to-End
 
-Lance Senor Pink en lui passant l'analyse de Bartholomew et la collection de Perona :
-/senor-pink Genere une collection de tests E2E Postman a partir de l'analyse d'API et de la collection Postman suivantes : [coller l'output complet de Bartholomew — routes, endpoints, securite] + [coller l'output complet de Perona — collection JSON, variables, structure]
+Lance Senor Pink via l'outil Skill avec `skill: "senor-pink"` et `args` contenant l'analyse de Bartholomew et la collection de Perona :
+args: "Genere une collection de tests E2E Postman a partir de l'analyse d'API et de la collection Postman suivantes : [coller l'output complet de Bartholomew — routes, endpoints, securite] + [coller l'output complet de Perona — collection JSON, variables, structure]"
 
 Senor Pink va :
 1. Identifier les workflows metier E2E a partir des endpoints

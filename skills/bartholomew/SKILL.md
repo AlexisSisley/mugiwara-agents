@@ -8,7 +8,7 @@ description: >
   payloads, reponses, authentification, middlewares. Identifie les failles
   de securite et les mauvaises pratiques.
 argument-hint: "[fichier, dossier ou specification d'API a analyser]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus

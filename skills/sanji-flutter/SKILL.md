@@ -7,7 +7,7 @@ description: >
   le projet concret avec flutter create puis personnalise les fichiers.
   Appelable par Sanji ou independamment.
 argument-hint: "[application ou fonctionnalite a implementer en Flutter/Dart]"
-disable-model-invocation: true
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
