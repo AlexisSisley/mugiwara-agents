@@ -107,9 +107,51 @@ for i in "${!CREW[@]}"; do
     installed=$((installed + 1))
 done
 
+
+# ──────────────────────────────────────
+# Hooks installation
+# ──────────────────────────────────────
+echo ""
+echo -e "  ${BLUE}Installing hooks...${NC}"
+
+# Check jq dependency
+if ! command -v jq &> /dev/null; then
+    echo -e "  ${YELLOW}[!]${NC} jq not found — hooks require jq for JSON parsing"
+    echo -e "      Install: https://jqlang.github.io/jq/download/"
+else
+    echo -e "  ${GREEN}[+]${NC} jq found"
+fi
+
+# Copy hooks to project .claude/hooks/
+HOOKS_SOURCE="$SCRIPT_DIR/.claude/hooks"
+HOOKS_DEST="$SCRIPT_DIR/.claude/hooks"
+
+if [ -d "$HOOKS_SOURCE" ]; then
+    mkdir -p "$HOOKS_DEST"
+    for hook in "$HOOKS_SOURCE"/*.sh; do
+        if [ -f "$hook" ]; then
+            hook_name=$(basename "$hook")
+            cp "$hook" "$HOOKS_DEST/$hook_name"
+            chmod +x "$HOOKS_DEST/$hook_name"
+            echo -e "  ${GREEN}[+]${NC} Hook: $hook_name"
+        fi
+    done
+else
+    echo -e "  ${YELLOW}[!]${NC} No hooks source directory found, skipping"
+fi
+
+# Create logs directory
+mkdir -p "$SCRIPT_DIR/logs"
+echo -e "  ${GREEN}[+]${NC} logs/ directory ready"
+
+# Copy settings.json if not already present
+if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
+    echo -e "  ${GREEN}[+]${NC} .claude/settings.json (hooks config) present"
+fi
+
 echo ""
 echo "  ──────────────────────────────────────"
-echo -e "  ${GREEN}Installed: $installed${NC} | ${YELLOW}Skipped: $skipped${NC}"
+echo -e "  ${GREEN}Installed: $installed agents${NC} | ${YELLOW}Skipped: $skipped${NC}"
 echo ""
 echo -e "  ${GREEN}Installation complete!${NC}"
 echo ""

@@ -34,6 +34,28 @@ for member in "${CREW[@]}"; do
     fi
 done
 
+# Clean up hooks
 echo ""
-echo -e "  ${GREEN}Removed $removed agents. Restart Claude Code to apply.${NC}"
+echo -e "  ${YELLOW}Cleaning up hooks...${NC}"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HOOKS_DIR="$SCRIPT_DIR/.claude/hooks"
+
+if [ -d "$HOOKS_DIR" ]; then
+    rm -rf "$HOOKS_DIR"
+    echo -e "  ${RED}[-]${NC} Removed .claude/hooks/"
+fi
+
+if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
+    rm -f "$SCRIPT_DIR/.claude/settings.json"
+    echo -e "  ${RED}[-]${NC} Removed .claude/settings.json"
+fi
+
+if [ -d "$SCRIPT_DIR/logs" ]; then
+    rm -rf "$SCRIPT_DIR/logs"
+    echo -e "  ${RED}[-]${NC} Removed logs/"
+fi
+
+echo ""
+echo -e "  ${GREEN}Removed $removed agents + hooks. Restart Claude Code to apply.${NC}"
 echo ""
