@@ -1,5 +1,7 @@
 # Mugiwara Agents - One Piece Crew for Claude Code CLI
 
+[![CI](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml)
+
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
 **Mugiwara Agents** is a collection of 40 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.

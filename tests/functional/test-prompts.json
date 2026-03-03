@@ -1,0 +1,249 @@
+{
+  "_meta": {
+    "description": "Prompts de test minimaux pour les 40 agents mugiwara-agents",
+    "version": "1.4.0",
+    "note": "Chaque prompt est concu pour produire un output rapide et validable. En mode dry-run, seule la structure est verifiee (pas d'appel LLM)."
+  },
+  "agents": [
+    {
+      "name": "ace",
+      "prompt": "Analyse le fichier README.md de ce projet et fais un resume en 3 points.",
+      "min_output_length": 50,
+      "description": "Reviewer de code senior"
+    },
+    {
+      "name": "api-postman",
+      "prompt": "Genere une collection Postman minimale pour un endpoint GET /health.",
+      "min_output_length": 50,
+      "description": "Pipeline generation collection Postman"
+    },
+    {
+      "name": "bartholomew",
+      "prompt": "Analyse les dependances de ce projet et identifie les risques potentiels.",
+      "min_output_length": 50,
+      "description": "Analyste de dependances"
+    },
+    {
+      "name": "bon-clay",
+      "prompt": "Cache un easter egg dans un commentaire HTML fictif.",
+      "min_output_length": 50,
+      "description": "Architecte easter eggs"
+    },
+    {
+      "name": "brook",
+      "prompt": "Genere un changelog pour la version 1.4.0 avec 3 items fictifs.",
+      "min_output_length": 50,
+      "description": "Generateur de changelog"
+    },
+    {
+      "name": "chopper",
+      "prompt": "Diagnostique la sante du projet en verifiant la structure des fichiers.",
+      "min_output_length": 50,
+      "description": "Diagnostic de sante projet"
+    },
+    {
+      "name": "discovery",
+      "prompt": "Lance une decouverte produit pour une application de gestion de taches simple.",
+      "min_output_length": 50,
+      "description": "Pipeline discovery produit"
+    },
+    {
+      "name": "doc-hunt",
+      "prompt": "Trouve et liste les fichiers de documentation dans ce projet.",
+      "min_output_length": 50,
+      "description": "Pipeline chasse a la documentation"
+    },
+    {
+      "name": "franky",
+      "prompt": "Propose une architecture Docker minimale pour un service Node.js.",
+      "min_output_length": 50,
+      "description": "Architecte infrastructure"
+    },
+    {
+      "name": "incident",
+      "prompt": "Simule une reponse incident pour un service API qui retourne des 500.",
+      "min_output_length": 50,
+      "description": "Pipeline reponse incident"
+    },
+    {
+      "name": "jinbe",
+      "prompt": "Audite la securite du fichier .gitignore de ce projet.",
+      "min_output_length": 50,
+      "description": "Auditeur securite"
+    },
+    {
+      "name": "law",
+      "prompt": "Refactore la fonction suivante: function add(a, b) { return a + b; }",
+      "min_output_length": 50,
+      "description": "Chirurgien du code (refactoring)"
+    },
+    {
+      "name": "law-sql",
+      "prompt": "Optimise la requete SQL: SELECT * FROM users WHERE active = 1 ORDER BY created_at DESC",
+      "min_output_length": 50,
+      "description": "Specialiste SQL"
+    },
+    {
+      "name": "luffy",
+      "prompt": "Cree un plan projet minimal pour implementer une fonctionnalite de login.",
+      "min_output_length": 50,
+      "description": "Program Manager"
+    },
+    {
+      "name": "modernize",
+      "prompt": "Propose un plan de modernisation pour migrer un projet jQuery vers React.",
+      "min_output_length": 50,
+      "description": "Pipeline modernisation"
+    },
+    {
+      "name": "morgans",
+      "prompt": "Redige un email de release pour la version 1.4.0 de mugiwara-agents.",
+      "min_output_length": 50,
+      "description": "Generateur d'emails de release"
+    },
+    {
+      "name": "mugiwara",
+      "prompt": "Orchestre la creation d'un endpoint GET /status pour un projet Node.js.",
+      "min_output_length": 50,
+      "description": "Pipeline principal orchestrateur"
+    },
+    {
+      "name": "nami",
+      "prompt": "Produis une strategie QA pour une fonction de calcul de panier e-commerce.",
+      "min_output_length": 50,
+      "description": "Lead QA Senior"
+    },
+    {
+      "name": "onboard",
+      "prompt": "Cree un guide d'onboarding pour un nouveau developpeur sur ce projet.",
+      "min_output_length": 50,
+      "description": "Pipeline onboarding"
+    },
+    {
+      "name": "one_piece",
+      "prompt": "Route la demande suivante vers le bon agent: Je veux ecrire des tests unitaires.",
+      "min_output_length": 20,
+      "description": "Routeur principal"
+    },
+    {
+      "name": "perona",
+      "prompt": "Analyse le sentiment et le ton du README.md de ce projet.",
+      "min_output_length": 50,
+      "description": "Analyste de sentiment"
+    },
+    {
+      "name": "pre-launch",
+      "prompt": "Genere une checklist pre-lancement pour un service API REST.",
+      "min_output_length": 50,
+      "description": "Pipeline pre-lancement"
+    },
+    {
+      "name": "robin",
+      "prompt": "Genere la documentation technique pour la fonction add(a, b).",
+      "min_output_length": 50,
+      "description": "Architecte documentation"
+    },
+    {
+      "name": "sanji",
+      "prompt": "Cree un scaffold pour un projet Node.js avec un endpoint GET /health.",
+      "min_output_length": 50,
+      "description": "Developpeur full-stack principal"
+    },
+    {
+      "name": "sanji-design",
+      "prompt": "Propose un design system minimal avec 3 composants UI de base.",
+      "min_output_length": 50,
+      "description": "Developpeur design system"
+    },
+    {
+      "name": "sanji-dotnet",
+      "prompt": "Cree un scaffold minimal pour une API ASP.NET Core avec un endpoint /health.",
+      "min_output_length": 50,
+      "description": "Developpeur .NET"
+    },
+    {
+      "name": "sanji-flutter",
+      "prompt": "Cree un scaffold minimal pour une app Flutter avec un ecran d'accueil.",
+      "min_output_length": 50,
+      "description": "Developpeur Flutter"
+    },
+    {
+      "name": "sanji-go",
+      "prompt": "Cree un scaffold minimal pour une API Go avec un endpoint /health.",
+      "min_output_length": 50,
+      "description": "Developpeur Go"
+    },
+    {
+      "name": "sanji-i18n",
+      "prompt": "Configure l'internationalisation pour un projet avec support fr/en.",
+      "min_output_length": 50,
+      "description": "Specialiste i18n"
+    },
+    {
+      "name": "sanji-java",
+      "prompt": "Cree un scaffold minimal pour une API Spring Boot avec un endpoint /health.",
+      "min_output_length": 50,
+      "description": "Developpeur Java"
+    },
+    {
+      "name": "sanji-python",
+      "prompt": "Cree un scaffold minimal pour une API FastAPI avec un endpoint /health.",
+      "min_output_length": 50,
+      "description": "Developpeur Python"
+    },
+    {
+      "name": "sanji-rust",
+      "prompt": "Cree un scaffold minimal pour une API Rust Actix avec un endpoint /health.",
+      "min_output_length": 50,
+      "description": "Developpeur Rust"
+    },
+    {
+      "name": "sanji-ts",
+      "prompt": "Cree un scaffold minimal pour une API TypeScript Express avec un endpoint /health.",
+      "min_output_length": 50,
+      "description": "Developpeur TypeScript"
+    },
+    {
+      "name": "senor-pink",
+      "prompt": "Analyse l'accessibilite d'un formulaire HTML de login basique.",
+      "min_output_length": 50,
+      "description": "Specialiste accessibilite"
+    },
+    {
+      "name": "shanks",
+      "prompt": "Fais une revue strategique du roadmap v1.4 de ce projet.",
+      "min_output_length": 50,
+      "description": "Conseiller strategique"
+    },
+    {
+      "name": "usopp",
+      "prompt": "Propose un pipeline CI/CD minimal avec GitHub Actions pour un projet Node.js.",
+      "min_output_length": 50,
+      "description": "DevOps / CI-CD"
+    },
+    {
+      "name": "vegapunk",
+      "prompt": "Propose une architecture technique pour un microservice de notifications.",
+      "min_output_length": 50,
+      "description": "Architecte systeme"
+    },
+    {
+      "name": "vivi",
+      "prompt": "Redige les specs fonctionnelles pour une fonctionnalite de recherche utilisateur.",
+      "min_output_length": 50,
+      "description": "Product Owner"
+    },
+    {
+      "name": "yamato",
+      "prompt": "Analyse les metriques de performance d'un endpoint API fictif (200ms p50, 800ms p99).",
+      "min_output_length": 50,
+      "description": "Analyste performance"
+    },
+    {
+      "name": "zorro",
+      "prompt": "Genere un test unitaire pour la fonction suivante: function add(a, b) { return a + b; }",
+      "min_output_length": 50,
+      "description": "Specialiste tests unitaires"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "_meta": {
+    "description": "Fixtures d'events Claude Code simules pour tester les hooks v1.3",
+    "version": "1.4.0",
+    "note": "Chaque cle represente un type d'event hook avec les champs attendus par les scripts"
+  },
+
+  "PostToolUse_Skill": {
+    "_description": "Event PostToolUse avec matcher Skill — utilise par log-agent-output.sh et validate-agent-output.sh",
+    "tool_name": "Skill",
+    "tool_input": {
+      "skill": "zorro",
+      "args": "Genere un test unitaire pour la fonction add(a, b)"
+    },
+    "tool_response": "## Test unitaire pour add(a, b)\n\n```javascript\ndescribe('add', () => {\n  test('additionne deux nombres positifs', () => {\n    expect(add(2, 3)).toBe(5);\n  });\n  test('gere les nombres negatifs', () => {\n    expect(add(-1, 1)).toBe(0);\n  });\n});\n```\n\nCe test couvre les cas nominaux et les nombres negatifs.",
+    "session_id": "test-session-001"
+  },
+
+  "PostToolUse_Skill_Empty": {
+    "_description": "Event PostToolUse avec output vide — doit declencher un warning dans validate-agent-output.sh",
+    "tool_name": "Skill",
+    "tool_input": {
+      "skill": "sanji",
+      "args": "Cree un scaffold"
+    },
+    "tool_response": "",
+    "session_id": "test-session-002"
+  },
+
+  "PostToolUse_Skill_Short": {
+    "_description": "Event PostToolUse avec output trop court — doit declencher un warning",
+    "tool_name": "Skill",
+    "tool_input": {
+      "skill": "robin",
+      "args": "Genere la documentation"
+    },
+    "tool_response": "OK done.",
+    "session_id": "test-session-003"
+  },
+
+  "PostToolUse_Skill_Pipeline": {
+    "_description": "Event PostToolUse pour un agent pipeline — verifie la detection pipeline + validation sections",
+    "tool_name": "Skill",
+    "tool_input": {
+      "skill": "mugiwara",
+      "args": "Orchestre la creation d'un endpoint GET /status"
+    },
+    "tool_response": "## Plan d'execution\n\n**Etape 1** : Analyse des specs\n- Appel a /vivi pour les specs fonctionnelles\n- Appel a /vegapunk pour l'architecture\n\n**Etape 2** : Implementation\n- Appel a /sanji-ts pour le scaffold\n- Appel a /zorro pour les tests\n\n## Resultat\nPipeline mugiwara complet. 4 agents invoques.",
+    "session_id": "test-session-004"
+  },
+
+  "PostToolUse_Skill_Pipeline_NoStructure": {
+    "_description": "Event PostToolUse pipeline sans structure — doit declencher un warning",
+    "tool_name": "Skill",
+    "tool_input": {
+      "skill": "incident",
+      "args": "Gere un incident"
+    },
+    "tool_response": "Voila le resultat de l'incident. Tout est resolu maintenant. Le service est de retour en ligne et les metriques sont normales.",
+    "session_id": "test-session-005"
+  },
+
+  "PostToolUse_Skill_OneRoute": {
+    "_description": "Event PostToolUse pour one_piece (routeur) — doit etre ignore par validate-agent-output.sh",
+    "tool_name": "Skill",
+    "tool_input": {
+      "skill": "one_piece",
+      "args": "Route vers le bon agent"
+    },
+    "tool_response": "→ zorro",
+    "session_id": "test-session-006"
+  },
+
+  "PostToolUse_Write": {
+    "_description": "Event PostToolUse avec matcher Write — utilise par run-smoke-tests.sh",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/home/user/project/skills/zorro/SKILL.md"
+    },
+    "session_id": "test-session-007"
+  },
+
+  "PostToolUse_Write_NonSkill": {
+    "_description": "Event PostToolUse Write sur un fichier hors skills/ — run-smoke-tests.sh doit ignorer",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/home/user/project/src/index.ts"
+    },
+    "session_id": "test-session-008"
+  },
+
+  "SessionStart": {
+    "_description": "Event SessionStart — utilise par log-session.sh",
+    "hook_event": "SessionStart",
+    "session_id": "test-session-009"
+  },
+
+  "SessionEnd": {
+    "_description": "Event SessionEnd — utilise par log-session.sh",
+    "hook_event": "SessionEnd",
+    "session_id": "test-session-009",
+    "reason": "user_exit"
+  },
+
+  "Notification": {
+    "_description": "Event Notification — utilise par notify-slack.sh",
+    "title": "Test Notification",
+    "message": "Ceci est une notification de test pour valider le hook notify-slack.sh",
+    "session_id": "test-session-010"
+  },
+
+  "Stop": {
+    "_description": "Event Stop — utilise par notify-complete.sh",
+    "session_id": "test-session-011",
+    "reason": "end_turn",
+    "last_assistant_message": "Le pipeline mugiwara est complet. Tous les agents ont ete invoques avec succes."
+  },
+
+  "Stop_NoPipeline": {
+    "_description": "Event Stop sans pattern pipeline — notify-complete.sh doit quand meme logger",
+    "session_id": "test-session-012",
+    "reason": "end_turn",
+    "last_assistant_message": "Voici le test unitaire genere pour la fonction add(a, b)."
+  }
+}

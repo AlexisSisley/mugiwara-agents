@@ -1,0 +1,74 @@
+# ============================================================
+# Mugiwara Agents - CI Pipeline
+# ============================================================
+# Runs all test suites on every push to main and pull request.
+# Three parallel jobs: smoke tests, functional tests (dry-run),
+# and hooks tests.
+#
+# No secrets or API keys required — all tests run offline.
+# ============================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same branch/PR
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── Job 1: Smoke Tests (structural) ───────────────────────
+  smoke-tests:
+    name: Smoke Tests (structural)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run structural smoke tests
+        run: |
+          chmod +x tests/test_structural.sh
+          bash tests/test_structural.sh
+
+  # ── Job 2: Functional Tests (dry-run) ─────────────────────
+  functional-tests:
+    name: Functional Tests (dry-run)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run functional tests in dry-run mode
+        run: |
+          chmod +x tests/functional/run-functional-tests.sh
+          bash tests/functional/run-functional-tests.sh --dry-run
+
+  # ── Job 3: Hooks Tests ────────────────────────────────────
+  hooks-tests:
+    name: Hooks Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run hooks tests
+        run: |
+          chmod +x tests/hooks/test-hooks.sh
+          bash tests/hooks/test-hooks.sh
