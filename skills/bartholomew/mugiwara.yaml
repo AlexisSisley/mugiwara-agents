@@ -1,0 +1,14 @@
+name: bartholomew
+version: 1.5.0
+description: Analyseur d'API Locale, architecte logiciel
+category: analysis
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

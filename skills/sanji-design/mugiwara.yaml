@@ -1,0 +1,14 @@
+name: sanji-design
+version: 1.5.0
+description: Sous-Chef Directeur Artistique et UI/UX Designer Senior
+category: architecture
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

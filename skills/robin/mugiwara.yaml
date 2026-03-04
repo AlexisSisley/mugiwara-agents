@@ -1,0 +1,14 @@
+name: robin
+version: 1.5.0
+description: Experte en cartographie de systemes complexes et reverse-engineering
+category: analysis
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

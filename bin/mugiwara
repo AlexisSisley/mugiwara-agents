@@ -1,0 +1,213 @@
+#!/bin/bash
+# ============================================================
+# Mugiwara CLI - Plugin Manager for Mugiwara Agents
+# CLI entry point
+#
+# Usage: mugiwara <command> [options] [arguments]
+#
+# Part of mugiwara-agents v1.5.0
+# https://github.com/AlexisSisley/mugiwara-agents
+# ============================================================
+
+set -euo pipefail
+
+# ── Resolve script location ─────────────────────────────────
+# Works even when called via symlink
+SCRIPT_PATH="${BASH_SOURCE[0]}"
+while [[ -L "$SCRIPT_PATH" ]]; do
+    SCRIPT_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+    SCRIPT_PATH="$(readlink "$SCRIPT_PATH")"
+    [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$SCRIPT_DIR/$SCRIPT_PATH"
+done
+BIN_DIR="$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)"
+PROJECT_DIR="$(cd "$BIN_DIR/.." && pwd)"
+LIB_DIR="$PROJECT_DIR/lib"
+
+# ── Source libraries ─────────────────────────────────────────
+source "$LIB_DIR/core.sh"
+source "$LIB_DIR/registry.sh"
+source "$LIB_DIR/manifest.sh"
+source "$LIB_DIR/installer.sh"
+source "$LIB_DIR/cmd_install.sh"
+source "$LIB_DIR/cmd_uninstall.sh"
+source "$LIB_DIR/cmd_update.sh"
+source "$LIB_DIR/cmd_list.sh"
+source "$LIB_DIR/cmd_search.sh"
+source "$LIB_DIR/cmd_info.sh"
+
+# ── Global flags ─────────────────────────────────────────────
+VERBOSE=0
+QUIET=0
+OFFLINE=0
+
+# ── Banner ───────────────────────────────────────────────────
+show_banner() {
+    echo ""
+    echo -e "  ${YELLOW}  MUGIWARA - Agent Plugin Manager${NC}"
+    echo -e "  ${DIM}  v${MUGIWARA_VERSION}${NC}"
+    echo "  ──────────────────────────────────────"
+}
+
+# ── Help ─────────────────────────────────────────────────────
+show_help() {
+    show_banner
+    echo ""
+    echo -e "  ${BOLD}USAGE:${NC}"
+    echo "    mugiwara <command> [options] [arguments]"
+    echo ""
+    echo -e "  ${BOLD}COMMANDS:${NC}"
+    echo "    install <agent> [...]    Install one or more agents"
+    echo "    uninstall <agent> [...]  Remove one or more agents"
+    echo "    update [agent]           Update agents (all if none specified)"
+    echo "    list                     List installed and available agents"
+    echo "    search <query>           Search agents by name or description"
+    echo "    info <agent>             Show detailed agent information"
+    echo "    version                  Show CLI version"
+    echo "    help                     Show this help message"
+    echo ""
+    echo -e "  ${BOLD}GLOBAL OPTIONS:${NC}"
+    echo "    -v, --verbose            Verbose output"
+    echo "    -q, --quiet              Suppress output (exit code only)"
+    echo "    --offline                Use cached data only, no network"
+    echo "    -h, --help               Show help"
+    echo ""
+    echo -e "  ${BOLD}EXAMPLES:${NC}"
+    echo "    mugiwara install zorro          Install the Zorro agent"
+    echo "    mugiwara install --all          Install all agents"
+    echo "    mugiwara update                 Update all installed agents"
+    echo "    mugiwara list --installed       Show only installed agents"
+    echo "    mugiwara search \"qa\"             Search for QA-related agents"
+    echo "    mugiwara info zorro             Show details about Zorro"
+    echo ""
+    echo -e "  ${DIM}https://github.com/AlexisSisley/mugiwara-agents${NC}"
+    echo ""
+}
+
+# ── Version ──────────────────────────────────────────────────
+show_version() {
+    echo "mugiwara v${MUGIWARA_VERSION}"
+}
+
+# ── Self-update ──────────────────────────────────────────────
+cmd_self_update() {
+    info "Checking for CLI updates..."
+    local repo
+    repo=$(get_registry_repo)
+    local url="https://raw.githubusercontent.com/${repo}/main/bin/mugiwara"
+
+    local tmp="/tmp/mugiwara-update-$$"
+    local http_code
+    http_code=$(curl -sL -w "%{http_code}" -o "$tmp" \
+        --connect-timeout 10 \
+        --max-time 30 \
+        "$url" 2>/dev/null)
+
+    if [[ "$http_code" == "200" ]] && [[ -s "$tmp" ]]; then
+        # Extract version from downloaded file
+        local remote_version
+        remote_version=$(grep 'MUGIWARA_VERSION=' "$tmp" 2>/dev/null | head -1 | sed 's/.*="//' | sed 's/".*//')
+
+        if [[ -n "$remote_version" ]] && version_gt "$remote_version" "$MUGIWARA_VERSION"; then
+            cp "$tmp" "$BIN_DIR/mugiwara"
+            chmod +x "$BIN_DIR/mugiwara"
+            success "Updated mugiwara CLI: $MUGIWARA_VERSION -> $remote_version"
+        else
+            info "mugiwara CLI is up to date ($MUGIWARA_VERSION)"
+        fi
+    else
+        error "Failed to check for updates (HTTP $http_code)"
+    fi
+
+    rm -f "$tmp"
+}
+
+# ── Main ─────────────────────────────────────────────────────
+main() {
+    local command=""
+    local args=()
+
+    # Parse global flags first
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -v|--verbose)
+                VERBOSE=1
+                shift
+                ;;
+            -q|--quiet)
+                QUIET=1
+                shift
+                ;;
+            --offline)
+                OFFLINE=1
+                shift
+                ;;
+            -h|--help)
+                show_help
+                return 0
+                ;;
+            -*)
+                # Pass unknown flags to the command
+                args+=("$1")
+                shift
+                ;;
+            *)
+                if [[ -z "$command" ]]; then
+                    command="$1"
+                else
+                    args+=("$1")
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    # Initialize mugiwara home
+    mugiwara_init
+
+    # Dispatch command
+    case "${command:-help}" in
+        install)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_install "${args[@]+"${args[@]}"}"
+            ;;
+        uninstall|remove)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_uninstall "${args[@]+"${args[@]}"}"
+            ;;
+        update|upgrade)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_update "${args[@]+"${args[@]}"}"
+            ;;
+        list|ls)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_list "${args[@]+"${args[@]}"}"
+            ;;
+        search|find)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_search "${args[@]+"${args[@]}"}"
+            ;;
+        info|show)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_info "${args[@]+"${args[@]}"}"
+            ;;
+        version|-V|--version)
+            show_version
+            ;;
+        self-update)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_self_update
+            ;;
+        help)
+            show_help
+            ;;
+        *)
+            error "Unknown command: $command"
+            echo ""
+            echo "  Run 'mugiwara help' for usage information."
+            echo ""
+            return 1
+            ;;
+    esac
+}
+
+main "$@"

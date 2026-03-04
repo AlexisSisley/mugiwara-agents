@@ -1,0 +1,14 @@
+name: sanji-ts
+version: 1.5.0
+description: Sous-Chef specialise TypeScript / Node.js
+category: architecture
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

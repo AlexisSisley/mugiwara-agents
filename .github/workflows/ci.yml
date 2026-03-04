@@ -2,8 +2,8 @@
 # Mugiwara Agents - CI Pipeline
 # ============================================================
 # Runs all test suites on every push to main and pull request.
-# Three parallel jobs: smoke tests, functional tests (dry-run),
-# and hooks tests.
+# Four parallel jobs: smoke tests, functional tests (dry-run),
+# hooks tests, and plugin system tests.
 #
 # No secrets or API keys required — all tests run offline.
 # ============================================================
@@ -72,3 +72,18 @@ jobs:
         run: |
           chmod +x tests/hooks/test-hooks.sh
           bash tests/hooks/test-hooks.sh
+
+  # ── Job 4: Plugin System Tests ──────────────────────────────
+  plugin-tests:
+    name: Plugin System Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run plugin system tests
+        run: |
+          chmod +x tests/plugin/test_cli.sh
+          chmod +x bin/mugiwara
+          bash tests/plugin/test_cli.sh

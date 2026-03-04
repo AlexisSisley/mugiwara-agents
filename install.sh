@@ -160,5 +160,22 @@ echo "  1. Restart Claude Code (or start a new session)"
 echo "  2. Type / to see the crew in autocomplete"
 echo "  3. Try: /zorro Your first problem description"
 echo ""
+
+# ──────────────────────────────────────
+# Suggest mugiwara CLI (v1.5+)
+# ──────────────────────────────────────
+if [[ -f "$SCRIPT_DIR/bin/mugiwara" ]]; then
+    echo -e "  ${BLUE}Tip:${NC} You can also manage agents individually with the mugiwara CLI:"
+    echo ""
+    echo "    # Add bin/ to your PATH (add to ~/.bashrc or ~/.zshrc):"
+    echo "    export PATH=\"$SCRIPT_DIR/bin:\$PATH\""
+    echo ""
+    echo "    # Then use:"
+    echo "    mugiwara list              # List installed/available agents"
+    echo "    mugiwara install <agent>   # Install a single agent"
+    echo "    mugiwara update            # Update all agents"
+    echo ""
+fi
+
 echo -e "  ${YELLOW}Set sail with the Mugiwara crew!${NC}"
 echo ""

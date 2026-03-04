@@ -1,0 +1,14 @@
+name: incident
+version: 1.5.0
+description: Pipeline de reponse d'urgence production
+category: pipeline
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

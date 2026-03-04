@@ -1,0 +1,168 @@
+# ============================================================
+# Mugiwara Agents - Registry Index
+# Auto-generated index of all available agents
+# ============================================================
+version: 1
+updated: "2026-03-04T00:00:00Z"
+base_url: "https://raw.githubusercontent.com/AlexisSisley/mugiwara-agents/main"
+agents:
+  ace:
+    version: 1.5.0
+    description: "Performance Engineer et specialiste en optimisation systeme"
+    category: performance
+  api-postman:
+    version: 1.5.0
+    description: "Pipeline Bartholomew > Perona > Senor Pink (API Analyze > Postman > E2E)"
+    category: pipeline
+  bartholomew:
+    version: 1.5.0
+    description: "Analyseur d'API Locale, architecte logiciel"
+    category: analysis
+  bon-clay:
+    version: 1.5.0
+    description: "Architecte d'Easter Eggs et Maitre des Secrets Caches"
+    category: meta
+  brook:
+    version: 1.5.0
+    description: "Technical Writer de haut niveau"
+    category: writing
+  chopper:
+    version: 1.5.0
+    description: "Urgentiste specialise en diagnostic et resolution de bugs"
+    category: debugging
+  discovery:
+    version: 1.5.0
+    description: "Pipeline de decouverte produit (Vivi + Zorro)"
+    category: pipeline
+  doc-hunt:
+    version: 1.5.0
+    description: "Pipeline de recherche et redaction de documentation"
+    category: pipeline
+  franky:
+    version: 1.5.0
+    description: "Senior Code Reviewer et Expert en Cybersecurite"
+    category: security
+  incident:
+    version: 1.5.0
+    description: "Pipeline de reponse d'urgence production"
+    category: pipeline
+  jinbe:
+    version: 1.5.0
+    description: "Auditeur SecOps et consultant en conformite reglementaire"
+    category: security
+  law:
+    version: 1.5.0
+    description: "Data Engineer et Architecte Analytics"
+    category: data
+  law-sql:
+    version: 1.5.0
+    description: "Specialiste SQL et convertisseur Doc-to-SQL"
+    category: data
+  luffy:
+    version: 1.5.0
+    description: "Program Manager et Capitaine de l'equipage"
+    category: management
+  modernize:
+    version: 1.5.0
+    description: "Pipeline de modernisation de stack technique"
+    category: pipeline
+  morgans:
+    version: 1.5.0
+    description: "Generateur d'emails de release QA et mise en production"
+    category: writing
+  mugiwara:
+    version: 1.5.0
+    description: "Pipeline d'analyse integral (Zorro > Sanji > Nami > Luffy)"
+    category: pipeline
+  nami:
+    version: 1.5.0
+    description: "Lead QA Senior certifiee ISTQB Expert"
+    category: qa
+  onboard:
+    version: 1.5.0
+    description: "Pipeline de decouverte codebase pour nouveau developpeur"
+    category: pipeline
+  one_piece:
+    version: 1.5.0
+    description: "Routeur intelligent de l'equipage"
+    category: router
+  perona:
+    version: 1.5.0
+    description: "Creatrice de Collections Postman"
+    category: qa
+  pre-launch:
+    version: 1.5.0
+    description: "Pipeline de verification avant mise en production"
+    category: pipeline
+  robin:
+    version: 1.5.0
+    description: "Experte en cartographie de systemes complexes et reverse-engineering"
+    category: analysis
+  sanji:
+    version: 1.5.0
+    description: "Architecte Logiciel Senior et Chef de Cuisine Technique"
+    category: architecture
+  sanji-design:
+    version: 1.5.0
+    description: "Sous-Chef Directeur Artistique et UI/UX Designer Senior"
+    category: architecture
+  sanji-dotnet:
+    version: 1.5.0
+    description: "Sous-Chef specialise C# / .NET"
+    category: architecture
+  sanji-flutter:
+    version: 1.5.0
+    description: "Sous-Chef specialise Dart / Flutter"
+    category: architecture
+  sanji-go:
+    version: 1.5.0
+    description: "Sous-Chef specialise Go (Golang)"
+    category: architecture
+  sanji-i18n:
+    version: 1.5.0
+    description: "Sous-Chef Expert en Traduction Localisee et Contextuelle"
+    category: architecture
+  sanji-java:
+    version: 1.5.0
+    description: "Sous-Chef specialise Java / Kotlin"
+    category: architecture
+  sanji-python:
+    version: 1.5.0
+    description: "Sous-Chef specialise Python"
+    category: architecture
+  sanji-rust:
+    version: 1.5.0
+    description: "Sous-Chef specialise Rust"
+    category: architecture
+  sanji-ts:
+    version: 1.5.0
+    description: "Sous-Chef specialise TypeScript / Node.js"
+    category: architecture
+  senor-pink:
+    version: 1.5.0
+    description: "Createur de Tests End-to-End Postman"
+    category: qa
+  shanks:
+    version: 1.5.0
+    description: "Expert en Refactoring et Migration de systemes legacy"
+    category: refactoring
+  usopp:
+    version: 1.5.0
+    description: "Expert DevOps et Infrastructure as Code (IaC)"
+    category: devops
+  vegapunk:
+    version: 1.5.0
+    description: "Meta-Auditeur de l'ecosysteme Mugiwara"
+    category: meta
+  vivi:
+    version: 1.5.0
+    description: "Product Manager et UX Strategist"
+    category: management
+  yamato:
+    version: 1.5.0
+    description: "Expert en veille technologique strategique"
+    category: intelligence
+  zorro:
+    version: 1.5.0
+    description: "Business Analyst et Chef de Projet Senior"
+    category: analysis

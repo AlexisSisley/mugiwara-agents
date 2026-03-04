@@ -1,0 +1,14 @@
+name: bon-clay
+version: 1.5.0
+description: Architecte d'Easter Eggs et Maitre des Secrets Caches
+category: meta
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

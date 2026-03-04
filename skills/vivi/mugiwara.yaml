@@ -1,0 +1,14 @@
+name: vivi
+version: 1.5.0
+description: Product Manager et UX Strategist
+category: management
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

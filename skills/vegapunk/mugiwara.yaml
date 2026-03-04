@@ -1,0 +1,14 @@
+name: vegapunk
+version: 1.5.0
+description: Meta-Auditeur de l'ecosysteme Mugiwara
+category: meta
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""

@@ -1,0 +1,14 @@
+name: morgans
+version: 1.5.0
+description: Generateur d'emails de release QA et mise en production
+category: writing
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags: []
+checksum:
+  SKILL.md: ""
