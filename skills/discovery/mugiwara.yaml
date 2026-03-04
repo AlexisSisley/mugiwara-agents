@@ -6,9 +6,11 @@ author: AlexisSisley
 license: MIT
 files:
   - SKILL.md
-depends: []
+depends:
+  - vivi
+  - mugiwara
 requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: ""
+  SKILL.md: "2d6d48e4475d19161a2659815f38c690c8ded917a37595fa876a0448563a2dfd"

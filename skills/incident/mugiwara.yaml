@@ -6,9 +6,13 @@ author: AlexisSisley
 license: MIT
 files:
   - SKILL.md
-depends: []
+depends:
+  - chopper
+  - franky
+  - jinbe
+  - usopp
 requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: ""
+  SKILL.md: "92629ace6dce18cf7b7932bd070b6efeb971079bcae6b3b422e02873d631a872"

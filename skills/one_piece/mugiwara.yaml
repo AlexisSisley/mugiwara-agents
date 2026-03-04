@@ -11,4 +11,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: ""
+  SKILL.md: "52e313b1dec45345666ed6cfc3dc9b6f5cabd7d2d9cf350f8a905fbdfc48dc33"

@@ -4,6 +4,7 @@ description: >
   L'equipage au complet ! Lance le pipeline d'analyse integral en sequence :
   Zorro (Business Analyst) puis Sanji (Lead Developer + Scaffolding) puis
   Nami (QA Lead + Verification) avec boucle de retroaction si erreurs,
+  puis Franky (Code Review post-tests) pour aider Sanji a corriger,
   puis Luffy (Capitaine/Synthese). Produit une analyse complete et un
   projet scaffold a partir d'un seul enonce de probleme.
 argument-hint: "[decrivez votre probleme]"
@@ -16,9 +17,9 @@ allowed-tools: Read, Glob, Grep, Skill
 
 # Mugiwara - L'Equipage au Complet
 
-Tu es le coordinateur de l'equipage Mugiwara. Tu vas orchestrer les 4 agents
+Tu es le coordinateur de l'equipage Mugiwara. Tu vas orchestrer les 5 agents
 specialises en sequence pour produire une analyse complete d'un probleme,
-un projet scaffold fonctionnel et une strategie QA validee.
+un projet scaffold fonctionnel, une strategie QA validee et un audit de code.
 
 ## Probleme a analyser
 
@@ -104,7 +105,36 @@ args: "$ARGUMENTS — PROJECT_PATH=<chemin> — MODE=RE-VERIFICATION — Correct
 on passe a Luffy avec le rapport de Nami (erreurs residuelles incluses).
 Le verdict de re-verification sera transmis a Luffy pour la synthese.
 
-### Etape 4 : Luffy - Synthese et Feuille de Route
+### Etape 4 : Franky - Code Review Post-Tests
+
+**Cette etape s'execute systematiquement** apres le verdict de Nami (PASS ou FAIL).
+Franky analyse le code scaffold pour identifier les problemes de qualite,
+les anti-patterns et les ameliorations possibles.
+
+#### 4a — Code Review (si VERDICT = FAIL)
+
+Si Nami a produit un **VERDICT : FAIL**, lance Franky via l'outil Skill avec `skill: "franky"` et `args` contenant :
+args: "CODE REVIEW POST-FAIL — PROJECT_PATH=<chemin du projet> — Verdict de Nami : FAIL — Erreurs detectees : [copie les erreurs CODE et SPEC du verdict de Nami] — Stack : [stack choisie par Sanji] — Objectif : Identifier la cause racine des echecs de tests, proposer des corrections precises avec fichiers et lignes concernes, et prioriser les fixes par severite pour aider Sanji a corriger rapidement"
+
+Franky va :
+1. **Analyser les fichiers en echec** signales par Nami
+2. **Identifier les anti-patterns** et violations SOLID dans le code scaffold
+3. **Proposer des corrections precises** (fichier, ligne, suggestion de fix)
+4. **Prioriser** les corrections par severite (CRITICAL > HIGH > MEDIUM > LOW)
+
+Conserve l'output complet de Franky. Si des corrections CRITICAL sont identifiees,
+lance Sanji en mode FIX avec le feedback de Franky :
+args: "FIX — PROJECT_PATH=<chemin> — Feedback de Franky (Code Review) : [copie les corrections CRITICAL et HIGH avec fichiers et suggestions de fix] — Feedback original de Nami : [resume des erreurs]"
+
+#### 4b — Code Review (si VERDICT = PASS)
+
+Si Nami a produit un **VERDICT : PASS**, lance Franky via l'outil Skill avec `skill: "franky"` et `args` contenant :
+args: "CODE REVIEW POST-PASS — PROJECT_PATH=<chemin du projet> — Verdict de Nami : PASS — Stack : [stack choisie par Sanji] — Objectif : Audit qualite du code scaffold — verifier SOLID, DRY, securite, performance. Pas de corrections bloquantes attendues, focus sur les ameliorations recommandees pour la suite du developpement"
+
+Franky va produire un rapport d'audit avec des recommandations non-bloquantes.
+Conserve l'output pour la synthese de Luffy.
+
+### Etape 5 : Luffy - Synthese et Feuille de Route
 
 Lance l'agent Luffy en lui fournissant un resume des analyses precedentes.
 Inclus les elements cles :
@@ -114,11 +144,12 @@ Inclus les elements cles :
   (+ corrections FIX si l'etape 3b.2 a ete executee)
 - De Nami : VERDICT (PASS/FAIL), strategie de test, scenarios critiques, matrice de risques
   (+ rapport de re-verification si l'etape 3b.3 a ete executee)
+- De Franky : rapport de code review, corrections appliquees (si FAIL), recommandations (si PASS)
 
 Lance Luffy via l'outil Skill avec `skill: "luffy"` et `args` contenant :
-args: "Synthetise les analyses suivantes pour : $ARGUMENTS [Inclus les resumes des etapes 1-3 + corrections 3b si applicables]"
+args: "Synthetise les analyses suivantes pour : $ARGUMENTS [Inclus les resumes des etapes 1-4 + corrections 3b si applicables + audit Franky]"
 
-### Etape 5 : Bon Clay - La Touche Finale Secrete (conditionnel)
+### Etape 6 : Bon Clay - La Touche Finale Secrete (conditionnel)
 
 **Cette etape ne s'execute QUE si les 3 conditions suivantes sont reunies :**
 1. Le VERDICT final de Nami est **PASS**
@@ -145,8 +176,9 @@ Apres tous les agents, presente :
 4. **Analyse de Zorro** - Output complet du Business Analyst (+ delta REFINEMENT si applicable)
 5. **Architecture de Sanji** - Output complet du Lead Developer + scaffolding (+ corrections FIX si applicable)
 6. **Plan de Test de Nami** - Output complet du QA Lead (verdict + strategie)
-7. **Feuille de Route de Luffy** - Output complet du Capitaine
-8. **Top 5 Actions Immediates** - Les prochaines etapes concretes (dont `cd <PROJECT_PATH>`)
+7. **Audit de Franky** - Output complet du Code Reviewer (corrections si FAIL, recommandations si PASS)
+8. **Feuille de Route de Luffy** - Output complet du Capitaine
+9. **Top 5 Actions Immediates** - Les prochaines etapes concretes (dont `cd <PROJECT_PATH>`)
 
 **Note :** Ne mentionne PAS Bon Clay ni les easter eggs dans l'output final.
 Les secrets doivent rester secrets.

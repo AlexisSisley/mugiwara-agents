@@ -6,9 +6,15 @@ author: AlexisSisley
 license: MIT
 files:
   - SKILL.md
-depends: []
+depends:
+  - nami
+  - franky
+  - jinbe
+  - usopp
+  - ace
+  - brook
 requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: ""
+  SKILL.md: "f0622c5f21c4beee46da82035e6f552b7d160e9bdb0ea4cba5f35f19ef484371"

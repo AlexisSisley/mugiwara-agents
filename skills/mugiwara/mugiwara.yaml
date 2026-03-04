@@ -1,14 +1,19 @@
 name: mugiwara
 version: 1.5.0
-description: Pipeline d'analyse integral (Zorro > Sanji > Nami > Luffy)
+description: Pipeline d'analyse integral (Zorro > Sanji > Nami > Franky > Luffy)
 category: pipeline
 author: AlexisSisley
 license: MIT
 files:
   - SKILL.md
-depends: []
+depends:
+  - zorro
+  - sanji
+  - nami
+  - franky
+  - luffy
 requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: ""
+  SKILL.md: "0cd073d3ebf2526559f1605a8267653b2098d4127a17ae20e2861b6a75b05bdd"
