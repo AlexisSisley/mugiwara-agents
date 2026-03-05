@@ -41,6 +41,9 @@
   .app-layout {
     display: flex;
     min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 15% 80%, rgba(230, 57, 70, 0.02) 0%, transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.02) 0%, transparent 40%);
   }
 
   .main-content {
@@ -49,5 +52,6 @@
     flex: 1;
     max-width: var(--content-max-width);
     width: calc(100% - var(--sidebar-width));
+    position: relative;
   }
 </style>

@@ -30,7 +30,10 @@
       on:click|stopPropagation
     >
       <div class="drawer-header">
-        <h3 class="drawer-title">{title}</h3>
+        <div class="drawer-title-group">
+          <h3 class="drawer-title manga">{title}</h3>
+          <div class="drawer-accent-line"></div>
+        </div>
         <button class="drawer-close" on:click={close}>&times;</button>
       </div>
       <div class="drawer-body">
@@ -44,7 +47,7 @@
   .drawer-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 100;
     display: flex;
     justify-content: flex-end;
@@ -53,10 +56,10 @@
   .drawer {
     height: 100%;
     background: var(--color-surface);
-    border-left: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-primary);
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-xl);
+    box-shadow: -6px 0 24px rgba(0, 0, 0, 0.5);
   }
 
   .drawer-header {
@@ -64,30 +67,46 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-4) var(--space-6);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 2px solid var(--color-border);
     min-height: var(--header-height);
   }
 
+  .drawer-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
   .drawer-title {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 400;
     color: var(--color-text-primary);
+    letter-spacing: 0.04em;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+  }
+
+  .drawer-accent-line {
+    height: 2px;
+    width: 40px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    border-radius: 1px;
   }
 
   .drawer-close {
     background: none;
-    border: none;
+    border: 2px solid var(--color-border);
     color: var(--color-text-secondary);
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
-    padding: var(--space-1);
+    padding: var(--space-1) var(--space-2);
     line-height: 1;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     transition: all var(--transition-fast);
   }
 
   .drawer-close:hover {
-    color: var(--color-text-primary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
     background: var(--color-surface-hover);
   }
 

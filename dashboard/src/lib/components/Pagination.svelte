@@ -20,11 +20,13 @@
       disabled={pagination.page <= 1}
       on:click={() => goTo(pagination.page - 1)}
     >
-      &laquo; Prev
+      \u25C0 Prev
     </button>
 
-    <span class="page-info mono">
-      {pagination.page} / {pagination.totalPages}
+    <span class="page-info">
+      <span class="page-current manga">{pagination.page}</span>
+      <span class="page-sep">/</span>
+      <span class="page-total-num mono">{pagination.totalPages}</span>
       <span class="page-total">({pagination.total} items)</span>
     </span>
 
@@ -33,7 +35,7 @@
       disabled={pagination.page >= pagination.totalPages}
       on:click={() => goTo(pagination.page + 1)}
     >
-      Next &raquo;
+      Next \u25B6
     </button>
   </div>
 {/if}
@@ -44,40 +46,62 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-4);
-    padding: var(--space-4) 0;
+    padding: var(--space-5) 0;
   }
 
   .page-btn {
     font-family: var(--font-ui);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     padding: var(--space-2) var(--space-4);
-    border: 1px solid var(--color-border);
+    border: 2px solid var(--color-border);
     border-radius: var(--radius-md);
     background: var(--color-surface);
     color: var(--color-text-primary);
     cursor: pointer;
     transition: all var(--transition-fast);
+    box-shadow: var(--shadow-sm);
   }
 
   .page-btn:hover:not(:disabled) {
     background: var(--color-surface-hover);
     border-color: var(--color-primary);
     color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
   }
 
   .page-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.3;
     cursor: not-allowed;
+    box-shadow: none;
   }
 
   .page-info {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-1);
     font-size: 13px;
     color: var(--color-text-secondary);
+  }
+
+  .page-current {
+    font-size: 20px;
+    color: var(--color-primary);
+  }
+
+  .page-sep {
+    color: var(--color-text-tertiary);
+  }
+
+  .page-total-num {
+    font-size: 14px;
+    color: var(--color-text-primary);
   }
 
   .page-total {
     color: var(--color-text-tertiary);
     font-size: 11px;
+    margin-left: var(--space-1);
   }
 </style>

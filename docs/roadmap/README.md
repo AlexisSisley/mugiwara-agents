@@ -18,6 +18,7 @@ Suivi des evolutions du projet. Chaque section documente les ajouts, modificatio
 | v1.5 | 2026-03-04 | [v1.5.md](./v1.5.md) | Plugin system — CLI mugiwara, registry, manifests, SHA256, pipeline depends |
 | v1.6 | 2026-03-05 | [v1.6.md](./v1.6.md) | Dashboard & Observabilite — SPA web Svelte + API Express, 116 tests, job CI #5 |
 | v1.7 | 2026-03-05 | [v1.7.md](./v1.7.md) | Governance & Release — agents monitoring + feature-flags, pipeline release, conventional commits, schema JSON, CHANGELOG auto |
+| v1.8 | 2026-04 | [v1.8.md](./v1.8.md) | Infrastructure & Deploiement — agents docker, iis, infra-reseau, orchestration, conteneurs Windows |
 
 ---
 
@@ -47,4 +48,9 @@ Idees et taches a venir (non priorisees) :
 - [x] Nouveaux agents (monitoring/alerting, feature flags) (done v1.7)
 - [x] Pipeline Release automatise (changelog + morgans + tag + deploy) (done v1.7)
 - [x] Audit ecosysteme post-v1.7 (done v1.7)
+- [ ] Agent Docker (Dockerfile, docker-compose, orchestration Swarm/K8s) (v1.8)
+- [ ] Agent IIS (web.config, pools, SSL, URL Rewrite, deploiement) (v1.8)
+- [ ] Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN) (v1.8)
+- [ ] Integration Docker + IIS (conteneurs Windows) (v1.8)
+- [ ] Integration Monitoring + Infra (dashboards Grafana) (v1.8)
 - [ ] Site Docusaurus, marketplace d'agents (v2.0)

@@ -95,32 +95,32 @@
   });
 </script>
 
-<Header title="Agents" />
+<Header title="AGENTS" />
 
 <div class="page">
   <!-- KPI Cards -->
   {#if $stats}
     <div class="kpi-row">
-      <StatCard label="Agents" value={formatNumber($stats.totalAgents)} icon="&#129302;" />
-      <StatCard label="Invocations" value={formatNumber($stats.totalInvocations)} accent="var(--color-info)" icon="&#9889;" />
+      <StatCard label="Nakama" value={formatNumber($stats.totalAgents)} icon={'\u{1F465}'} />
+      <StatCard label="Invocations" value={formatNumber($stats.totalInvocations)} accent="var(--color-accent)" icon={'\u{26A1}'} />
       <StatCard
         label="Smoke Pass"
         value={formatNumber($stats.smokeTests.pass)}
         accent="var(--color-success)"
-        icon="&#9989;"
+        icon={'\u2705'}
       />
       <StatCard
         label="Smoke Fail"
         value={formatNumber($stats.smokeTests.fail)}
         accent="var(--color-error)"
-        icon="&#10060;"
+        icon={'\u274C'}
       />
     </div>
   {/if}
 
   <!-- Toolbar -->
   <div class="toolbar">
-    <SearchInput placeholder="Rechercher un agent..." on:input={handleSearch} />
+    <SearchInput placeholder="Rechercher un nakama..." on:input={handleSearch} />
     <select class="filter-select" value={categoryFilter} on:change={handleCategoryChange}>
       <option value="">Toutes categories</option>
       {#each categories as cat}
@@ -131,7 +131,10 @@
 
   <!-- Table -->
   {#if $agentsLoading && !$agents}
-    <div class="loading">Chargement des agents...</div>
+    <div class="loading">
+      <span class="loading-icon anim-spin">{'\u{1F300}'}</span>
+      Chargement des agents...
+    </div>
   {:else if $agentsError}
     <div class="error">{$agentsError}</div>
   {:else if $agents}
@@ -192,27 +195,28 @@
       </div>
       <div class="detail-row">
         <span class="detail-label">Version</span>
-        <span class="mono">{selectedAgent.version}</span>
+        <span class="mono detail-value">{selectedAgent.version}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Description</span>
         <p class="detail-desc">{selectedAgent.description}</p>
       </div>
+      <div class="detail-divider"></div>
       <div class="detail-row">
         <span class="detail-label">Smoke Tests</span>
         <Badge variant={getSmokeVariant(selectedAgent.smokeTestStatus)} />
       </div>
       <div class="detail-row">
         <span class="detail-label">Invocations</span>
-        <span class="mono">{formatNumber(selectedAgent.invocationCount)}</span>
+        <span class="mono detail-value">{formatNumber(selectedAgent.invocationCount)}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Derniere invocation</span>
-        <span>{formatRelativeTime(selectedAgent.lastInvocation)}</span>
+        <span class="detail-value">{formatRelativeTime(selectedAgent.lastInvocation)}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Dernier smoke test</span>
-        <span>{formatRelativeTime(selectedAgent.lastSmokeTest)}</span>
+        <span class="detail-value">{formatRelativeTime(selectedAgent.lastSmokeTest)}</span>
       </div>
     </div>
   {/if}
@@ -221,7 +225,7 @@
 <style>
   .page {
     padding: var(--space-6);
-    animation: fade-in 200ms ease;
+    animation: fade-in 250ms ease;
   }
 
   .kpi-row {
@@ -239,27 +243,30 @@
   }
 
   .filter-select {
-    height: 36px;
+    height: 38px;
     padding: 0 var(--space-3);
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
     border-radius: var(--radius-md);
     color: var(--color-text-primary);
     font-family: var(--font-ui);
     font-size: 13px;
     cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-fast);
   }
 
   .filter-select:focus {
-    border-color: var(--color-primary);
+    border-color: var(--color-secondary);
     outline: none;
-    box-shadow: 0 0 0 2px rgba(232, 163, 23, 0.15);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
   }
 
   .table-wrapper {
     overflow-x: auto;
-    border: 1px solid var(--color-border);
+    border: 2px solid var(--color-border);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
   }
 
   .data-table {
@@ -275,13 +282,14 @@
   .data-table th {
     padding: var(--space-3) var(--space-4);
     text-align: left;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-secondary);
-    border-bottom: 1px solid var(--color-border);
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    border-bottom: 2px solid var(--color-border);
     white-space: nowrap;
+    font-family: var(--font-ui);
   }
 
   .data-table th.sortable {
@@ -301,7 +309,7 @@
 
   .data-row {
     cursor: pointer;
-    transition: background var(--transition-fast);
+    transition: all var(--transition-fast);
   }
 
   .data-row:hover {
@@ -310,11 +318,12 @@
 
   .data-row.selected {
     background: var(--color-surface-active);
-    border-left: 3px solid var(--color-primary);
+    border-left: 4px solid var(--color-primary);
+    box-shadow: inset 0 0 20px rgba(230, 57, 70, 0.05);
   }
 
   .col-status { width: 70px; text-align: center; }
-  .col-name { width: 140px; }
+  .col-name { width: 140px; color: var(--color-secondary); }
   .col-desc { max-width: 300px; }
   .col-cat { width: 120px; }
   .col-ver { width: 80px; }
@@ -326,6 +335,15 @@
     text-align: center;
     color: var(--color-text-secondary);
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+
+  .loading-icon {
+    font-size: 20px;
+    display: inline-block;
   }
 
   .error { color: var(--color-error); }
@@ -344,15 +362,26 @@
 
   .detail-label {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     color: var(--color-text-tertiary);
+  }
+
+  .detail-value {
+    color: var(--color-text-primary);
+    font-size: 14px;
   }
 
   .detail-desc {
     font-size: 14px;
     color: var(--color-text-secondary);
     line-height: 1.5;
+  }
+
+  .detail-divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-border), transparent);
+    margin: var(--space-1) 0;
   }
 </style>

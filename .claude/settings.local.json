@@ -8,7 +8,28 @@
       "Bash(node:*)",
       "WebSearch",
       "WebFetch(domain:mcpcat.io)",
-      "Bash(chmod +x:*)"
+      "Bash(xargs grep:*)",
+      "WebFetch(domain:www.eesel.ai)",
+      "WebFetch(domain:github.com)",
+      "Bash(wc:*)",
+      "Bash(chmod +x:*)",
+      "Skill(luffy)",
+      "Skill(nami)",
+      "Bash(winget install:*)",
+      "Bash(export:*)",
+      "Bash(echo $PATH:*)",
+      "Bash(sed:*)",
+      "Skill(usopp)",
+      "Bash(/c/Users/Alexi/Documents/projet/mugiwara-agents/bin/mugiwara version:*)",
+      "Bash(/c/Users/Alexi/Documents/projet/mugiwara-agents/bin/mugiwara help:*)",
+      "Bash(/c/Users/Alexi/Documents/projet/mugiwara-agents/bin/mugiwara search:*)",
+      "Bash(do echo:*)",
+      "Bash(test:*)",
+      "Bash(ls:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx vite:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx svelte-check:*)"
     ]
   }
 }
