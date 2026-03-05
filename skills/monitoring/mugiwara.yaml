@@ -1,0 +1,21 @@
+name: monitoring
+version: 1.7.0
+description: Agent Monitoring et Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)
+category: infrastructure
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - prometheus
+  - grafana
+  - alerting
+  - sre
+  - observability
+  - pagerduty
+  - opsgenie
+checksum:
+  SKILL.md: "906308877821220f9ef92211453264392fb78ddf24eea17a179b1d0eb29d2930"

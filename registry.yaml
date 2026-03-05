@@ -3,7 +3,7 @@
 # Auto-generated index of all available agents
 # ============================================================
 version: 1
-updated: "2026-03-04T00:00:00Z"
+updated: "2026-03-05T00:00:00Z"
 base_url: "https://raw.githubusercontent.com/AlexisSisley/mugiwara-agents/main"
 agents:
   ace:
@@ -66,6 +66,14 @@ agents:
     version: 1.5.0
     description: "Pipeline de modernisation de stack technique"
     category: pipeline
+  feature-flags:
+    version: 1.7.0
+    description: "Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery"
+    category: infrastructure
+  monitoring:
+    version: 1.7.0
+    description: "Agent Monitoring et Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)"
+    category: infrastructure
   morgans:
     version: 1.5.0
     description: "Generateur d'emails de release QA et mise en production"

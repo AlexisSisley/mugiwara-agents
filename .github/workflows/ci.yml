@@ -88,7 +88,56 @@ jobs:
           chmod +x bin/mugiwara
           bash tests/plugin/test_cli.sh
 
-  # ── Job 5: Dashboard Tests ──────────────────────────────────
+  # ── Job 5: Monitoring Agent Tests ──────────────────────────────
+  monitoring-tests:
+    name: Monitoring Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Run monitoring agent tests
+        run: |
+          chmod +x tests/monitoring/test_monitoring.sh
+          bash tests/monitoring/test_monitoring.sh
+
+  # ── Job 6: Feature Flags Agent Tests ───────────────────────────
+  feature-flags-tests:
+    name: Feature Flags Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Run feature flags agent tests
+        run: |
+          chmod +x tests/feature-flags/test_feature_flags.sh
+          bash tests/feature-flags/test_feature_flags.sh
+
+  # ── Job 7: Dashboard Tests ──────────────────────────────────
   dashboard-tests:
     name: Dashboard Tests
     runs-on: ubuntu-latest

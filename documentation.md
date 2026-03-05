@@ -14,13 +14,15 @@
 
 ### Qu'est-ce que Mugiwara Agents ?
 
-Mugiwara Agents est un ecosysteme de **40 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
+Mugiwara Agents est un ecosysteme de **42 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
 Le projet repose sur une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
 Depuis la v1.5, le projet inclut egalement un **systeme de plugins** avec un CLI `mugiwara`, un registre central (`registry.yaml`), des manifests par agent (`mugiwara.yaml`) avec checksums SHA256, et des dependances declarees pour les pipelines. Le projet dispose aussi d'un pipeline **CI/CD GitHub Actions** (v1.4) avec 5 suites de tests automatisees.
 
 Depuis la v1.6, un **dashboard web** (Svelte 4 + Express 4 + TypeScript) offre une visualisation en temps reel des invocations d'agents, sessions et executions de pipelines. Il consomme les logs JSONL produits par les hooks v1.3 via une API REST.
+
+Depuis la v1.7, le projet adopte les **Conventional Commits** (commitlint + Husky), genere un **CHANGELOG.md** automatiquement, et dispose d'un **pipeline Release** (`release.yml`) orchestrant bump de version, changelog, email Morgans, tag git et deploiement. Deux nouveaux agents enrichissent l'ecosysteme : **Monitoring/Alerting** (Prometheus, Grafana, PagerDuty, OpsGenie) et **Feature Flags** (env-based, Unleash, LaunchDarkly). Un **schema JSON** (`schemas/agent-event.schema.json`) standardise le format des logs JSONL.
 
 ### Philosophie architecturale
 
@@ -39,7 +41,7 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) ont aussi les outils Write/Edit pour appliquer directement les corrections ou produire les livrables. Les agents d'execution (Ace, Law) disposent des outils de build/run necessaires a leur mission (benchmarks, scripts data). Jinbe peut scanner l'historique git et les dependances pour detecter les secrets et vulnerabilites.
 
 **5. Distribution par plugins (v1.5)**
-Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant version, description, categorie, fichiers et checksums SHA256. Un registre central (`registry.yaml`) indexe les 40 agents. Un CLI bash modulaire (`bin/mugiwara`) permet d'installer, mettre a jour et gerer les agents individuellement. Les pipelines declarent leurs dependances inter-agents dans le champ `depends` de leur manifest.
+Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant version, description, categorie, fichiers et checksums SHA256. Un registre central (`registry.yaml`) indexe les 42 agents. Un CLI bash modulaire (`bin/mugiwara`) permet d'installer, mettre a jour et gerer les agents individuellement. Les pipelines declarent leurs dependances inter-agents dans le champ `depends` de leur manifest.
 
 ### Choix techniques
 
@@ -52,7 +54,9 @@ Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant v
 | Langue | Miroir de l'input | L'output s'adapte automatiquement a la langue de la demande |
 | Tool restrictions | `allowed-tools` par role | Chaque agent n'a acces qu'aux outils necessaires a sa mission |
 | Packaging | `mugiwara.yaml` manifest + registre YAML | Distribution par plugin, integrite par SHA256, dependances declaratives |
-| CI/CD | GitHub Actions, 5 jobs paralleles | Smoke, fonctionnel, hooks, plugins, dashboard -- tests offline sans API key |
+| CI/CD | GitHub Actions, 7 jobs paralleles | Smoke, fonctionnel, hooks, plugins, dashboard, monitoring, feature-flags -- tests offline sans API key |
+| Commits | Conventional Commits + commitlint + Husky | Format standardise, CHANGELOG auto, pipeline Release |
+| Logs schema | JSON Schema (`schemas/agent-event.schema.json`) | Contrat entre hooks, dashboard et pipeline Release |
 | Dashboard | Svelte 4 + Vite 6 + Express 4 + TypeScript | SPA legere, API REST, lecture JSONL, pas de base de donnees |
 | Versioning | SemVer strict (VERSIONING.md) | MAJOR/MINOR/PATCH avec politique documentee et arbre de decision |
 
@@ -198,32 +202,34 @@ Chaine ad-hoc recommandee :
 | 27 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 | 28 | Senor Pink | `/senor-pink` | E2E Test Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 | 29 | Morgans | `/morgans` | Release Email Generator (QA & Prod) | Read, Glob, Grep, Bash(git log/diff/tag/show/ls) |
+| 30 | Monitoring | `/monitoring` | Monitoring & Alerting Engineer | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 31 | Feature-Flags | `/feature-flags` | Feature Flags Strategist | Read, Write, Glob, Grep, Bash(cat/ls/file) |
 
 ### 2.4 Meta-Agent
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 30 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
-| 31 | Bon-Clay | `/bon-clay` | Easter Egg Architect (secret) | Read, Write, Edit, Glob, Grep, Bash(cat/ls/file) |
+| 32 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
+| 33 | Bon-Clay | `/bon-clay` | Easter Egg Architect (secret) | Read, Write, Edit, Glob, Grep, Bash(cat/ls/file) |
 
 ### 2.5 Pipelines (Orchestrateurs)
 
 | # | Pipeline | Commande | Chaine d'agents | Tools autorises |
 |---|----------|---------|-----------------|-----------------|
-| 32 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Franky (code review) -> Luffy | Read, Glob, Grep, Skill |
-| 33 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
-| 34 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
-| 35 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
-| 36 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
-| 37 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
-| 38 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
-| 39 | Api-Postman | `/api-postman` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
+| 34 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Franky (code review) -> Luffy | Read, Glob, Grep, Skill |
+| 35 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
+| 36 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
+| 37 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
+| 38 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
+| 39 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
+| 40 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+| 41 | Api-Postman | `/api-postman` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
 
 ### 2.5b Smart Router
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 40 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+| 42 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
 
 ### 2.6 Configuration commune
 
@@ -262,8 +268,12 @@ mugiwara-agents/
 │   │   └── run-smoke-tests.sh      #   Smoke tests post-modification
 │   └── settings.local.json         # Permissions & hooks config
 ├── .github/
-│   └── workflows/ci.yml            # Pipeline CI GitHub Actions (v1.4)
-├── .gitignore                       # .DS_Store, Thumbs.db, *.log
+│   └── workflows/
+│       ├── ci.yml                   # Pipeline CI GitHub Actions (v1.4)
+│       └── release.yml              # Pipeline Release automatise (v1.7)
+├── .gitignore                       # .DS_Store, Thumbs.db, *.log, node_modules, dist, .env
+├── .husky/                          # Git hooks (v1.7)
+│   └── commit-msg                   #   Commitlint validation
 ├── bin/
 │   └── mugiwara                     # CLI Plugin Manager (v1.5)
 ├── lib/                             # Librairies CLI (v1.5)
@@ -282,7 +292,7 @@ mugiwara-agents/
 │   ├── plan-v1.4-v2.0.md           # Plan strategique v1.4 → v2.0
 │   └── roadmap/                     # Notes de release par version
 │       ├── README.md                #   Index des versions
-│       ├── v1.0.md ... v1.5.md     #   Details par version
+│       ├── v1.0.md ... v1.7.md     #   Details par version
 ├── dashboard/                       # Dashboard web (v1.6)
 │   ├── src/                         #   Frontend Svelte (routes, composants)
 │   │   ├── routes/                  #     Pages (agents, pipelines, sessions)
@@ -295,7 +305,10 @@ mugiwara-agents/
 │   │   ├── unit/                    #     Tests unitaires (data-loader, parsers, cache)
 │   │   └── integration/            #     Tests API (server, endpoints, sessions)
 │   └── package.json
-├── tests/                           # Suites de tests (v1.2 → v1.6)
+├── schemas/                         # Schemas JSON (v1.7)
+│   ├── agent-event.schema.json      #   Schema des events JSONL
+│   └── validate-jsonl.sh            #   Validateur de schema
+├── tests/                           # Suites de tests (v1.2 → v1.7)
 │   ├── test_structural.sh           #   Smoke tests structurels (342+ assertions)
 │   ├── functional/                  #   Tests fonctionnels (v1.4)
 │   │   ├── run-functional-tests.sh  #     Runner principal
@@ -304,19 +317,26 @@ mugiwara-agents/
 │   ├── hooks/                       #   Tests des hooks (v1.4)
 │   │   ├── test-hooks.sh            #     Suite de tests pour les 6 hooks
 │   │   └── mock-event.json          #     Fixtures d'events simules
-│   └── plugin/                      #   Tests du systeme de plugins (v1.5)
-│       └── test_cli.sh              #     Tests CLI + manifests + registre
-├── skills/                          # 40 agents (chacun avec SKILL.md + mugiwara.yaml)
+│   ├── plugin/                      #   Tests du systeme de plugins (v1.5)
+│   │   └── test_cli.sh              #     Tests CLI + manifests + registre
+│   ├── monitoring/                  #   Tests agent monitoring (v1.7)
+│   │   └── test_monitoring.sh       #     Validation SKILL.md + manifest
+│   └── feature-flags/              #   Tests agent feature-flags (v1.7)
+│       └── test_feature_flags.sh    #     Validation SKILL.md + manifest
+├── skills/                          # 42 agents (chacun avec SKILL.md + mugiwara.yaml)
 │   ├── ace/                         #   Performance Engineer
 │   │   ├── SKILL.md
 │   │   └── mugiwara.yaml            #   Manifest plugin (v1.5)
-│   ├── ... (40 agents au total)
+│   ├── ... (42 agents au total)
 │   └── zorro/
 │       ├── SKILL.md
 │       └── mugiwara.yaml
 ├── registry.yaml                    # Index central des agents (v1.5)
 ├── install.sh                       # Script d'installation (tous les agents)
 ├── uninstall.sh                     # Script de desinstallation
+├── commitlint.config.js             # Configuration Conventional Commits (v1.7)
+├── CONTRIBUTING.md                  # Guide de contribution (v1.7)
+├── CHANGELOG.md                     # Changelog auto-genere (v1.7)
 ├── documentation.md                 # Documentation technique Diataxis (ce fichier)
 ├── VERSIONING.md                    # Politique de versioning SemVer (v1.4)
 ├── LICENSE                          # MIT License
@@ -340,7 +360,7 @@ Le CLI bash modulaire (`bin/mugiwara`) offre 6 commandes pour gerer les agents c
 
 #### Registre central (`registry.yaml`)
 
-Fichier YAML a la racine du projet indexant les 40 agents avec :
+Fichier YAML a la racine du projet indexant les 42 agents avec :
 - `version` : version SemVer de l'agent
 - `description` : description courte
 - `category` : categorie (analysis, pipeline, security, data, etc.)
@@ -371,15 +391,17 @@ Chaque agent possede un manifest `mugiwara.yaml` contenant :
 
 ### 2.10 CI/CD (v1.4+)
 
-Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 5 jobs paralleles :
+Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 7 jobs paralleles :
 
 | Job | Suite de tests | Description |
 |-----|----------------|-------------|
 | `smoke-tests` | `tests/test_structural.sh` | 342+ assertions structurelles (existence fichiers, YAML valide, coherence) |
-| `functional-tests` | `tests/functional/run-functional-tests.sh --dry-run` | Execution dry-run des 40 agents avec validation output |
+| `functional-tests` | `tests/functional/run-functional-tests.sh --dry-run` | Execution dry-run des 42 agents avec validation output |
 | `hooks-tests` | `tests/hooks/test-hooks.sh` | Tests automatises des 6 hooks Claude Code |
 | `plugin-tests` | `tests/plugin/test_cli.sh` | Tests du CLI et du systeme de plugins |
 | `dashboard-tests` | `dashboard/` (npm test) | 116 tests unitaires + integration pour le dashboard web (Vitest) |
+| `monitoring-tests` | `tests/monitoring/test_monitoring.sh` | Validation agent monitoring (SKILL.md, manifest, schema) |
+| `feature-flags-tests` | `tests/feature-flags/test_feature_flags.sh` | Validation agent feature-flags (SKILL.md, manifest, providers) |
 
 Aucune cle API ou secret n'est necessaire : tous les tests s'executent offline.
 
@@ -415,6 +437,40 @@ npm run seed     # Generer 30 jours de donnees de demo
 npm run dev      # Lancer le serveur sur http://localhost:3000
 ```
 
+### 2.12 Governance & Release Pipeline (v1.7)
+
+#### Conventional Commits
+
+Le projet adopte le format [Conventional Commits](https://www.conventionalcommits.org/) a partir de la v1.7. Le hook `.husky/commit-msg` valide chaque message de commit via `commitlint` (config : `commitlint.config.js`).
+
+Types autorises : `feat`, `fix`, `docs`, `chore`, `test`, `ci`, `refactor`, `perf`, `style`, `build`, `revert`.
+
+#### CHANGELOG automatique
+
+Le fichier `CHANGELOG.md` est genere automatiquement via `conventional-changelog-cli`. L'historique v1.0 a v1.6 a ete genere retroactivement depuis les roadmaps et le git log. A partir de la v1.7, le CHANGELOG est mis a jour automatiquement a chaque release.
+
+#### Schema JSON des logs JSONL
+
+Le fichier `schemas/agent-event.schema.json` definit le contrat de donnees entre les hooks v1.3, le dashboard v1.6 et le pipeline Release v1.7. Le validateur `schemas/validate-jsonl.sh` verifie la conformite des logs.
+
+#### Pipeline Release (`release.yml`)
+
+Le pipeline Release automatise le cycle de livraison :
+1. Bump de version (SemVer)
+2. Generation du CHANGELOG
+3. Email de release via Morgans
+4. Creation du tag git
+5. Deploiement
+
+Le pipeline est semi-automatique : il prepare tout mais attend une validation humaine avant de publier le tag (dry-run par defaut).
+
+#### Agents v1.7
+
+| Agent | Commande | Role | Description |
+|-------|----------|------|-------------|
+| Monitoring | `/monitoring` | Monitoring & Alerting Engineer | Prometheus, Grafana, PagerDuty, OpsGenie : configuration, dashboards, alertes, escalation policies |
+| Feature-Flags | `/feature-flags` | Feature Flags Strategist | env-based, Unleash, LaunchDarkly : rollout progressif, A/B testing, lifecycle management |
+
 ---
 
 ## 3. Tutorial -- Premier pas avec l'equipage
@@ -428,7 +484,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Le script copie les 40 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+Le script copie les 42 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
 
 **Alternative (v1.5+)** — Installer un agent individuel avec le CLI :
 
@@ -673,6 +729,7 @@ mugiwara uninstall <agent>
 | v1.4.0 | 2026-03-03 | MINOR | Tests fonctionnels, tests hooks, CI/CD GitHub Actions, politique SemVer (VERSIONING.md) |
 | v1.5.0 | 2026-03-04 | MINOR | Plugin system : CLI mugiwara, registry.yaml, 40 manifests, SHA256 checksums, pipeline depends, Franky code review |
 | v1.6.0 | 2026-03-05 | MINOR | Dashboard web : SPA Svelte + API Express, vues Agents/Pipelines/Sessions/Stats, 116 tests, job CI #5 |
+| v1.7.0 | 2026-03-05 | MINOR | Governance & Release : agents monitoring + feature-flags, pipeline release, conventional commits, schema JSON, CHANGELOG auto, 42 agents, 7 jobs CI |
 
 *v1.1.0 aurait du etre v1.0.1 (correction de bug). Voir VERSIONING.md pour la retrospective.
 

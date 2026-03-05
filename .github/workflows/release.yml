@@ -1,0 +1,373 @@
+# ============================================================
+# Mugiwara Agents - Automated Release Pipeline
+# ============================================================
+# Triggered manually or on tag push. Performs:
+# 1. Bump version in package.json
+# 2. Generate CHANGELOG from conventional commits
+# 3. Generate Morgans release email
+# 4. Create git tag
+# 5. Create GitHub Release
+#
+# No secrets required for changelog/tagging.
+# SMTP secrets required for Morgans email (optional).
+# ============================================================
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      dry_run:
+        description: 'Dry run (no actual release)'
+        required: false
+        default: false
+        type: boolean
+      send_email:
+        description: 'Send Morgans release email'
+        required: false
+        default: true
+        type: boolean
+
+  push:
+    tags:
+      - 'v*.*.*'
+
+# Only one release at a time
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  # ── Step 1: Validate & Prepare ──────────────────────────────
+  prepare:
+    name: Validate & Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      current_version: ${{ steps.version.outputs.current }}
+      new_version: ${{ steps.version.outputs.new }}
+      tag_name: ${{ steps.version.outputs.tag }}
+      is_tag_push: ${{ steps.detect.outputs.is_tag_push }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for changelog generation
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Detect trigger type
+        id: detect
+        env:
+          GIT_REF: ${{ github.ref }}
+        run: |
+          if [[ "$GIT_REF" == refs/tags/v* ]]; then
+            echo "is_tag_push=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_tag_push=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compute version
+        id: version
+        env:
+          IS_TAG_PUSH: ${{ steps.detect.outputs.is_tag_push }}
+          BUMP_TYPE: ${{ inputs.bump_type }}
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+          if [[ "$IS_TAG_PUSH" == "true" ]]; then
+            # Tag push: extract version from tag
+            NEW="${GITHUB_REF#refs/tags/v}"
+            echo "new=$NEW" >> "$GITHUB_OUTPUT"
+            echo "tag=v$NEW" >> "$GITHUB_OUTPUT"
+          else
+            # Manual dispatch: bump version
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+            case "$BUMP_TYPE" in
+              major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+              minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+              patch) PATCH=$((PATCH + 1)) ;;
+            esac
+            NEW="$MAJOR.$MINOR.$PATCH"
+            echo "new=$NEW" >> "$GITHUB_OUTPUT"
+            echo "tag=v$NEW" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "Version: $CURRENT -> $NEW"
+
+      - name: Run smoke tests
+        run: |
+          chmod +x tests/test_structural.sh
+          bash tests/test_structural.sh
+
+      - name: Validate registry consistency
+        run: |
+          echo "=== Registry Consistency Check ==="
+          # Ensure every skills/ directory has an entry in registry.yaml
+          MISSING=0
+          for dir in skills/*/; do
+            name=$(basename "$dir")
+            if ! grep -q "^  $name:" registry.yaml; then
+              echo "ERROR: $name has a skills/ directory but no registry.yaml entry"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          # Ensure every registry entry has a skills/ directory
+          for agent in $(grep "^  [a-z]" registry.yaml | sed 's/://'); do
+            agent=$(echo "$agent" | tr -d ' ')
+            if [ ! -d "skills/$agent" ]; then
+              echo "ERROR: $agent is in registry.yaml but has no skills/ directory"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          if [ "$MISSING" -gt 0 ]; then
+            echo "FAIL: $MISSING registry inconsistencies found"
+            exit 1
+          fi
+          AGENT_COUNT=$(grep -c "^  [a-z]" registry.yaml)
+          echo "Registry consistent: $AGENT_COUNT agents verified"
+
+  # ── Step 2: Bump, Changelog, Tag ────────────────────────────
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: prepare
+    if: needs.prepare.outputs.is_tag_push == 'false'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version in package.json
+        if: inputs.dry_run == false || inputs.dry_run == 'false'
+        env:
+          NEW_VERSION: ${{ needs.prepare.outputs.new_version }}
+        run: |
+          node -e "
+            const pkg = require('./package.json');
+            pkg.version = process.env.NEW_VERSION;
+            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+          echo "Bumped to $NEW_VERSION"
+
+      - name: Generate CHANGELOG
+        run: |
+          npx conventional-changelog -p conventionalcommits -i CHANGELOG.md -s
+
+      - name: Generate release notes (for GitHub Release body)
+        id: notes
+        env:
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          # Extract the latest version block from CHANGELOG
+          NOTES=$(awk '/^## \[/{if(p) exit; p=1} p' CHANGELOG.md)
+          # Write to file for gh release
+          echo "$NOTES" > /tmp/release-notes.md
+          echo "Generated release notes for $TAG_NAME"
+
+      - name: Commit version bump and changelog
+        if: inputs.dry_run == false || inputs.dry_run == 'false'
+        env:
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          git add package.json CHANGELOG.md
+          git commit -m "chore(release): $TAG_NAME" || echo "No changes to commit"
+
+      - name: Create git tag
+        if: inputs.dry_run == false || inputs.dry_run == 'false'
+        env:
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          git tag -a "$TAG_NAME" -m "Release $TAG_NAME"
+
+      - name: Push changes and tag
+        if: inputs.dry_run == false || inputs.dry_run == 'false'
+        env:
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          git push origin main
+          git push origin "$TAG_NAME"
+
+      - name: Create GitHub Release
+        if: inputs.dry_run == false || inputs.dry_run == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          gh release create "$TAG_NAME" \
+            --title "Release $TAG_NAME" \
+            --notes-file /tmp/release-notes.md
+
+      - name: Dry run summary
+        if: inputs.dry_run == true || inputs.dry_run == 'true'
+        env:
+          CURRENT_VERSION: ${{ needs.prepare.outputs.current_version }}
+          NEW_VERSION: ${{ needs.prepare.outputs.new_version }}
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          echo "=== DRY RUN ==="
+          echo "Would bump:     $CURRENT_VERSION -> $NEW_VERSION"
+          echo "Would tag:      $TAG_NAME"
+          echo "Would release:  GitHub Release with changelog"
+          echo ""
+          echo "=== Changelog Preview ==="
+          cat /tmp/release-notes.md || echo "(no new entries)"
+
+  # ── Step 3: Morgans Release Email ───────────────────────────
+  morgans-email:
+    name: Morgans Release Email
+    runs-on: ubuntu-latest
+    needs: [prepare, release]
+    if: |
+      always() &&
+      needs.release.result == 'success' &&
+      (inputs.send_email == true || inputs.send_email == 'true')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Morgans release email
+        env:
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+          NEW_VERSION: ${{ needs.prepare.outputs.new_version }}
+        run: |
+          # Extract changelog for this version
+          CHANGELOG=$(awk '/^## \[/{if(p) exit; p=1} p' CHANGELOG.md)
+
+          # Count agents in registry
+          AGENT_COUNT=$(grep -c "^  [a-z]" registry.yaml || echo "?")
+
+          # Escape HTML special characters in changelog
+          CHANGELOG_ESCAPED=$(echo "$CHANGELOG" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g')
+          TAG_ESCAPED=$(echo "$TAG_NAME" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g')
+          VERSION_ESCAPED=$(echo "$NEW_VERSION" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g')
+
+          # Generate email body
+          cat > /tmp/release-email.html <<EMAILEOF
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="utf-8"></head>
+          <body style="font-family: sans-serif; max-width: 700px; margin: 0 auto;">
+            <h1>Big News! Mugiwara Agents $TAG_ESCAPED Released</h1>
+            <p><strong>Date:</strong> $(date -u +"%Y-%m-%d %H:%M UTC")</p>
+            <p><strong>Version:</strong> $VERSION_ESCAPED</p>
+            <p><strong>Agents in ecosystem:</strong> $AGENT_COUNT</p>
+
+            <h2>Changelog</h2>
+            <pre>$CHANGELOG_ESCAPED</pre>
+
+            <h2>Installation</h2>
+            <pre>git pull origin main &amp;&amp; npm install</pre>
+
+            <h2>Links</h2>
+            <ul>
+              <li><a href="https://github.com/AlexisSisley/mugiwara-agents/releases/tag/$TAG_ESCAPED">GitHub Release</a></li>
+              <li><a href="https://github.com/AlexisSisley/mugiwara-agents/blob/main/CHANGELOG.md">Full Changelog</a></li>
+            </ul>
+
+            <p><em>-- Morgans, Big News Release Officer</em></p>
+          </body>
+          </html>
+          EMAILEOF
+
+          echo "=== Morgans Release Email Generated ==="
+          echo "To: QA Team + Stakeholders"
+          echo "Subject: [Release] Mugiwara Agents $TAG_NAME"
+          echo ""
+          echo "Email saved to /tmp/release-email.html"
+          cat /tmp/release-email.html
+
+      - name: Send email via SMTP (if configured)
+        if: env.SMTP_HOST != ''
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          RELEASE_EMAIL_TO: ${{ secrets.RELEASE_EMAIL_TO }}
+        run: |
+          echo "SMTP configured — would send email to $RELEASE_EMAIL_TO"
+          echo "(Email sending requires a mail CLI tool; configure in production)"
+
+  # ── Step 4: Post-Release Verification ───────────────────────
+  verify:
+    name: Post-Release Verification
+    runs-on: ubuntu-latest
+    needs: [prepare, release]
+    if: always() && needs.release.result == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Verify tag exists
+        env:
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          git fetch --tags
+          if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME verified"
+          else
+            echo "ERROR: Tag $TAG_NAME not found"
+            exit 1
+          fi
+
+      - name: Verify package.json version
+        env:
+          EXPECTED_VERSION: ${{ needs.prepare.outputs.new_version }}
+        run: |
+          ACTUAL=$(node -p "require('./package.json').version")
+          if [ "$ACTUAL" = "$EXPECTED_VERSION" ]; then
+            echo "package.json version verified: $ACTUAL"
+          else
+            echo "ERROR: package.json version mismatch (expected: $EXPECTED_VERSION, got: $ACTUAL)"
+            exit 1
+          fi
+
+      - name: Verify GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ needs.prepare.outputs.tag_name }}
+        run: |
+          gh release view "$TAG_NAME" --json tagName,name,isDraft,isPrerelease || echo "Release not yet visible (propagation delay)"

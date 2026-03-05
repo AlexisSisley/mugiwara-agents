@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/AlexisSisley/mugiwara-agents/main/schemas/agent-event.schema.json",
+  "title": "Mugiwara Agent Event",
+  "description": "Schema for JSONL events logged by mugiwara-agents hooks (v1.7+). Backward-compatible with v1.3 events — all new fields are optional.",
+  "type": "object",
+  "required": ["timestamp", "event"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp of the event"
+    },
+    "event": {
+      "type": "string",
+      "enum": [
+        "agent_invocation",
+        "session_start",
+        "session_stop",
+        "smoke_tests",
+        "post_agent_tests",
+        "pipeline_complete",
+        "release_created",
+        "flag_evaluation"
+      ],
+      "description": "Type of event logged"
+    },
+    "agent": {
+      "type": "string",
+      "description": "Name of the agent invoked (skill name)"
+    },
+    "tool": {
+      "type": "string",
+      "description": "Claude tool that triggered the event (e.g. Skill)"
+    },
+    "args_preview": {
+      "type": "string",
+      "description": "Truncated preview of the arguments passed to the agent (max 200 chars)"
+    },
+    "output_summary": {
+      "type": "string",
+      "description": "Truncated preview of the agent output (max 500 chars)"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier"
+    },
+    "is_pipeline": {
+      "type": "boolean",
+      "description": "Whether the agent is a pipeline orchestrator"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Reason for session stop (session_stop events)"
+    },
+    "pipeline_detected": {
+      "type": "string",
+      "description": "Name of the pipeline detected during session (session_stop events)"
+    },
+    "trigger_file": {
+      "type": "string",
+      "description": "File that triggered smoke tests (smoke_tests events)"
+    },
+    "exit_code": {
+      "type": "integer",
+      "description": "Exit code of the test run (smoke_tests events)"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Test summary output (smoke_tests events)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "error", "warning", "skipped"],
+      "description": "Outcome status of the event (v1.7+, optional)"
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Duration of the operation in milliseconds (v1.7+, optional)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9.]+)?$",
+      "description": "Mugiwara version that produced this event (v1.7+, optional)"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional key-value metadata (v1.7+, optional)",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

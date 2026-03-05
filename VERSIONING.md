@@ -61,6 +61,10 @@ Incremente quand de nouvelles fonctionnalites sont ajoutees **sans casser l'exis
 |---------|-------------|---------------------|
 | **v1.2.0** | Agents `law-sql` et `morgans`, smoke tests (342 assertions), guide MCP servers | Ajout de 2 nouveaux agents et d'un framework de tests — nouvelles fonctionnalites |
 | **v1.3.0** | Hooks Claude Code — logging, validation, notifications, detection fin pipeline | Ajout de 6 hooks et d'un systeme d'observabilite complet — nouvelle fonctionnalite majeure |
+| **v1.4.0** | Tests fonctionnels, CI/CD GitHub Actions, politique SemVer | Nouveau framework de tests + pipeline CI — nouvelles fonctionnalites |
+| **v1.5.0** | Plugin system — CLI mugiwara, registry, manifests, SHA256, depends | Ajout du systeme de plugins complet — nouvelle fonctionnalite majeure |
+| **v1.6.0** | Dashboard web — SPA Svelte + API Express, 116 tests, job CI #5 | Ajout du dashboard d'observabilite — nouvelle fonctionnalite majeure |
+| **v1.7.0** | Governance & Release — agents monitoring + feature-flags, pipeline release, conventional commits, schema JSON, CHANGELOG auto | Ajout de 2 agents, pipeline release, infrastructure de gouvernance — nouvelles fonctionnalites |
 
 ---
 
@@ -269,7 +273,7 @@ Chaque version correspond a un fichier dans `docs/roadmap/` :
 | v1.4.0 | `docs/roadmap/v1.4.md` | Done |
 | v1.5.0 | `docs/roadmap/v1.5.md` | Done |
 | v1.6.0 | `docs/roadmap/v1.6.md` | Done |
-| v1.7.0 | `docs/roadmap/v1.7.md` | En cours |
+| v1.7.0 | `docs/roadmap/v1.7.md` | Done |
 
 Le plan strategique global est dans `docs/plan-v1.4-v2.0.md`.
 

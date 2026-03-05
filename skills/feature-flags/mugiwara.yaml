@@ -1,0 +1,19 @@
+name: feature-flags
+version: 1.7.0
+description: Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery
+category: infrastructure
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - feature-flags
+  - unleash
+  - launchdarkly
+  - progressive-delivery
+  - toggles
+checksum:
+  SKILL.md: "0e7ba82527469dcdf26737093c497d789554629e53692744044697e9bf8fe750"

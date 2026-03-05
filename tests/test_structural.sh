@@ -62,8 +62,8 @@ section() {
 # ── Expected agents (source of truth) ──────────────────────
 EXPECTED_AGENTS=(
     ace api-postman bartholomew bon-clay brook chopper
-    discovery doc-hunt franky incident jinbe law law-sql
-    luffy modernize morgans mugiwara nami onboard one_piece
+    discovery doc-hunt feature-flags franky incident jinbe law law-sql
+    luffy modernize monitoring morgans mugiwara nami onboard one_piece
     perona pre-launch robin sanji sanji-design sanji-dotnet
     sanji-flutter sanji-go sanji-i18n sanji-java sanji-python
     sanji-rust sanji-ts senor-pink shanks usopp vegapunk
