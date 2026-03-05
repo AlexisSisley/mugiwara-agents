@@ -13,6 +13,11 @@
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-agent-output.sh\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/run-post-agent-tests.sh\"",
+            "timeout": 120
           }
         ]
       },

@@ -1,13 +1,13 @@
 # Mugiwara Agents - One Piece Crew for Claude Code CLI
 
 [![CI](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-1.5.0-blue)
+![Version](https://img.shields.io/badge/version-1.6.0-blue)
 ![Agents](https://img.shields.io/badge/agents-40-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 40 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of 40 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. A **web dashboard** provides real-time observability of agent invocations, sessions, and pipeline executions. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -615,9 +615,29 @@ depends:
 
 Every manifest contains a pre-computed SHA256 checksum of its `SKILL.md`. The CLI uses these checksums to detect tampered or outdated agent files during `mugiwara update`.
 
+## Dashboard & Observability (v1.6)
+
+Since v1.6, the project includes a **web dashboard** for real-time observability of agent invocations, sessions, and pipeline executions. Built with **Svelte 4 + Vite 6** (frontend) and **Express 4 + TypeScript** (backend API), it reads the JSONL logs produced by the v1.3 hooks.
+
+```bash
+cd dashboard
+npm install
+npm run seed     # Generate 30 days of demo data
+npm run dev      # http://localhost:3000
+```
+
+**Features:**
+- Agent statistics view (invocations, success rate, avg duration)
+- Pipeline execution view (status, duration, agent chain)
+- Session history view (timeline, agent usage)
+- Global stats dashboard (KPIs, categories breakdown)
+- REST API with 5 endpoints (`/agents`, `/sessions`, `/pipelines`, `/stats`, `/health`)
+
+**Test coverage:** 116 tests (unit + integration), >97% coverage via Vitest.
+
 ## Testing & CI/CD (v1.4+)
 
-The project is validated by four parallel CI jobs on every push and PR:
+The project is validated by five parallel CI jobs on every push and PR:
 
 | Suite | File | Description |
 |-------|------|-------------|
@@ -625,6 +645,7 @@ The project is validated by four parallel CI jobs on every push and PR:
 | Functional tests | `tests/functional/run-functional-tests.sh` | Dry-run execution of all 40 agents with output validation |
 | Hooks tests | `tests/hooks/test-hooks.sh` | Automated tests for the 6 Claude Code hooks (logging, validation, notifications) |
 | Plugin tests | `tests/plugin/test_cli.sh` | CLI and plugin system validation (commands, manifests, registry) |
+| Dashboard tests | `dashboard/` (via `npm test`) | 116 unit + integration tests for the web dashboard (Vitest) |
 
 The CI pipeline is defined in `.github/workflows/ci.yml` and runs on Ubuntu with `jq` installed.
 
@@ -656,6 +677,11 @@ mugiwara-agents/
 │   └── settings.local.json      # Permissions & hooks config
 ├── .github/workflows/ci.yml     # CI pipeline (v1.4)
 ├── bin/mugiwara                  # Plugin CLI (v1.5)
+├── dashboard/                    # Web Dashboard (v1.6)
+│   ├── src/                      #   Svelte frontend (routes, components)
+│   ├── server/                   #   Express API (REST endpoints, JSONL parsers)
+│   ├── tests/                    #   Unit + integration tests (Vitest)
+│   └── package.json
 ├── lib/                          # CLI libraries (v1.5)
 │   ├── core.sh                   #   Utilities (colors, logging, errors)
 │   ├── registry.sh               #   Registry management
@@ -688,7 +714,7 @@ mugiwara-agents/
 | [documentation.md](./documentation.md) | Full technical documentation (Diataxis framework) |
 | [VERSIONING.md](./VERSIONING.md) | Semantic Versioning policy with decision tree |
 | [docs/mcp-servers.md](./docs/mcp-servers.md) | MCP Servers installation guide (9 servers) |
-| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 → v1.5) |
+| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 → v1.6) |
 | [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md) | Strategic plan through v2.0 |
 
 ## License

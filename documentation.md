@@ -18,7 +18,9 @@ Mugiwara Agents est un ecosysteme de **40 agents IA specialises** (Skills) pour 
 
 Le projet repose sur une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
-Depuis la v1.5, le projet inclut egalement un **systeme de plugins** avec un CLI `mugiwara`, un registre central (`registry.yaml`), des manifests par agent (`mugiwara.yaml`) avec checksums SHA256, et des dependances declarees pour les pipelines. Le projet dispose aussi d'un pipeline **CI/CD GitHub Actions** (v1.4) avec 4 suites de tests automatisees.
+Depuis la v1.5, le projet inclut egalement un **systeme de plugins** avec un CLI `mugiwara`, un registre central (`registry.yaml`), des manifests par agent (`mugiwara.yaml`) avec checksums SHA256, et des dependances declarees pour les pipelines. Le projet dispose aussi d'un pipeline **CI/CD GitHub Actions** (v1.4) avec 5 suites de tests automatisees.
+
+Depuis la v1.6, un **dashboard web** (Svelte 4 + Express 4 + TypeScript) offre une visualisation en temps reel des invocations d'agents, sessions et executions de pipelines. Il consomme les logs JSONL produits par les hooks v1.3 via une API REST.
 
 ### Philosophie architecturale
 
@@ -50,7 +52,8 @@ Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant v
 | Langue | Miroir de l'input | L'output s'adapte automatiquement a la langue de la demande |
 | Tool restrictions | `allowed-tools` par role | Chaque agent n'a acces qu'aux outils necessaires a sa mission |
 | Packaging | `mugiwara.yaml` manifest + registre YAML | Distribution par plugin, integrite par SHA256, dependances declaratives |
-| CI/CD | GitHub Actions, 4 jobs paralleles | Smoke, fonctionnel, hooks, plugins -- tests offline sans API key |
+| CI/CD | GitHub Actions, 5 jobs paralleles | Smoke, fonctionnel, hooks, plugins, dashboard -- tests offline sans API key |
+| Dashboard | Svelte 4 + Vite 6 + Express 4 + TypeScript | SPA legere, API REST, lecture JSONL, pas de base de donnees |
 | Versioning | SemVer strict (VERSIONING.md) | MAJOR/MINOR/PATCH avec politique documentee et arbre de decision |
 
 ### Architecture de l'ecosysteme
@@ -110,11 +113,18 @@ Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant v
                       └────────────────┘
 
                     ┌──────────────────────────┐
+                    │  DASHBOARD (v1.6)        │
+                    │  Svelte + Express + TS   │
+                    │  Agents | Pipelines |    │
+                    │  Sessions | Stats        │
+                    └──────────────────────────┘
+
+                    ┌──────────────────────────┐
                     │  CI/CD (v1.4)            │
                     │  GitHub Actions           │
-                    │  4 jobs paralleles        │
+                    │  5 jobs paralleles        │
                     │  smoke | func | hooks |   │
-                    │  plugin                   │
+                    │  plugin | dashboard       │
                     └──────────────────────────┘
 ```
 
@@ -273,7 +283,19 @@ mugiwara-agents/
 │   └── roadmap/                     # Notes de release par version
 │       ├── README.md                #   Index des versions
 │       ├── v1.0.md ... v1.5.md     #   Details par version
-├── tests/                           # Suites de tests (v1.2 → v1.5)
+├── dashboard/                       # Dashboard web (v1.6)
+│   ├── src/                         #   Frontend Svelte (routes, composants)
+│   │   ├── routes/                  #     Pages (agents, pipelines, sessions)
+│   │   └── lib/                     #     Composants reutilisables
+│   ├── server/                      #   Backend Express (API REST)
+│   │   ├── index.ts                 #     Serveur principal
+│   │   ├── routes/                  #     Endpoints REST
+│   │   └── parsers/                 #     Lecteurs JSONL
+│   ├── tests/                       #   Tests unitaires + integration (Vitest)
+│   │   ├── unit/                    #     Tests unitaires (data-loader, parsers, cache)
+│   │   └── integration/            #     Tests API (server, endpoints, sessions)
+│   └── package.json
+├── tests/                           # Suites de tests (v1.2 → v1.6)
 │   ├── test_structural.sh           #   Smoke tests structurels (342+ assertions)
 │   ├── functional/                  #   Tests fonctionnels (v1.4)
 │   │   ├── run-functional-tests.sh  #     Runner principal
@@ -347,9 +369,9 @@ Chaque agent possede un manifest `mugiwara.yaml` contenant :
 | `doc-hunt` | yamato, brook |
 | `api-postman` | bartholomew, perona, senor-pink |
 
-### 2.10 CI/CD (v1.4)
+### 2.10 CI/CD (v1.4+)
 
-Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 4 jobs paralleles :
+Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 5 jobs paralleles :
 
 | Job | Suite de tests | Description |
 |-----|----------------|-------------|
@@ -357,8 +379,41 @@ Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaq
 | `functional-tests` | `tests/functional/run-functional-tests.sh --dry-run` | Execution dry-run des 40 agents avec validation output |
 | `hooks-tests` | `tests/hooks/test-hooks.sh` | Tests automatises des 6 hooks Claude Code |
 | `plugin-tests` | `tests/plugin/test_cli.sh` | Tests du CLI et du systeme de plugins |
+| `dashboard-tests` | `dashboard/` (npm test) | 116 tests unitaires + integration pour le dashboard web (Vitest) |
 
 Aucune cle API ou secret n'est necessaire : tous les tests s'executent offline.
+
+### 2.11 Dashboard web (v1.6)
+
+Le dashboard est une SPA legere construite avec **Svelte 4 + Vite 6** (frontend) et **Express 4 + TypeScript** (backend API). Il lit directement les fichiers JSONL produits par les hooks v1.3 sans base de donnees.
+
+#### Endpoints API
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/agents` | Statistiques par agent (invocations, succes, duree moyenne) |
+| `GET /api/sessions` | Historique des sessions (timeline, agents utilises) |
+| `GET /api/pipelines` | Executions de pipelines (statut, duree, chaine d'agents) |
+| `GET /api/stats` | KPIs globaux (total agents, categories, smoke tests) |
+| `GET /api/health` | Statut de sante de l'API et des fichiers de donnees |
+
+#### Vues frontend
+
+| Vue | Description |
+|-----|-------------|
+| Agents | Liste des agents avec statistiques d'utilisation |
+| Pipelines | Historique des executions de pipelines |
+| Sessions | Timeline des sessions utilisateur |
+| Stats | Dashboard global avec KPIs et graphiques |
+
+#### Demarrage
+
+```bash
+cd dashboard
+npm install
+npm run seed     # Generer 30 jours de donnees de demo
+npm run dev      # Lancer le serveur sur http://localhost:3000
+```
 
 ---
 
@@ -617,7 +672,8 @@ mugiwara uninstall <agent>
 | v1.3.0 | 2026-03-02 | MINOR | Hooks Claude Code : logging JSONL, validation sync, notifications Slack, detection fin pipeline |
 | v1.4.0 | 2026-03-03 | MINOR | Tests fonctionnels, tests hooks, CI/CD GitHub Actions, politique SemVer (VERSIONING.md) |
 | v1.5.0 | 2026-03-04 | MINOR | Plugin system : CLI mugiwara, registry.yaml, 40 manifests, SHA256 checksums, pipeline depends, Franky code review |
+| v1.6.0 | 2026-03-05 | MINOR | Dashboard web : SPA Svelte + API Express, vues Agents/Pipelines/Sessions/Stats, 116 tests, job CI #5 |
 
 *v1.1.0 aurait du etre v1.0.1 (correction de bug). Voir VERSIONING.md pour la retrospective.
 
-Pour le plan strategique v1.6 a v2.0, voir [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md).
+Pour le plan strategique v1.7 a v2.0, voir [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md).

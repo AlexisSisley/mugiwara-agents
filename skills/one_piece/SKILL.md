@@ -240,6 +240,39 @@ demande des precisions :
 Si l'utilisateur nomme directement un agent (ex: "appelle Zorro", "lance /franky"),
 route directement sans classification ni evaluation de confiance.
 
+## Verification Automatique Post-Agent
+
+**IMPORTANT :** Apres chaque invocation d'un agent via l'outil `Skill`, un hook
+automatique (`run-post-agent-tests.sh`) lance les tests structurels du projet
+(`tests/test_structural.sh`). Ce mecanisme garantit qu'aucun agent n'a casse
+l'ecosysteme mugiwara.
+
+### Comportement attendu
+
+- **Si les tests passent** : un message `[POST-AGENT TEST] PASS` apparait dans
+  l'`additionalContext` du hook. Aucune action requise.
+- **Si les tests echouent** : un message `[POST-AGENT TEST] FAIL` apparait avec
+  la liste des tests en echec. **Tu DOIS alors :**
+  1. Analyser les erreurs listees dans le message
+  2. Informer l'utilisateur des regressions detectees
+  3. Proposer une action corrective (re-invocation de l'agent fautif, ou routage
+     vers `/franky` pour un audit correctif, ou vers `/vegapunk` si c'est un
+     probleme de structure d'agent)
+
+### Ce qui est teste automatiquement
+
+Les tests structurels verifient :
+- Presence de tous les dossiers et SKILL.md des agents attendus
+- Validite du YAML front matter (champs requis, valeurs attendues)
+- Coherence du contenu (reference a `$ARGUMENTS`, heading H1, longueur minimale)
+- Presence de `Skill` dans `allowed-tools` des pipelines
+- Parite entre `install.sh`, `uninstall.sh` et le dossier `skills/`
+- Coherence inter-agents (`model: opus`, `context: fork`, `disable-model-invocation: false`)
+
+### Agents exclus de la verification
+
+- `one_piece` lui-meme est exclu (il ne modifie pas de fichiers, il route uniquement)
+
 ## Regles de Format
 
 - Tout l'output doit etre dans la **meme langue que l'input** (francais si input francais, anglais si input anglais, etc.)

@@ -266,7 +266,10 @@ Chaque version correspond a un fichier dans `docs/roadmap/` :
 | v1.1.0 | `docs/roadmap/v1.1.md` | Done |
 | v1.2.0 | `docs/roadmap/v1.2.md` | Done |
 | v1.3.0 | `docs/roadmap/v1.3.md` | Done |
-| v1.4.0 | `docs/roadmap/v1.4.md` | En cours |
+| v1.4.0 | `docs/roadmap/v1.4.md` | Done |
+| v1.5.0 | `docs/roadmap/v1.5.md` | Done |
+| v1.6.0 | `docs/roadmap/v1.6.md` | Done |
+| v1.7.0 | `docs/roadmap/v1.7.md` | En cours |
 
 Le plan strategique global est dans `docs/plan-v1.4-v2.0.md`.
 

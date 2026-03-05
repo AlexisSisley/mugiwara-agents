@@ -119,9 +119,9 @@ Le projet mugiwara-agents a livre 4 versions en une journee (2026-03-02), passan
 ## Chronologie
 
 ```
-Mars 2026       : v1.4 — Tests fonctionnels & CI/CD
-Avril 2026      : v1.5 — Plugin System
-Mai 2026        : v1.6 — Dashboard Web
-Juin 2026       : v1.7 — Nouveaux agents & pipelines
+Mars 2026       : v1.4 — Tests fonctionnels & CI/CD          [DONE]
+Mars 2026       : v1.5 — Plugin System                       [DONE]
+Mars 2026       : v1.6 — Dashboard Web                       [DONE]
+Mars 2026       : v1.7 — Nouveaux agents & pipelines         [EN COURS]
 Septembre 2026  : v2.0 — Maturite ecosysteme
 ```
