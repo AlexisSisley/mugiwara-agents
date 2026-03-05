@@ -1,10 +1,13 @@
 # Mugiwara Agents - One Piece Crew for Claude Code CLI
 
 [![CI](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml)
+![Version](https://img.shields.io/badge/version-1.5.0-blue)
+![Agents](https://img.shields.io/badge/agents-40-orange)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 40 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of 40 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -74,7 +77,7 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 | Agent | Command | Role | Specialty |
 |-------|---------|------|-----------|
 | **One Piece** | `/one_piece` | Smart Router | Intelligent dispatcher. Describe any problem and it automatically routes to the best agent(s) or pipeline(s). No need to know the crew — just describe your need. |
-| **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the 4 core analysis agents in sequence from a single problem statement. The whole crew at once! |
+| **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the core analysis agents in sequence (Zorro, Sanji, Nami, Franky code review, Luffy) from a single problem statement. The whole crew at once! |
 
 ## Quick Start
 
@@ -95,6 +98,23 @@ Copy the skill directories to your Claude Code user skills folder:
 
 ```bash
 cp -r skills/* ~/.claude/skills/
+```
+
+#### Plugin CLI (v1.5+)
+
+You can also manage agents individually with the `mugiwara` CLI:
+
+```bash
+# Add bin/ to your PATH (add to ~/.bashrc or ~/.zshrc):
+export PATH="/path/to/mugiwara-agents/bin:$PATH"
+
+# Then use:
+mugiwara list              # List installed & available agents
+mugiwara install <agent>   # Install a single agent
+mugiwara uninstall <agent> # Remove a single agent
+mugiwara update            # Update all agents
+mugiwara search <query>    # Search agents by name or description
+mugiwara info <agent>      # Show agent details (version, category, checksum)
 ```
 
 ### Restart Claude Code
@@ -253,8 +273,9 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 ```
 1. /zorro [problem]     -> Functional specifications
 2. /sanji [problem]     -> Stack choice + architecture → auto-routes to sous-chef
-3. /nami  [problem]     -> Test & validation plan
-4. /luffy [summaries]   -> Strategic roadmap & KPIs
+3. /nami  [problem]     -> Test & validation plan (+ feedback loop)
+4. /franky [code]       -> Code review of generated code (v1.5)
+5. /luffy [summaries]   -> Strategic roadmap & KPIs
 ```
 
 **Code Quality Pipeline:**
@@ -549,6 +570,74 @@ All agents use these defaults:
 | `disable-model-invocation: true` | Yes | Manual invocation only via `/command` |
 | `allowed-tools` | Yes (all agents) | Role-specific tool restrictions (e.g., `Read, Glob, Grep` for analysts; `Read, Write, Edit, ...` for builders; `Read, Glob, Grep, Skill` for pipeline orchestrators) |
 
+## Plugin System (v1.5)
+
+Since v1.5, Mugiwara Agents ships with a **plugin management system** that treats each agent as an independent, versionable package.
+
+### Components
+
+| Component | File | Description |
+|-----------|------|-------------|
+| **CLI** | `bin/mugiwara` | Bash CLI with 6 commands: `list`, `install`, `uninstall`, `update`, `search`, `info` |
+| **Registry** | `registry.yaml` | Central index of all 40 agents with version, description and category |
+| **Manifests** | `skills/*/mugiwara.yaml` | Per-agent metadata: name, version, description, category, files, SHA256 checksums, dependencies |
+| **Core libs** | `lib/*.sh` | Modular shell libraries (core, registry, manifest, installer, commands) |
+
+### Agent Manifest Example
+
+Each agent has a `mugiwara.yaml` beside its `SKILL.md`:
+
+```yaml
+name: zorro
+version: 1.5.0
+description: "Business Analyst et Chef de Projet Senior"
+category: analysis
+files:
+  - SKILL.md
+checksum:
+  SKILL.md: "sha256:abc123..."
+```
+
+Pipeline manifests also declare their dependencies:
+
+```yaml
+name: mugiwara
+version: 1.5.0
+category: pipeline
+depends:
+  - zorro
+  - sanji
+  - nami
+  - luffy
+```
+
+### Integrity Verification
+
+Every manifest contains a pre-computed SHA256 checksum of its `SKILL.md`. The CLI uses these checksums to detect tampered or outdated agent files during `mugiwara update`.
+
+## Testing & CI/CD (v1.4+)
+
+The project is validated by four parallel CI jobs on every push and PR:
+
+| Suite | File | Description |
+|-------|------|-------------|
+| Smoke tests | `tests/test_structural.sh` | 342+ structural assertions (file existence, YAML validity, field coherence) |
+| Functional tests | `tests/functional/run-functional-tests.sh` | Dry-run execution of all 40 agents with output validation |
+| Hooks tests | `tests/hooks/test-hooks.sh` | Automated tests for the 6 Claude Code hooks (logging, validation, notifications) |
+| Plugin tests | `tests/plugin/test_cli.sh` | CLI and plugin system validation (commands, manifests, registry) |
+
+The CI pipeline is defined in `.github/workflows/ci.yml` and runs on Ubuntu with `jq` installed.
+
+## Versioning
+
+This project follows [Semantic Versioning](https://semver.org/). See [VERSIONING.md](./VERSIONING.md) for the full policy.
+
+| Bump | Trigger | Example |
+|------|---------|---------|
+| **MAJOR** | Breaking change (rename/remove agent, change YAML format) | `/zorro` becomes `/zoro` |
+| **MINOR** | New agent, pipeline, hook or feature | New `/sanji-swift` agent |
+| **PATCH** | Bug fix, doc correction, config adjustment | Fix prompt typo |
+
 ## Language Support
 
 All agents automatically respond in the same language as the input. Write your problem in French, English, or any language - the output will match.
@@ -557,6 +646,50 @@ All agents automatically respond in the same language as the input. Write your p
 
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed
 - Active Claude subscription with Opus model access
+
+## Project Structure
+
+```
+mugiwara-agents/
+├── .claude/
+│   ├── hooks/                    # Claude Code hooks (v1.3)
+│   └── settings.local.json      # Permissions & hooks config
+├── .github/workflows/ci.yml     # CI pipeline (v1.4)
+├── bin/mugiwara                  # Plugin CLI (v1.5)
+├── lib/                          # CLI libraries (v1.5)
+│   ├── core.sh                   #   Utilities (colors, logging, errors)
+│   ├── registry.sh               #   Registry management
+│   ├── manifest.sh               #   Manifest parsing & validation
+│   ├── installer.sh              #   Install/uninstall logic
+│   └── cmd_*.sh                  #   CLI commands (list, install, update, ...)
+├── docs/
+│   ├── mcp-servers.md            # MCP Servers installation guide
+│   ├── plan-v1.4-v2.0.md        # Strategic roadmap v1.4 → v2.0
+│   └── roadmap/                  # Per-version release notes
+├── tests/
+│   ├── test_structural.sh        # Smoke tests (342+ assertions)
+│   ├── functional/               # Functional tests (dry-run)
+│   ├── hooks/                    # Hooks tests
+│   └── plugin/                   # Plugin system tests
+├── skills/                       # 40 agents — each with SKILL.md + mugiwara.yaml
+├── registry.yaml                 # Central agent index (v1.5)
+├── install.sh                    # Full installation script
+├── uninstall.sh                  # Uninstallation script
+├── documentation.md              # Full technical documentation (Diataxis)
+├── VERSIONING.md                 # Semantic Versioning policy
+└── LICENSE                       # MIT
+```
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README.md](./README.md) | This file — overview, quick start, usage examples |
+| [documentation.md](./documentation.md) | Full technical documentation (Diataxis framework) |
+| [VERSIONING.md](./VERSIONING.md) | Semantic Versioning policy with decision tree |
+| [docs/mcp-servers.md](./docs/mcp-servers.md) | MCP Servers installation guide (9 servers) |
+| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 → v1.5) |
+| [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md) | Strategic plan through v2.0 |
 
 ## License
 

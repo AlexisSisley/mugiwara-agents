@@ -14,7 +14,9 @@ Suivi des evolutions du projet. Chaque section documente les ajouts, modificatio
 | v1.1 | 2026-03-02 | [v1.1.md](./v1.1.md) | Fix disable-model-invocation — agents accessibles cross-projet |
 | v1.2 | 2026-03-02 | [v1.2.md](./v1.2.md) | Smoke tests (342 assertions), fix uninstall.sh, fix morgans, agents law-sql & morgans |
 | v1.3 | 2026-03-02 | [v1.3.md](./v1.3.md) | Hooks Claude Code — logging, validation, notifications, chainage post-agent |
-| v1.4 | Mars 2026 | [v1.4.md](./v1.4.md) | Tests fonctionnels & CI/CD — framework de test, GitHub Actions, SemVer |
+| v1.4 | 2026-03-03 | [v1.4.md](./v1.4.md) | Tests fonctionnels & CI/CD — framework de test, GitHub Actions, SemVer |
+| v1.5 | 2026-03-04 | [v1.5.md](./v1.5.md) | Plugin system — CLI mugiwara, registry, manifests, SHA256, pipeline depends |
+| v1.6 | 2026-03-05 | [v1.6.md](./v1.6.md) | Dashboard & Observabilite — SPA web, API REST, CHANGELOG auto, Conventional Commits |
 
 ---
 
@@ -33,8 +35,14 @@ Idees et taches a venir (non priorisees) :
 - [x] Agent `morgans` — generateur d'emails de release QA & Prod (done v1.2)
 - [x] Hooks Claude Code pour automatiser des workflows post-agent (done v1.3)
 - [x] Tests automatises de chaque agent (smoke tests) — 6 suites, 342 assertions (done v1.2)
-- [ ] Tests fonctionnels — execution reelle des agents avec validation output (v1.4)
-- [ ] GitHub Actions CI — pipeline automatise (v1.4)
-- [ ] Politique SemVer formelle (v1.4)
-- [ ] Plugin system — packaging des agents en `.mcpb` ou plugin Claude Code (v1.5)
-- [ ] Dashboard web pour visualiser les outputs des pipelines (v1.6)
+- [x] Tests fonctionnels — execution reelle des agents avec validation output (done v1.4)
+- [x] GitHub Actions CI — pipeline automatise (done v1.4)
+- [x] Politique SemVer formelle — VERSIONING.md (done v1.4)
+- [x] Plugin system — CLI mugiwara, registry, manifests, SHA256, depends (done v1.5)
+- [x] Franky code review dans pipeline mugiwara (done v1.5)
+- [ ] Dashboard web pour visualiser les outputs des pipelines (v1.6 - en cours)
+- [ ] CHANGELOG automatique (v1.6 Phase 2)
+- [ ] Conventional Commits + commitlint hook (v1.6 Phase 1)
+- [ ] Schema JSON standardise pour les logs JSONL (v1.6 Phase 1)
+- [ ] Nouveaux agents (monitoring/alerting, feature flags) (v1.7)
+- [ ] Site Docusaurus, marketplace d'agents (v2.0)

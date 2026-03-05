@@ -5,7 +5,8 @@
 1. [Explanation -- Comprendre le projet](#1-explanation----comprendre-mugiwara-agents)
 2. [Reference -- Registre complet des agents](#2-reference----registre-complet-des-agents)
 3. [Tutorial -- Premier pas avec l'equipage](#3-tutorial----premier-pas-avec-lequipage)
-4. [How-to Guide -- Guides pratiques](#4-how-to-guides----guides-pratiques)
+4. [How-to Guides -- Guides pratiques](#4-how-to-guides----guides-pratiques)
+5. [Annexe -- Historique des versions](#5-annexe----historique-des-versions)
 
 ---
 
@@ -15,7 +16,9 @@
 
 Mugiwara Agents est un ecosysteme de **40 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
-Le projet ne contient aucun code executable. Il s'agit d'une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
+Le projet repose sur une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
+
+Depuis la v1.5, le projet inclut egalement un **systeme de plugins** avec un CLI `mugiwara`, un registre central (`registry.yaml`), des manifests par agent (`mugiwara.yaml`) avec checksums SHA256, et des dependances declarees pour les pipelines. Le projet dispose aussi d'un pipeline **CI/CD GitHub Actions** (v1.4) avec 4 suites de tests automatisees.
 
 ### Philosophie architecturale
 
@@ -33,6 +36,9 @@ Le pipeline principal integre un mecanisme de correction automatique. Apres le s
 **4. Agents actionnables**
 Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) ont aussi les outils Write/Edit pour appliquer directement les corrections ou produire les livrables. Les agents d'execution (Ace, Law) disposent des outils de build/run necessaires a leur mission (benchmarks, scripts data). Jinbe peut scanner l'historique git et les dependances pour detecter les secrets et vulnerabilites.
 
+**5. Distribution par plugins (v1.5)**
+Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant version, description, categorie, fichiers et checksums SHA256. Un registre central (`registry.yaml`) indexe les 40 agents. Un CLI bash modulaire (`bin/mugiwara`) permet d'installer, mettre a jour et gerer les agents individuellement. Les pipelines declarent leurs dependances inter-agents dans le champ `depends` de leur manifest.
+
 ### Choix techniques
 
 | Decision | Choix | Justification |
@@ -43,10 +49,20 @@ Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) o
 | Invocation | `disable-model-invocation: true` | Les agents ne s'auto-invoquent pas -- uniquement via commande `/` explicite |
 | Langue | Miroir de l'input | L'output s'adapte automatiquement a la langue de la demande |
 | Tool restrictions | `allowed-tools` par role | Chaque agent n'a acces qu'aux outils necessaires a sa mission |
+| Packaging | `mugiwara.yaml` manifest + registre YAML | Distribution par plugin, integrite par SHA256, dependances declaratives |
+| CI/CD | GitHub Actions, 4 jobs paralleles | Smoke, fonctionnel, hooks, plugins -- tests offline sans API key |
+| Versioning | SemVer strict (VERSIONING.md) | MAJOR/MINOR/PATCH avec politique documentee et arbre de decision |
 
 ### Architecture de l'ecosysteme
 
 ```
+                    ┌──────────────────────────┐
+                    │  PLUGIN SYSTEM (v1.5)    │
+                    │  bin/mugiwara CLI         │
+                    │  registry.yaml            │
+                    │  skills/*/mugiwara.yaml   │
+                    └────────────┬─────────────┘
+                                 │ gere
                           SMART ROUTER
                     ┌──────────────────────────┐
                     │  /one_piece               │
@@ -62,12 +78,13 @@ Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) o
                     │  /onboard (nouveau dev)   │
                     │  /modernize (migration)   │
                     │  /doc-hunt (doc externe)  │
+                    │  /api-postman (API→E2E)   │
                     └────────────┬─────────────┘
                                  │ orchestre
                     ┌────────────▼─────────────┐
                     │    CORE ANALYSIS          │
                     │  Zorro → Sanji → Nami →   │
-                    │  Luffy                    │
+                    │  Franky (review) → Luffy  │
                     └────────────┬─────────────┘
                                  │ delègue
             ┌────────────────────┼────────────────────┐
@@ -91,6 +108,14 @@ Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) o
                       │ senor-pink     │
                       │ morgans        │
                       └────────────────┘
+
+                    ┌──────────────────────────┐
+                    │  CI/CD (v1.4)            │
+                    │  GitHub Actions           │
+                    │  4 jobs paralleles        │
+                    │  smoke | func | hooks |   │
+                    │  plugin                   │
+                    └──────────────────────────┘
 ```
 
 ### Graphe de dependances inter-agents
@@ -101,6 +126,7 @@ Les agents specialistes qui identifient des problemes (Chopper, Shanks, Brook) o
 /discovery ──→ /vivi ──→ /mugiwara
 /mugiwara  ──→ /zorro ──→ /sanji ──→ /sanji-design (si UI) ──→ /sanji-<stack>
            ──→ /nami (verification + feedback loop)
+           ──→ /franky (code review post-Nami, v1.5)
            ──→ /luffy
 
 /incident  ──→ /chopper ──→ /franky ──→ /jinbe ──→ /usopp
@@ -174,7 +200,7 @@ Chaine ad-hoc recommandee :
 
 | # | Pipeline | Commande | Chaine d'agents | Tools autorises |
 |---|----------|---------|-----------------|-----------------|
-| 32 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Luffy | Read, Glob, Grep, Skill |
+| 32 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Franky (code review) -> Luffy | Read, Glob, Grep, Skill |
 | 33 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
 | 34 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
 | 35 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
@@ -217,55 +243,122 @@ Chaque SKILL.md respecte les conventions suivantes :
 ```
 mugiwara-agents/
 ├── .claude/
-│   └── settings.local.json      # Permissions git pour le repo
-├── .gitignore                    # .DS_Store, Thumbs.db, *.log
-├── LICENSE                       # MIT License
-├── README.md                     # Documentation principale
-├── install.sh                    # Script d'installation automatique
-├── uninstall.sh                  # Script de desinstallation
-├── documentation.md              # Documentation technique (ce fichier)
-└── skills/
-    ├── ace/SKILL.md              # Performance Engineer
-    ├── bartholomew/SKILL.md      # Local API Analyzer
-    ├── brook/SKILL.md            # Technical Writer
-    ├── chopper/SKILL.md          # Debugger & Diagnostician
-    ├── discovery/SKILL.md        # Pipeline: Product Discovery
-    ├── doc-hunt/SKILL.md         # Pipeline: Documentation Hunting
-    ├── franky/SKILL.md           # Code Reviewer
-    ├── incident/SKILL.md         # Pipeline: Incident Response
-    ├── jinbe/SKILL.md            # SecOps & Compliance
-    ├── law/SKILL.md              # Data Engineer
-    ├── law-sql/SKILL.md          # SQL Specialist & Doc-to-SQL Converter
-    ├── luffy/SKILL.md            # Program Manager
-    ├── modernize/SKILL.md        # Pipeline: Modernization
-    ├── morgans/SKILL.md          # Release Email Generator (QA & Prod)
-    ├── mugiwara/SKILL.md         # Pipeline: Full Analysis
-    ├── nami/SKILL.md             # QA Lead
-    ├── onboard/SKILL.md          # Pipeline: Onboarding
-    ├── one_piece/SKILL.md        # Smart Router
-    ├── perona/SKILL.md           # Postman Collection Creator
-    ├── senor-pink/SKILL.md       # E2E Test Collection Creator
-    ├── api-postman/SKILL.md      # Pipeline: API → Postman → E2E
-    ├── bon-clay/SKILL.md         # Easter Egg Architect (secret)
-    ├── pre-launch/SKILL.md       # Pipeline: Pre-Launch
-    ├── robin/SKILL.md            # System Cartographer
-    ├── sanji/SKILL.md            # Architect & Tech Lead
-    ├── sanji-design/SKILL.md     # Sous-Chef Design UI/UX
-    ├── sanji-dotnet/SKILL.md     # Sous-Chef C# / .NET
-    ├── sanji-flutter/SKILL.md    # Sous-Chef Flutter / Dart
-    ├── sanji-go/SKILL.md         # Sous-Chef Go
-    ├── sanji-i18n/SKILL.md       # Sous-Chef Traduction & i18n
-    ├── sanji-java/SKILL.md       # Sous-Chef Java / Kotlin
-    ├── sanji-python/SKILL.md     # Sous-Chef Python
-    ├── sanji-rust/SKILL.md       # Sous-Chef Rust
-    ├── sanji-ts/SKILL.md         # Sous-Chef TypeScript
-    ├── shanks/SKILL.md           # Refactoring & Migration
-    ├── usopp/SKILL.md            # DevOps & IaC
-    ├── vegapunk/SKILL.md         # Meta-Auditor
-    ├── vivi/SKILL.md             # Product Manager & UX
-    ├── yamato/SKILL.md           # Tech Intelligence
-    └── zorro/SKILL.md            # Business Analyst
+│   ├── hooks/                      # Hooks Claude Code (v1.3)
+│   │   ├── log-agent-output.sh     #   Logging JSONL des outputs agents
+│   │   ├── validate-agent-output.sh#   Validation synchrone des outputs
+│   │   ├── log-session.sh          #   Logging des sessions
+│   │   ├── notify-slack.sh         #   Notifications Slack
+│   │   ├── notify-complete.sh      #   Detection fin pipeline
+│   │   └── run-smoke-tests.sh      #   Smoke tests post-modification
+│   └── settings.local.json         # Permissions & hooks config
+├── .github/
+│   └── workflows/ci.yml            # Pipeline CI GitHub Actions (v1.4)
+├── .gitignore                       # .DS_Store, Thumbs.db, *.log
+├── bin/
+│   └── mugiwara                     # CLI Plugin Manager (v1.5)
+├── lib/                             # Librairies CLI (v1.5)
+│   ├── core.sh                      #   Utilitaires (couleurs, logging, erreurs)
+│   ├── registry.sh                  #   Gestion du registre
+│   ├── manifest.sh                  #   Lecture/validation des manifests
+│   ├── installer.sh                 #   Logique d'installation/desinstallation
+│   ├── cmd_install.sh               #   Commande `install`
+│   ├── cmd_uninstall.sh             #   Commande `uninstall`
+│   ├── cmd_update.sh                #   Commande `update`
+│   ├── cmd_list.sh                  #   Commande `list`
+│   ├── cmd_search.sh                #   Commande `search`
+│   └── cmd_info.sh                  #   Commande `info`
+├── docs/
+│   ├── mcp-servers.md               # Guide d'installation MCP Servers
+│   ├── plan-v1.4-v2.0.md           # Plan strategique v1.4 → v2.0
+│   └── roadmap/                     # Notes de release par version
+│       ├── README.md                #   Index des versions
+│       ├── v1.0.md ... v1.5.md     #   Details par version
+├── tests/                           # Suites de tests (v1.2 → v1.5)
+│   ├── test_structural.sh           #   Smoke tests structurels (342+ assertions)
+│   ├── functional/                  #   Tests fonctionnels (v1.4)
+│   │   ├── run-functional-tests.sh  #     Runner principal
+│   │   ├── test-prompts.json        #     Prompts de test par agent
+│   │   └── validate-output.sh       #     Validateur generique d'output
+│   ├── hooks/                       #   Tests des hooks (v1.4)
+│   │   ├── test-hooks.sh            #     Suite de tests pour les 6 hooks
+│   │   └── mock-event.json          #     Fixtures d'events simules
+│   └── plugin/                      #   Tests du systeme de plugins (v1.5)
+│       └── test_cli.sh              #     Tests CLI + manifests + registre
+├── skills/                          # 40 agents (chacun avec SKILL.md + mugiwara.yaml)
+│   ├── ace/                         #   Performance Engineer
+│   │   ├── SKILL.md
+│   │   └── mugiwara.yaml            #   Manifest plugin (v1.5)
+│   ├── ... (40 agents au total)
+│   └── zorro/
+│       ├── SKILL.md
+│       └── mugiwara.yaml
+├── registry.yaml                    # Index central des agents (v1.5)
+├── install.sh                       # Script d'installation (tous les agents)
+├── uninstall.sh                     # Script de desinstallation
+├── documentation.md                 # Documentation technique Diataxis (ce fichier)
+├── VERSIONING.md                    # Politique de versioning SemVer (v1.4)
+├── LICENSE                          # MIT License
+└── README.md                        # Documentation principale
 ```
+
+### 2.9 Systeme de plugins (v1.5)
+
+#### CLI `mugiwara`
+
+Le CLI bash modulaire (`bin/mugiwara`) offre 6 commandes pour gerer les agents comme des plugins :
+
+| Commande | Description |
+|----------|-------------|
+| `mugiwara list` | Lister les agents installes et disponibles |
+| `mugiwara install <agent>` | Installer un agent depuis le registre |
+| `mugiwara uninstall <agent>` | Supprimer un agent |
+| `mugiwara update` | Mettre a jour tous les agents |
+| `mugiwara search <query>` | Rechercher un agent par nom/description |
+| `mugiwara info <agent>` | Afficher les details d'un agent (version, categorie, checksum) |
+
+#### Registre central (`registry.yaml`)
+
+Fichier YAML a la racine du projet indexant les 40 agents avec :
+- `version` : version SemVer de l'agent
+- `description` : description courte
+- `category` : categorie (analysis, pipeline, security, data, etc.)
+
+#### Manifest agent (`mugiwara.yaml`)
+
+Chaque agent possede un manifest `mugiwara.yaml` contenant :
+- `name` : identifiant unique
+- `version` : version SemVer (1.5.0)
+- `description` : description courte
+- `category` : categorie
+- `files` : liste des fichiers de l'agent
+- `checksum` : hash SHA256 de chaque fichier (integrite)
+- `depends` : agents requis (pour les pipelines uniquement)
+
+#### Dependances des pipelines
+
+| Pipeline | Depends |
+|----------|---------|
+| `mugiwara` | zorro, sanji, nami, luffy |
+| `discovery` | vivi, mugiwara |
+| `incident` | chopper, franky, jinbe, usopp |
+| `pre-launch` | nami, franky, jinbe, usopp, ace, brook |
+| `onboard` | robin, franky, brook |
+| `modernize` | yamato, robin, law, sanji, shanks, usopp |
+| `doc-hunt` | yamato, brook |
+| `api-postman` | bartholomew, perona, senor-pink |
+
+### 2.10 CI/CD (v1.4)
+
+Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 4 jobs paralleles :
+
+| Job | Suite de tests | Description |
+|-----|----------------|-------------|
+| `smoke-tests` | `tests/test_structural.sh` | 342+ assertions structurelles (existence fichiers, YAML valide, coherence) |
+| `functional-tests` | `tests/functional/run-functional-tests.sh --dry-run` | Execution dry-run des 40 agents avec validation output |
+| `hooks-tests` | `tests/hooks/test-hooks.sh` | Tests automatises des 6 hooks Claude Code |
+| `plugin-tests` | `tests/plugin/test_cli.sh` | Tests du CLI et du systeme de plugins |
+
+Aucune cle API ou secret n'est necessaire : tous les tests s'executent offline.
 
 ---
 
@@ -281,6 +374,13 @@ chmod +x install.sh
 ```
 
 Le script copie les 40 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+
+**Alternative (v1.5+)** — Installer un agent individuel avec le CLI :
+
+```bash
+export PATH="/chemin/vers/mugiwara-agents/bin:$PATH"
+mugiwara install zorro
+```
 
 ### Etape 2 : Redemarrer Claude Code
 
@@ -315,7 +415,7 @@ Pour une analyse complete d'un probleme avec scaffolding de projet :
 /mugiwara Construire un marketplace connectant freelancers et PME
 ```
 
-Le pipeline orchestre automatiquement : Zorro -> Sanji (+ sous-chef adapte) -> Nami (+ boucle de correction) -> Luffy.
+Le pipeline orchestre automatiquement : Zorro -> Sanji (+ sous-chef adapte) -> Nami (+ boucle de correction) -> Franky (code review) -> Luffy.
 
 ---
 
@@ -448,7 +548,48 @@ Si One Piece hesite entre plusieurs options, il vous presente un tableau de choi
 /one_piece Lance Chopper sur cette stack trace : TypeError at line 42
 ```
 
+### Comment gerer les agents avec le CLI (v1.5)
+
+Le CLI `mugiwara` permet de gerer les agents individuellement sans passer par `install.sh` :
+
+```bash
+# Ajouter le CLI au PATH (une seule fois)
+export PATH="/chemin/vers/mugiwara-agents/bin:$PATH"
+
+# Lister les agents installes et disponibles
+mugiwara list
+
+# Installer un agent specifique
+mugiwara install franky
+
+# Installer un pipeline (installe aussi ses dependances)
+mugiwara install incident
+
+# Rechercher un agent par mot-cle
+mugiwara search security
+
+# Voir les details d'un agent (version, categorie, checksum)
+mugiwara info zorro
+
+# Mettre a jour tous les agents installes
+mugiwara update
+
+# Desinstaller un agent specifique
+mugiwara uninstall bon-clay
+```
+
+### Comment verifier l'integrite des agents
+
+Chaque manifest `mugiwara.yaml` contient un checksum SHA256 de son `SKILL.md`. Le CLI compare ce checksum lors de `mugiwara update` pour detecter les fichiers modifies ou corrompus.
+
+```bash
+mugiwara info zorro
+# Affiche : version, description, categorie, checksum SHA256
+```
+
 ### Comment desinstaller les agents
+
+**Methode 1** — Desinstallation complete :
 
 ```bash
 cd mugiwara-agents
@@ -457,3 +598,26 @@ chmod +x uninstall.sh
 ```
 
 Le script demande confirmation avant de supprimer les dossiers d'agents de `~/.claude/skills/`.
+
+**Methode 2** — Desinstallation individuelle (v1.5) :
+
+```bash
+mugiwara uninstall <agent>
+```
+
+---
+
+## 5. Annexe -- Historique des versions
+
+| Version | Date | Type SemVer | Contenu principal |
+|---------|------|-------------|-------------------|
+| v1.0.0 | 2026-03-02 | MAJOR | Release initiale : 38 agents, 8 pipelines, smart router, MCP servers |
+| v1.1.0 | 2026-03-02 | PATCH* | Fix `disable-model-invocation` — agents accessibles cross-projet |
+| v1.2.0 | 2026-03-02 | MINOR | Smoke tests (342 assertions), agents law-sql & morgans, guide MCP, fix uninstall.sh |
+| v1.3.0 | 2026-03-02 | MINOR | Hooks Claude Code : logging JSONL, validation sync, notifications Slack, detection fin pipeline |
+| v1.4.0 | 2026-03-03 | MINOR | Tests fonctionnels, tests hooks, CI/CD GitHub Actions, politique SemVer (VERSIONING.md) |
+| v1.5.0 | 2026-03-04 | MINOR | Plugin system : CLI mugiwara, registry.yaml, 40 manifests, SHA256 checksums, pipeline depends, Franky code review |
+
+*v1.1.0 aurait du etre v1.0.1 (correction de bug). Voir VERSIONING.md pour la retrospective.
+
+Pour le plan strategique v1.6 a v2.0, voir [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md).

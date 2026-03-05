@@ -2,8 +2,8 @@
 # Mugiwara Agents - CI Pipeline
 # ============================================================
 # Runs all test suites on every push to main and pull request.
-# Four parallel jobs: smoke tests, functional tests (dry-run),
-# hooks tests, and plugin system tests.
+# Five parallel jobs: smoke tests, functional tests (dry-run),
+# hooks tests, plugin system tests, and dashboard tests.
 #
 # No secrets or API keys required — all tests run offline.
 # ============================================================
@@ -87,3 +87,39 @@ jobs:
           chmod +x tests/plugin/test_cli.sh
           chmod +x bin/mugiwara
           bash tests/plugin/test_cli.sh
+
+  # ── Job 5: Dashboard Tests ──────────────────────────────────
+  dashboard-tests:
+    name: Dashboard Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        working-directory: dashboard
+        run: npm ci
+
+      - name: Type check (server)
+        working-directory: dashboard
+        run: npx tsc --noEmit -p tsconfig.server.json
+
+      - name: Type check (frontend)
+        working-directory: dashboard
+        run: npx svelte-check --tsconfig ./tsconfig.json
+
+      - name: Run tests with coverage
+        working-directory: dashboard
+        run: npx vitest run --coverage
+
+      - name: Build frontend
+        working-directory: dashboard
+        run: npx vite build
