@@ -1,47 +1,49 @@
 /* ============================================================
    Mugiwara Dashboard - Global Styles & Design Tokens
-   Galley-La Design System v1.0
+   Galley-La Design System v2.1
    ============================================================ */
-/* "People's dreams never end!" - Marshall D. Teach              */
-/* If you found this, you have the spirit of a true pirate.      */
-/* ============================================================ */
 
 /* ── CSS Custom Properties (Design Tokens) ───────────────────── */
 :root {
-  /* Background */
-  --color-bg: #0B0E14;
-  --color-bg-alt: #111621;
-  --color-surface: #161B26;
-  --color-surface-hover: #1C2333;
-  --color-surface-active: #232B3E;
+  /* Background — Clean dark slate */
+  --color-bg: #0F1117;
+  --color-bg-alt: #161821;
+  --color-surface: #1C1E2B;
+  --color-surface-hover: #252836;
+  --color-surface-active: #2D3041;
 
-  /* Primary - Grand Line Gold */
-  --color-primary: #E8A317;
-  --color-primary-light: #F2C14E;
-  --color-primary-dark: #B8820D;
+  /* Primary — Luffy's Straw Hat (vibrant manga red) */
+  --color-primary: #E63946;
+  --color-primary-light: #FF5C6A;
+  --color-primary-dark: #B81C2A;
 
-  /* Secondary - Straw Hat Red */
-  --color-secondary: #C0392B;
-  --color-secondary-light: #E74C3C;
+  /* Secondary — Ocean Teal (Grand Line sea) */
+  --color-secondary: #38BDF8;
+  --color-secondary-light: #7DD3FC;
+
+  /* Accent — Nami's Log Pose Orange */
+  --color-accent: #FB923C;
+  --color-accent-light: #FDBA74;
 
   /* Text */
-  --color-text-primary: #E6E8ED;
-  --color-text-secondary: #8B92A5;
-  --color-text-tertiary: #5A6178;
+  --color-text-primary: #E8ECF4;
+  --color-text-secondary: #9CA3B8;
+  --color-text-tertiary: #5C6378;
 
   /* Semantic */
-  --color-success: #16A34A;
-  --color-success-bg: #0A2E1A;
-  --color-error: #DC2626;
-  --color-error-bg: #2E0A0A;
-  --color-warning: #EAB308;
-  --color-warning-bg: #2E2A08;
-  --color-info: #3B82F6;
-  --color-info-bg: #0A1A2E;
+  --color-success: #34D399;
+  --color-success-bg: #0D2E23;
+  --color-error: #F87171;
+  --color-error-bg: #2D1215;
+  --color-warning: #FBBF24;
+  --color-warning-bg: #2D2506;
+  --color-info: #60A5FA;
+  --color-info-bg: #0C1A33;
 
-  /* Border */
-  --color-border: #232B3E;
-  --color-border-light: #2D3548;
+  /* Border — Subtle and clean */
+  --color-border: #2A2D3A;
+  --color-border-light: #363A4A;
+  --color-border-strong: #4A4F64;
 
   /* Category Colors */
   --cat-pipeline: #818CF8;
@@ -60,7 +62,8 @@
   --cat-performance: #F87171;
   --cat-intelligence: #A78BFA;
 
-  /* Typography */
+  /* Typography — Manga: Bangers for headings, Inter for body */
+  --font-manga: 'Bangers', 'Impact', cursive;
   --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
@@ -75,18 +78,20 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* Radius */
+  /* Radius — Manga: slightly rounded, not pill-shaped */
   --radius-sm: 4px;
   --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+  /* Shadows — Manga-style: hard/offset shadows like speech bubbles */
+  --shadow-sm: 2px 2px 0px rgba(0, 0, 0, 0.5);
+  --shadow-md: 3px 3px 0px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 5px 5px 0px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 6px 6px 0px rgba(0, 0, 0, 0.6);
+  --shadow-glow-red: 0 0 20px rgba(230, 57, 70, 0.3);
+  --shadow-glow-blue: 0 0 20px rgba(56, 189, 248, 0.3);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -94,8 +99,8 @@
   --transition-slow: 300ms ease;
 
   /* Layout */
-  --sidebar-width: 220px;
-  --header-height: 56px;
+  --sidebar-width: 230px;
+  --header-height: 60px;
   --content-max-width: 1400px;
 }
 
@@ -121,6 +126,10 @@ body {
   color: var(--color-text-primary);
   background-color: var(--color-bg);
   min-width: 1024px;
+  /* Subtle ambient gradient */
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(230, 57, 70, 0.03) 0%, transparent 50%);
 }
 
 a {
@@ -132,10 +141,15 @@ a:hover {
   color: var(--color-primary-light);
 }
 
+::selection {
+  background-color: rgba(230, 57, 70, 0.35);
+  color: var(--color-text-primary);
+}
+
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -144,11 +158,12 @@ a:hover {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border-light);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-tertiary);
+  background: var(--color-secondary);
 }
 
 /* ── Animations ──────────────────────────────────────────────── */
@@ -163,8 +178,8 @@ a:hover {
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-in-right {
@@ -178,21 +193,66 @@ a:hover {
 }
 
 @keyframes flash-update {
-  0% { background-color: rgba(232, 163, 23, 0.15); }
+  0% { background-color: rgba(56, 189, 248, 0.2); }
   100% { background-color: transparent; }
+}
+
+/* Pop-in entrance animation */
+@keyframes manga-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
 }
 
 .anim-spin { animation: spin 800ms linear infinite; }
 .anim-pulse { animation: pulse-live 2s ease-in-out infinite; }
-.anim-fade-in { animation: fade-in 200ms ease forwards; }
+.anim-fade-in { animation: fade-in 250ms ease forwards; }
 .anim-slide-in { animation: slide-in-right 200ms ease forwards; }
 .anim-slide-out { animation: slide-out-right 150ms ease forwards; }
 .anim-flash { animation: flash-update 600ms ease forwards; }
+.anim-pop { animation: manga-pop 300ms ease forwards; }
+.anim-float { animation: gentle-float 3s ease-in-out infinite; }
 
 /* ── Utility Classes ─────────────────────────────────────────── */
 .mono { font-family: var(--font-mono); }
+.manga { font-family: var(--font-manga); letter-spacing: 0.04em; }
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Manga-style decorative line (used as divider) */
+.manga-divider {
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-primary));
+  border: none;
+  border-radius: 2px;
+}
+
+/* Speed lines background effect (subtle) */
+.speed-lines {
+  position: relative;
+}
+.speed-lines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(56, 189, 248, 0.015) 10px,
+    rgba(56, 189, 248, 0.015) 11px
+  );
+  pointer-events: none;
+  z-index: 0;
 }
