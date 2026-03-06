@@ -11,20 +11,43 @@ Entries for v1.0.0 through v1.6.0 were written retroactively from roadmaps and g
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-03-06
+
+### Added
+- **Agent Iceburg** (`/iceburg` ou `/docker`) -- Docker : Dockerfile multi-stage, docker-compose, Docker Swarm, Kubernetes, Helm charts, conteneurs Windows
+- **Agent Paulie** (`/paulie` ou `/iis`) -- IIS : web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell
+- **Agent Sabo** (`/sabo` ou `/firebase`) -- Firebase : Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Extensions, Emulator Suite
+- **Agent Coby** (`/coby` ou `/infra-reseau`) -- Infrastructure reseau : firewall (iptables, pf, Windows Firewall), DNS, load balancing (HAProxy, Nginx), VPN, VLAN, SD-WAN
+- SKILL.md et mugiwara.yaml pour chaque nouvel agent
+- 138 tests de validation syntaxique (Dockerfile, YAML, XML, JSON, Security Rules)
+- 4 nouveaux jobs CI dans GitHub Actions (jobs 8-11 : docker, iis, firebase, infra-reseau)
+- Registry mis a jour avec 50 entrees (46 agents uniques + 4 alias OP)
+- Dashboard : correction du rendu emoji dans la Sidebar pour Vite/Svelte
+- Dashboard : nouveaux composants ameliores (Badge, Drawer, Header, Pagination, SearchInput, StatCard, CategoryTag)
+- Easter egg Konami (`konami.ts`) et Nakama Roll (`nakama-roll.ts`) dans le dashboard
+- Design system v2.0 : palette dark slate (#0F1117), ocean blue (#38BDF8), neubrutalism manga
+
+### Changed
+- Palette de couleurs du dashboard : remplacement du parchment par dark slate, gold par ocean blue
+- Icones de la Sidebar : remplacement des caracteres pirate unicode par des emojis standard
+- Pages AgentsPage, PipelinesPage, SessionsPage ameliorees
+
+## [1.7.0] - 2026-03-05
+
 ### Added
 - Conventional Commits + commitlint hook (US-701)
 - JSON Schema for JSONL agent event logs (US-702)
 - CHANGELOG.md with retroactive history (US-703)
-- Agent Monitoring/Alerting — Prometheus + Grafana (US-704)
+- Agent Monitoring/Alerting -- Prometheus + Grafana (US-704)
 - Tests for Monitoring agent (US-705)
-- Agent Monitoring enrichi — PagerDuty + OpsGenie integrations (US-706)
-- Agent Feature Flags — env-based, Unleash, LaunchDarkly (US-707)
+- Agent Monitoring enrichi -- PagerDuty + OpsGenie integrations (US-706)
+- Agent Feature Flags -- env-based, Unleash, LaunchDarkly (US-707)
 - Tests for Feature Flags agent (US-708)
 - CI pipeline extended with monitoring-tests and feature-flags-tests jobs (US-709)
 - Registry updated with feature-flags agent (42 agents total) (US-710)
-- Automated Release pipeline — bump, changelog, morgans email, git tag, GitHub Release (US-711)
-- Morgans integration in Release pipeline — HTML release email generation (US-712)
-- Agent Feature Flags enrichi — LaunchDarkly SDK + comparison matrix (US-713)
+- Automated Release pipeline -- bump, changelog, morgans email, git tag, GitHub Release (US-711)
+- Morgans integration in Release pipeline -- HTML release email generation (US-712)
+- Agent Feature Flags enrichi -- LaunchDarkly SDK + comparison matrix (US-713)
 - Schema event enum extended with `release_created` and `flag_evaluation` event types
 - Release pipeline hardened with registry consistency validation step
 - Monitoring agent enriched with PagerDuty/OpsGenie dev/staging testing strategy (Section 5.4)
@@ -113,7 +136,9 @@ Entries for v1.0.0 through v1.6.0 were written retroactively from roadmaps and g
 - Script `install.sh` et `uninstall.sh`
 - README.md et documentation initiale
 
-[Unreleased]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.5.0-beta.1...v1.6.0
 [1.5.0]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.4.0...v1.5.0-beta.1
 [1.4.0]: https://github.com/AlexisSisley/mugiwara-agents/compare/v1.3.0...v1.4.0

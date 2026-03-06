@@ -1,13 +1,13 @@
 # Mugiwara Agents - One Piece Crew for Claude Code CLI
 
 [![CI](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-1.7.0-blue)
-![Agents](https://img.shields.io/badge/agents-42-orange)
+![Version](https://img.shields.io/badge/version-1.8.0-blue)
+![Agents](https://img.shields.io/badge/agents-46-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 42 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece crew member. Together, they form a complete software engineering pipeline — from product discovery to deployment, with shortcut pipelines for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. A **web dashboard** provides real-time observability of agent invocations, sessions, and pipeline executions. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of 46 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece character. Together, they form a complete software engineering pipeline — from product discovery to deployment and infrastructure management, with shortcut pipelines for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. A **web dashboard** provides real-time observability of agent invocations, sessions, and pipeline executions. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -43,6 +43,15 @@
 | **Morgans** | `/morgans` | Release Email Generator | Big News Morgans broadcasts every release. Generates professional release emails for QA (test-oriented) and Production (stakeholder-oriented) deployments, with changelog classification, test perimeters, rollback plans, and post-deployment checklists. |
 | **Monitoring** | `/monitoring` | Monitoring & Alerting Engineer | Observability expert. Configures Prometheus scraping, Grafana dashboards, alerting rules, PagerDuty/OpsGenie escalation policies, and monitoring best practices. |
 | **Feature-Flags** | `/feature-flags` | Feature Flags Strategist | Progressive rollout expert. Designs env-based, Unleash, and LaunchDarkly feature flag strategies, A/B testing, rollout plans, and flag lifecycle management. |
+
+### Infrastructure Agents (v1.8)
+
+| Agent | Command | Alias | Specialty |
+|-------|---------|-------|-----------|
+| **Iceburg** | `/iceburg` | `/docker` | Docker expert. Dockerfile multi-stage, docker-compose, Docker Swarm, Kubernetes (pods, deployments, services, ingress), Helm charts, container security, Windows containers. |
+| **Paulie** | `/paulie` | `/iis` | IIS specialist. web.config, application pools, SSL/TLS bindings, URL Rewrite, Application Request Routing (ARR), Web Deploy, PowerShell IIS management. |
+| **Sabo** | `/sabo` | `/firebase` | Firebase architect. Authentication (Email, Google, Anonymous, Custom Claims), Firestore (modeling, queries, indexes, Security Rules), Hosting, Cloud Functions, Storage, FCM, Extensions, Emulator Suite. |
+| **Coby** | `/coby` | `/infra-reseau` | Infrastructure network engineer. Firewall (iptables, pf, Windows Firewall), DNS (BIND, Windows DNS), load balancing (HAProxy, Nginx, Azure LB), VPN (WireGuard, IPSec, OpenVPN), VLAN, SD-WAN. |
 
 ### Sanji's Kitchen — Specialist Sous-Chefs
 
@@ -581,7 +590,7 @@ Since v1.5, Mugiwara Agents ships with a **plugin management system** that treat
 | Component | File | Description |
 |-----------|------|-------------|
 | **CLI** | `bin/mugiwara` | Bash CLI with 6 commands: `list`, `install`, `uninstall`, `update`, `search`, `info` |
-| **Registry** | `registry.yaml` | Central index of all 42 agents with version, description and category |
+| **Registry** | `registry.yaml` | Central index of all 50 agents (46 unique + 4 OP aliases) with version, description and category |
 | **Manifests** | `skills/*/mugiwara.yaml` | Per-agent metadata: name, version, description, category, files, SHA256 checksums, dependencies |
 | **Core libs** | `lib/*.sh` | Modular shell libraries (core, registry, manifest, installer, commands) |
 
@@ -653,21 +662,36 @@ Since v1.7, the project enforces **Conventional Commits** via commitlint + Husky
 - `CHANGELOG.md` — Auto-generated changelog (v1.0 to v1.7)
 - `.github/workflows/release.yml` — Automated release pipeline
 
-**Test coverage:** 42 agents validated, 7 CI jobs (smoke, functional, hooks, plugin, dashboard, monitoring, feature-flags).
+**Test coverage:** 46 agents validated, 11 CI jobs (smoke, functional, hooks, plugin, dashboard, monitoring, feature-flags, docker, iis, firebase, infra-reseau).
+
+## Infrastructure Agents (v1.8)
+
+Since v1.8, the project covers the full deployment lifecycle with four new infrastructure agents, each named after a Water 7 / One Piece character:
+
+- **Iceburg** (`/iceburg` or `/docker`) -- Docker containerization from Dockerfile to Kubernetes orchestration
+- **Paulie** (`/paulie` or `/iis`) -- IIS configuration, application pools, SSL/TLS, URL Rewrite, and PowerShell automation
+- **Sabo** (`/sabo` or `/firebase`) -- Firebase platform (Auth, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)
+- **Coby** (`/coby` or `/infra-reseau`) -- Network infrastructure (firewall, DNS, load balancing, VPN, VLAN, SD-WAN)
+
+Each agent has both a One Piece character name and a technical alias. The registry contains 50 entries (46 unique agents + 4 aliases). 138 syntax validation tests cover Dockerfile, YAML, XML, JSON, and Firebase Security Rules.
 
 ## Testing & CI/CD (v1.4+)
 
-The project is validated by seven parallel CI jobs on every push and PR:
+The project is validated by eleven parallel CI jobs on every push and PR:
 
 | Suite | File | Description |
 |-------|------|-------------|
 | Smoke tests | `tests/test_structural.sh` | 342+ structural assertions (file existence, YAML validity, field coherence) |
-| Functional tests | `tests/functional/run-functional-tests.sh` | Dry-run execution of all 42 agents with output validation |
+| Functional tests | `tests/functional/run-functional-tests.sh` | Dry-run execution of all 46 agents with output validation |
 | Hooks tests | `tests/hooks/test-hooks.sh` | Automated tests for the 6 Claude Code hooks (logging, validation, notifications) |
 | Plugin tests | `tests/plugin/test_cli.sh` | CLI and plugin system validation (commands, manifests, registry) |
 | Dashboard tests | `dashboard/` (via `npm test`) | 116 unit + integration tests for the web dashboard (Vitest) |
 | Monitoring tests | `tests/monitoring/test_monitoring.sh` | Agent monitoring validation (SKILL.md, manifest, schema) |
 | Feature-flags tests | `tests/feature-flags/test_feature_flags.sh` | Agent feature-flags validation (SKILL.md, manifest, providers) |
+| Docker tests | `tests/docker/test_docker.sh` | Dockerfile and docker-compose syntax validation, best practices checks |
+| IIS tests | `tests/iis/test_iis.sh` | web.config XML validation, configuration coherence checks |
+| Firebase tests | `tests/firebase/test_firebase.sh` | firebase.json, Security Rules syntax, firestore.indexes.json validation |
+| Infra-reseau tests | `tests/infra-reseau/test_infra_reseau.sh` | Firewall rules, DNS config, load balancer config validation |
 
 The CI pipeline is defined in `.github/workflows/ci.yml` and runs on Ubuntu with `jq` installed. The release pipeline (`.github/workflows/release.yml`) automates changelog generation, Morgans email, git tagging, and deployment.
 
@@ -721,11 +745,15 @@ mugiwara-agents/
 │   ├── test_structural.sh        # Smoke tests (342+ assertions)
 │   ├── functional/               # Functional tests (dry-run)
 │   ├── hooks/                    # Hooks tests
-│   └── plugin/                   # Plugin system tests
+│   ├── plugin/                   # Plugin system tests
+│   ├── docker/                   # Docker agent tests (v1.8)
+│   ├── iis/                      # IIS agent tests (v1.8)
+│   ├── firebase/                 # Firebase agent tests (v1.8)
+│   └── infra-reseau/             # Infra-reseau agent tests (v1.8)
 ├── schemas/                      # JSON Schemas (v1.7)
 │   ├── agent-event.schema.json  #   JSONL log event schema
 │   └── validate-jsonl.sh        #   Schema validator
-├── skills/                       # 42 agents — each with SKILL.md + mugiwara.yaml
+├── skills/                       # 50 agents (46 unique + 4 OP aliases) — each with SKILL.md + mugiwara.yaml
 ├── registry.yaml                 # Central agent index (v1.5)
 ├── install.sh                    # Full installation script
 ├── uninstall.sh                  # Uninstallation script
@@ -745,9 +773,9 @@ mugiwara-agents/
 | [documentation.md](./documentation.md) | Full technical documentation (Diataxis framework) |
 | [VERSIONING.md](./VERSIONING.md) | Semantic Versioning policy with decision tree |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Contributor guide with commit conventions |
-| [CHANGELOG.md](./CHANGELOG.md) | Auto-generated changelog (v1.0 → v1.7) |
+| [CHANGELOG.md](./CHANGELOG.md) | Auto-generated changelog (v1.0 -> v1.8) |
 | [docs/mcp-servers.md](./docs/mcp-servers.md) | MCP Servers installation guide (9 servers) |
-| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 → v1.7) |
+| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 -> v1.8) |
 | [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md) | Strategic plan through v2.0 |
 
 ## License
