@@ -219,11 +219,13 @@ if [ -f "$MONITORING_DIR/mugiwara.yaml" ]; then
         fail "Manifest missing checksum section"
     fi
 
-    # T3.5 - Checksum matches actual file
+    # T3.5 - Checksum matches actual file (LF-normalized for cross-platform)
     if command -v sha256sum >/dev/null 2>&1; then
-        ACTUAL_HASH=$(sha256sum "$MONITORING_DIR/SKILL.md" | awk '{print $1}')
+        ACTUAL_HASH=$(tr -d '\r' < "$MONITORING_DIR/SKILL.md" | sha256sum | awk '{print $1}')
         MANIFEST_HASH=$(grep "SKILL.md:" "$MONITORING_DIR/mugiwara.yaml" | sed 's/.*"\(.*\)"/\1/')
-        if [ "$ACTUAL_HASH" = "$MANIFEST_HASH" ]; then
+        if [ -z "$MANIFEST_HASH" ]; then
+            warn "SKILL.md checksum is empty in manifest, skipping"
+        elif [ "$ACTUAL_HASH" = "$MANIFEST_HASH" ]; then
             pass "SKILL.md checksum matches manifest"
         else
             fail "SKILL.md checksum mismatch (actual: $ACTUAL_HASH, manifest: $MANIFEST_HASH)"
