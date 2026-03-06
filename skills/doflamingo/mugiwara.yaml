@@ -1,0 +1,23 @@
+name: doflamingo
+version: 1.9.0
+description: Doflamingo — Architecte Event-Driven (Kafka, RabbitMQ, NATS, event sourcing, CQRS, saga patterns, schema registry)
+category: architecture
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - kafka
+  - rabbitmq
+  - nats
+  - event-sourcing
+  - cqrs
+  - saga
+  - messaging
+  - event-driven
+  - schema-registry
+checksum:
+  SKILL.md: ""

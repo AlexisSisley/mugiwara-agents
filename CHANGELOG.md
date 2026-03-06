@@ -11,6 +11,23 @@ Entries for v1.0.0 through v1.6.0 were written retroactively from roadmaps and g
 
 ## [Unreleased]
 
+### Added
+- **Agent Big Mom** (`/big-mom` ou `/agile`) -- Agile Coach / Scrum Master : ceremonies, sprint planning, retrospectives, velocity tracking, SAFe, Jira/Linear workflows, team health
+- **Agent Hawkins** (`/hawkins` ou `/bi`) -- BI & Data Viz : Power BI, Tableau, Metabase, Superset, Looker, DAX/MDX, data storytelling, KPI dashboards
+- **Agent Magellan** (`/magellan` ou `/dba`) -- DBA : PostgreSQL, MySQL, MongoDB, Redis tuning, backup/restore, replication, sharding, monitoring
+- **Agent Caesar** (`/caesar` ou `/chaos`) -- Chaos Engineering : Chaos Monkey, Litmus, Gremlin, GameDay planning, resilience scoring, circuit breakers
+- **Agent Aokiji** (`/aokiji` ou `/gcp`) -- Cloud GCP : Cloud Run, GKE, BigQuery, Cloud Functions, Pub/Sub, Terraform GCP, IAM, gestion des couts
+- **Agent Kizaru** (`/kizaru` ou `/azure`) -- Cloud Azure : App Service, Functions, Cosmos DB, AKS, Azure DevOps, Bicep/ARM, Azure AD, gestion des couts
+- **Agent Fujitora** (`/fujitora` ou `/a11y`) -- Accessibilite : WCAG 2.2 AA/AAA, ARIA, audit automatise (axe, Lighthouse), remediation, conformite RGAA
+- **Agent Katakuri** (`/katakuri` ou `/mlops`) -- AI/ML Ops : MLflow, Kubeflow, feature stores, model serving, drift detection, experiment tracking, GPU optimization
+- SKILL.md et mugiwara.yaml pour chaque nouvel agent (P1, P2, P3)
+- Routage intelligent inter-agents injecte dans les 5 nouveaux agents (Big Mom, Hawkins, Magellan, Caesar, Aokiji)
+- registry.yaml mis a jour avec 78 entrees (56 agents uniques + aliases)
+- 108 nouveaux tests (582 total structural)
+- 16 jobs CI paralleles dans GitHub Actions
+- install.sh et uninstall.sh mis a jour pour les 5 nouveaux agents
+- 56 agents uniques crees sur 56 prevus (v1.9 Phases 1-5 completes)
+
 ## [1.8.0] - 2026-03-06
 
 ### Added

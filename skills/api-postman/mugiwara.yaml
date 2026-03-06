@@ -1,6 +1,6 @@
 name: api-postman
-version: 1.5.0
-description: Pipeline Bartholomew > Perona > Senor Pink (API Analyze > Postman > E2E)
+version: 1.9.0
+description: Pipeline API Analyze > Postman Collection > E2E Tests [alias retro-compatible: maxim]
 category: pipeline
 author: AlexisSisley
 license: MIT
@@ -14,4 +14,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: "5fee90740726ada5f67a2b88356f43a3dfd8732580d0e0937621158eae08677c"
+  SKILL.md: ""

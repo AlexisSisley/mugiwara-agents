@@ -1,0 +1,23 @@
+name: oro-jackson
+version: 1.9.0
+description: Oro Jackson — Pipeline de verification avant mise en production (Nami > Franky > Jinbe > Usopp > Ace > Brook)
+category: pipeline
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends:
+  - nami
+  - franky
+  - jinbe
+  - usopp
+  - ace
+  - brook
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - pipeline
+  - pre-launch
+  - go-live
+checksum:
+  SKILL.md: ""

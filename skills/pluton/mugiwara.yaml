@@ -1,0 +1,22 @@
+name: pluton
+version: 1.9.0
+description: Pluton — Pipeline de modernisation de stack technique (Yamato > Robin > Law > Sanji > Shanks > Usopp)
+category: pipeline
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends:
+  - yamato
+  - robin
+  - law
+  - sanji
+  - shanks
+  - usopp
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - pipeline
+  - modernization
+checksum:
+  SKILL.md: ""

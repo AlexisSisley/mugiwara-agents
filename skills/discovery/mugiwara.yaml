@@ -1,6 +1,6 @@
 name: discovery
-version: 1.5.0
-description: Pipeline de decouverte produit (Vivi + Zorro)
+version: 1.9.0
+description: Pipeline de decouverte produit (Vivi + Mugiwara) [alias retro-compatible: merry]
 category: pipeline
 author: AlexisSisley
 license: MIT
@@ -13,4 +13,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: "2d6d48e4475d19161a2659815f38c690c8ded917a37595fa876a0448563a2dfd"
+  SKILL.md: ""

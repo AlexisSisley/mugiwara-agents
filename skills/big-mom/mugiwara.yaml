@@ -1,0 +1,26 @@
+name: big-mom
+version: 1.9.0
+description: Big Mom — Agile Coach & Scrum Master (ceremonies, sprint planning, retrospectives, velocity tracking, team health, Jira/Linear, SAFe)
+category: management
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - agile
+  - scrum
+  - kanban
+  - safe
+  - sprint-planning
+  - retrospective
+  - velocity
+  - jira
+  - linear
+  - team-health
+  - ceremonies
+  - facilitation
+checksum:
+  SKILL.md: ""

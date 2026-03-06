@@ -1,6 +1,6 @@
 name: onboard
-version: 1.5.0
-description: Pipeline de decouverte codebase pour nouveau developpeur
+version: 1.9.0
+description: Pipeline de decouverte codebase pour nouveau developpeur [alias retro-compatible: baratie]
 category: pipeline
 author: AlexisSisley
 license: MIT
@@ -14,4 +14,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: "e92bebef49f315b0349ebfe5d5bee541379645b7838304731a11a76dd462d5d6"
+  SKILL.md: ""

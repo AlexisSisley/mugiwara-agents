@@ -1,0 +1,22 @@
+name: enel
+version: 1.9.0
+description: Enel — Dieu Omniscient du Monitoring & Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)
+category: monitoring
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - prometheus
+  - grafana
+  - alerting
+  - sre
+  - observability
+  - pagerduty
+  - opsgenie
+  - monitoring
+checksum:
+  SKILL.md: ""

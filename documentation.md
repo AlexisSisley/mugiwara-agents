@@ -14,7 +14,7 @@
 
 ### Qu'est-ce que Mugiwara Agents ?
 
-Mugiwara Agents est un ecosysteme de **42 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
+Mugiwara Agents est un ecosysteme de **56 agents IA specialises** (Skills) pour le CLI Claude Code d'Anthropic. Chaque agent est modele d'apres un personnage de l'univers One Piece et incarne un role precis dans le cycle de vie du developpement logiciel -- de la decouverte produit au deploiement en production.
 
 Le projet repose sur une collection de fichiers `SKILL.md` (prompts structures en Markdown avec front matter YAML) qui sont installes dans le repertoire `~/.claude/skills/` de l'utilisateur. Une fois charges par Claude Code, ces skills deviennent invocables via des commandes slash (`/zorro`, `/sanji`, `/nami`, etc.).
 
@@ -22,7 +22,9 @@ Depuis la v1.5, le projet inclut egalement un **systeme de plugins** avec un CLI
 
 Depuis la v1.6, un **dashboard web** (Svelte 4 + Express 4 + TypeScript) offre une visualisation en temps reel des invocations d'agents, sessions et executions de pipelines. Il consomme les logs JSONL produits par les hooks v1.3 via une API REST.
 
-Depuis la v1.7, le projet adopte les **Conventional Commits** (commitlint + Husky), genere un **CHANGELOG.md** automatiquement, et dispose d'un **pipeline Release** (`release.yml`) orchestrant bump de version, changelog, email Morgans, tag git et deploiement. Deux nouveaux agents enrichissent l'ecosysteme : **Monitoring/Alerting** (Prometheus, Grafana, PagerDuty, OpsGenie) et **Feature Flags** (env-based, Unleash, LaunchDarkly). Un **schema JSON** (`schemas/agent-event.schema.json`) standardise le format des logs JSONL.
+Depuis la v1.7, le projet adopte les **Conventional Commits** (commitlint + Husky), genere un **CHANGELOG.md** automatiquement, et dispose d'un **pipeline Release** (`release.yml`) orchestrant bump de version, changelog, email Morgans, tag git et deploiement. Deux nouveaux agents enrichissent l'ecosysteme : **Enel** (ex-Monitoring : Prometheus, Grafana, PagerDuty, OpsGenie) et **Ivankov** (ex-Feature Flags : Unleash, LaunchDarkly). Un **schema JSON** (`schemas/agent-event.schema.json`) standardise le format des logs JSONL.
+
+Depuis la v1.9, l'ecosysteme atteint **56 agents uniques** avec 10 nouveaux agents metier (Cloud AWS/Azure/GCP, Event-Driven, Accessibilite, AI/ML Ops, Agile Coach, BI, DBA, Chaos Engineering). Les 2 agents sans nom One Piece sont renommes (monitoring -> **Enel**, feature-flags -> **Ivankov**) et les 8 pipelines portent des noms de navires OP (Thousand Sunny, Merry, Polar Tang, etc.). Un **routage intelligent inter-agents** forme une toile complete ou chaque agent redirige vers ses complementaires.
 
 ### Philosophie architecturale
 
@@ -54,7 +56,7 @@ Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant v
 | Langue | Miroir de l'input | L'output s'adapte automatiquement a la langue de la demande |
 | Tool restrictions | `allowed-tools` par role | Chaque agent n'a acces qu'aux outils necessaires a sa mission |
 | Packaging | `mugiwara.yaml` manifest + registre YAML | Distribution par plugin, integrite par SHA256, dependances declaratives |
-| CI/CD | GitHub Actions, 7 jobs paralleles | Smoke, fonctionnel, hooks, plugins, dashboard, monitoring, feature-flags -- tests offline sans API key |
+| CI/CD | GitHub Actions, 16 jobs paralleles | Smoke, fonctionnel, hooks, plugins, dashboard, monitoring, feature-flags, docker, iis, firebase, infra-reseau, big-mom, hawkins, magellan, caesar, aokiji -- tests offline sans API key |
 | Commits | Conventional Commits + commitlint + Husky | Format standardise, CHANGELOG auto, pipeline Release |
 | Logs schema | JSON Schema (`schemas/agent-event.schema.json`) | Contrat entre hooks, dashboard et pipeline Release |
 | Dashboard | Svelte 4 + Vite 6 + Express 4 + TypeScript | SPA legere, API REST, lecture JSONL, pas de base de donnees |
@@ -96,25 +98,29 @@ Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant v
                                  │ delègue
             ┌────────────────────┼────────────────────┐
             │                    │                    │
-  ┌─────────▼──────┐  ┌─────────▼──────┐  ┌─────────▼──────┐
   │ SOUS-CHEFS     │  │ SPECIALISTES   │  │ META           │
   │ sanji-dotnet   │  │ franky         │  │ vegapunk       │
   │ sanji-flutter  │  │ robin          │  │                │
   │ sanji-python   │  │ chopper        │  └────────────────┘
   │ sanji-ts       │  │ brook          │
-  │ sanji-rust     │  │ usopp          │
-  │ sanji-go       │  │ jinbe          │
-  │ sanji-java     │  │ yamato         │
-  │ sanji-design   │  │ shanks         │
-  │ sanji-i18n     │  │ vivi           │
-  └────────────────┘  │ ace            │
-                      │ law            │
+  │ sanji-rust     │  │ usopp          │  ┌────────────────┐
+  │ sanji-go       │  │ jinbe          │  │ CLOUD (v1.9)   │
+  │ sanji-java     │  │ yamato         │  │ crocodile(AWS) │
+  │ sanji-design   │  │ shanks         │  │ kizaru (Azure) │
+  │ sanji-i18n     │  │ vivi           │  │ aokiji (GCP)   │
+  └────────────────┘  │ ace            │  │ sabo (Firebase)│
+                      │ law            │  └────────────────┘
                       │ law-sql        │
-                      │ bartholomew    │
-                      │ perona         │
-                      │ senor-pink     │
-                      │ morgans        │
-                      └────────────────┘
+                      │ bartholomew    │  ┌────────────────┐
+                      │ perona         │  │ METIER (v1.9)  │
+                      │ senor-pink     │  │ doflamingo     │
+                      │ morgans        │  │ fujitora       │
+                      │ enel           │  │ katakuri       │
+                      │ ivankov        │  │ big-mom        │
+                      │ iceburg        │  │ hawkins        │
+                      │ paulie         │  │ magellan       │
+                      │ coby           │  │ caesar         │
+                      └────────────────┘  └────────────────┘
 
                     ┌──────────────────────────┐
                     │  DASHBOARD (v1.6)        │
@@ -124,11 +130,11 @@ Chaque agent est un plugin autonome avec un manifest `mugiwara.yaml` contenant v
                     └──────────────────────────┘
 
                     ┌──────────────────────────┐
-                    │  CI/CD (v1.4)            │
+                    │  CI/CD (v1.4+)           │
                     │  GitHub Actions           │
-                    │  5 jobs paralleles        │
+                    │  16 jobs paralleles       │
                     │  smoke | func | hooks |   │
-                    │  plugin | dashboard       │
+                    │  plugin | dashboard | ... │
                     └──────────────────────────┘
 ```
 
@@ -202,8 +208,8 @@ Chaine ad-hoc recommandee :
 | 27 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 | 28 | Senor Pink | `/senor-pink` | E2E Test Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 | 29 | Morgans | `/morgans` | Release Email Generator (QA & Prod) | Read, Glob, Grep, Bash(git log/diff/tag/show/ls) |
-| 30 | Monitoring | `/monitoring` | Monitoring & Alerting Engineer | Read, Write, Glob, Grep, Bash(cat/ls/file) |
-| 31 | Feature-Flags | `/feature-flags` | Feature Flags Strategist | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 30 | Enel | `/enel` (alias `/monitoring`) | Monitoring & Alerting Engineer | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 31 | Ivankov | `/ivankov` (alias `/feature-flags`) | Feature Flags Strategist | Read, Write, Glob, Grep, Bash(cat/ls/file) |
 
 ### 2.4 Meta-Agent
 
@@ -212,26 +218,41 @@ Chaine ad-hoc recommandee :
 | 32 | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | Read, Write, Edit, Glob, Grep, Bash(cat/wc/file/ls) |
 | 33 | Bon-Clay | `/bon-clay` | Easter Egg Architect (secret) | Read, Write, Edit, Glob, Grep, Bash(cat/ls/file) |
 
-### 2.5 Pipelines (Orchestrateurs)
-
-| # | Pipeline | Commande | Chaine d'agents | Tools autorises |
-|---|----------|---------|-----------------|-----------------|
-| 34 | Mugiwara | `/mugiwara` | Zorro -> Sanji -> Nami (+ feedback loop) -> Franky (code review) -> Luffy | Read, Glob, Grep, Skill |
-| 35 | Discovery | `/discovery` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
-| 36 | Incident | `/incident` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
-| 37 | Pre-Launch | `/pre-launch` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
-| 38 | Onboard | `/onboard` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
-| 39 | Modernize | `/modernize` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
-| 40 | Doc-Hunt | `/doc-hunt` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
-| 41 | Api-Postman | `/api-postman` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
-
-### 2.5b Smart Router
+### 2.5 Agents Metier v1.9
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 42 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+| 34 | Crocodile | `/crocodile` | Cloud AWS Architect | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 35 | Doflamingo | `/doflamingo` | Event-Driven Architect | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 36 | Kizaru | `/kizaru` | Cloud Azure Architect | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 37 | Fujitora | `/fujitora` | Accessibility Expert (a11y) | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 38 | Katakuri | `/katakuri` | AI/ML Ops Engineer | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 39 | Big Mom | `/big-mom` | Agile Coach / Scrum Master | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 40 | Hawkins | `/hawkins` | BI & Data Visualization | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 41 | Magellan | `/magellan` | Database Administrator | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 42 | Caesar | `/caesar` | Chaos Engineer | Read, Write, Glob, Grep, Bash(cat/ls/file) |
+| 43 | Aokiji | `/aokiji` | Cloud GCP Architect | Read, Write, Glob, Grep, Bash(cat/ls/file) |
 
-### 2.6 Configuration commune
+### 2.6 Pipelines (Orchestrateurs / Navires)
+
+| # | Pipeline | Commande | Alias Navire | Chaine d'agents | Tools autorises |
+|---|----------|---------|-------------|-----------------|-----------------|
+| 44 | Mugiwara | `/mugiwara` | `/thousand-sunny` | Zorro -> Sanji -> Nami (+ feedback loop) -> Franky (code review) -> Luffy | Read, Glob, Grep, Skill |
+| 45 | Discovery | `/discovery` | `/merry` | Vivi -> Mugiwara | Read, Glob, Grep, Skill |
+| 46 | Incident | `/incident` | `/polar-tang` | Chopper -> Franky -> Jinbe -> Usopp | Read, Glob, Grep, Skill |
+| 47 | Pre-Launch | `/pre-launch` | `/oro-jackson` | Nami -> Franky -> Jinbe -> Usopp -> Ace -> Brook | Read, Glob, Grep, Skill |
+| 48 | Onboard | `/onboard` | `/baratie` | Robin -> Franky -> Brook | Read, Glob, Grep, Skill |
+| 49 | Modernize | `/modernize` | `/pluton` | Yamato -> Robin -> Law -> Sanji -> Shanks -> Usopp | Read, Glob, Grep, Skill |
+| 50 | Doc-Hunt | `/doc-hunt` | `/ohara` | Yamato -> Brook | Read, Glob, Grep, Write, Skill |
+| 51 | Api-Postman | `/api-postman` | `/maxim` | Bartholomew -> Perona -> Senor-Pink | Read, Glob, Grep, Skill |
+
+### 2.6b Smart Router
+
+| # | Agent | Commande | Role | Tools autorises |
+|---|-------|----------|------|-----------------|
+| 52 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+
+### 2.7 Configuration commune
 
 Tous les agents partagent ces parametres dans leur YAML front matter :
 
@@ -242,7 +263,7 @@ agent: general-purpose           # Acces complet aux capacites de raisonnement
 model: opus                      # Modele le plus performant
 ```
 
-### 2.7 Standards de format transversaux
+### 2.8 Standards de format transversaux
 
 Chaque SKILL.md respecte les conventions suivantes :
 - Titre H1 avec nom du personnage et role
@@ -254,7 +275,7 @@ Chaque SKILL.md respecte les conventions suivantes :
 - Section "Regles de Format" en fin de fichier
 - Instruction "meme langue que l'input" pour le multilinguisme
 
-### 2.8 Structure des fichiers du projet
+### 2.9 Structure des fichiers du projet
 
 ```
 mugiwara-agents/
@@ -309,7 +330,7 @@ mugiwara-agents/
 │   ├── agent-event.schema.json      #   Schema des events JSONL
 │   └── validate-jsonl.sh            #   Validateur de schema
 ├── tests/                           # Suites de tests (v1.2 → v1.7)
-│   ├── test_structural.sh           #   Smoke tests structurels (342+ assertions)
+│   ├── test_structural.sh           #   Smoke tests structurels (582 assertions)
 │   ├── functional/                  #   Tests fonctionnels (v1.4)
 │   │   ├── run-functional-tests.sh  #     Runner principal
 │   │   ├── test-prompts.json        #     Prompts de test par agent
@@ -323,11 +344,11 @@ mugiwara-agents/
 │   │   └── test_monitoring.sh       #     Validation SKILL.md + manifest
 │   └── feature-flags/              #   Tests agent feature-flags (v1.7)
 │       └── test_feature_flags.sh    #     Validation SKILL.md + manifest
-├── skills/                          # 42 agents (chacun avec SKILL.md + mugiwara.yaml)
+├── skills/                          # 56 agents + aliases (chacun avec SKILL.md + mugiwara.yaml)
 │   ├── ace/                         #   Performance Engineer
 │   │   ├── SKILL.md
 │   │   └── mugiwara.yaml            #   Manifest plugin (v1.5)
-│   ├── ... (42 agents au total)
+│   ├── ... (56 agents au total + aliases)
 │   └── zorro/
 │       ├── SKILL.md
 │       └── mugiwara.yaml
@@ -343,7 +364,7 @@ mugiwara-agents/
 └── README.md                        # Documentation principale
 ```
 
-### 2.9 Systeme de plugins (v1.5)
+### 2.10 Systeme de plugins (v1.5)
 
 #### CLI `mugiwara`
 
@@ -360,7 +381,7 @@ Le CLI bash modulaire (`bin/mugiwara`) offre 6 commandes pour gerer les agents c
 
 #### Registre central (`registry.yaml`)
 
-Fichier YAML a la racine du projet indexant les 42 agents avec :
+Fichier YAML a la racine du projet indexant les 56 agents uniques + aliases (78 entrees) avec :
 - `version` : version SemVer de l'agent
 - `description` : description courte
 - `category` : categorie (analysis, pipeline, security, data, etc.)
@@ -389,23 +410,32 @@ Chaque agent possede un manifest `mugiwara.yaml` contenant :
 | `doc-hunt` | yamato, brook |
 | `api-postman` | bartholomew, perona, senor-pink |
 
-### 2.10 CI/CD (v1.4+)
+### 2.11 CI/CD (v1.4+)
 
-Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 7 jobs paralleles :
+Le pipeline CI est defini dans `.github/workflows/ci.yml` et se declenche a chaque push sur `main` et a chaque pull request. Il execute 16 jobs paralleles :
 
 | Job | Suite de tests | Description |
 |-----|----------------|-------------|
-| `smoke-tests` | `tests/test_structural.sh` | 342+ assertions structurelles (existence fichiers, YAML valide, coherence) |
-| `functional-tests` | `tests/functional/run-functional-tests.sh --dry-run` | Execution dry-run des 42 agents avec validation output |
+| `smoke-tests` | `tests/test_structural.sh` | 582 assertions structurelles (existence fichiers, YAML valide, coherence) |
+| `functional-tests` | `tests/functional/run-functional-tests.sh --dry-run` | Execution dry-run des 56 agents avec validation output |
 | `hooks-tests` | `tests/hooks/test-hooks.sh` | Tests automatises des 6 hooks Claude Code |
 | `plugin-tests` | `tests/plugin/test_cli.sh` | Tests du CLI et du systeme de plugins |
 | `dashboard-tests` | `dashboard/` (npm test) | 116 tests unitaires + integration pour le dashboard web (Vitest) |
 | `monitoring-tests` | `tests/monitoring/test_monitoring.sh` | Validation agent monitoring (SKILL.md, manifest, schema) |
 | `feature-flags-tests` | `tests/feature-flags/test_feature_flags.sh` | Validation agent feature-flags (SKILL.md, manifest, providers) |
+| `docker-tests` | `tests/docker/test_docker.sh` | Dockerfile et docker-compose syntax, best practices |
+| `iis-tests` | `tests/iis/test_iis.sh` | web.config XML validation, coherence configuration |
+| `firebase-tests` | `tests/firebase/test_firebase.sh` | firebase.json, Security Rules, firestore.indexes.json |
+| `infra-reseau-tests` | `tests/infra-reseau/test_infra_reseau.sh` | Firewall rules, DNS, load balancer config |
+| `big-mom-tests` | `tests/big-mom/test_big_mom.sh` | Validation agent Agile Coach (SKILL.md, manifest, routage) |
+| `hawkins-tests` | `tests/hawkins/test_hawkins.sh` | Validation agent BI & Data Viz (SKILL.md, manifest, routage) |
+| `magellan-tests` | `tests/magellan/test_magellan.sh` | Validation agent DBA (SKILL.md, manifest, routage) |
+| `caesar-tests` | `tests/caesar/test_caesar.sh` | Validation agent Chaos Engineering (SKILL.md, manifest, routage) |
+| `aokiji-tests` | `tests/aokiji/test_aokiji.sh` | Validation agent Cloud GCP (SKILL.md, manifest, routage) |
 
 Aucune cle API ou secret n'est necessaire : tous les tests s'executent offline.
 
-### 2.11 Dashboard web (v1.6)
+### 2.12 Dashboard web (v1.6)
 
 Le dashboard est une SPA legere construite avec **Svelte 4 + Vite 6** (frontend) et **Express 4 + TypeScript** (backend API). Il lit directement les fichiers JSONL produits par les hooks v1.3 sans base de donnees.
 
@@ -437,7 +467,7 @@ npm run seed     # Generer 30 jours de donnees de demo
 npm run dev      # Lancer le serveur sur http://localhost:3000
 ```
 
-### 2.12 Governance & Release Pipeline (v1.7)
+### 2.13 Governance & Release Pipeline (v1.7)
 
 #### Conventional Commits
 
@@ -468,8 +498,35 @@ Le pipeline est semi-automatique : il prepare tout mais attend une validation hu
 
 | Agent | Commande | Role | Description |
 |-------|----------|------|-------------|
-| Monitoring | `/monitoring` | Monitoring & Alerting Engineer | Prometheus, Grafana, PagerDuty, OpsGenie : configuration, dashboards, alertes, escalation policies |
-| Feature-Flags | `/feature-flags` | Feature Flags Strategist | env-based, Unleash, LaunchDarkly : rollout progressif, A/B testing, lifecycle management |
+| Enel (ex-Monitoring) | `/enel` (alias `/monitoring`) | Monitoring & Alerting Engineer | Prometheus, Grafana, PagerDuty, OpsGenie : configuration, dashboards, alertes, escalation policies |
+| Ivankov (ex-Feature-Flags) | `/ivankov` (alias `/feature-flags`) | Feature Flags Strategist | env-based, Unleash, LaunchDarkly : rollout progressif, A/B testing, lifecycle management |
+
+### 2.14 Routage Intelligent & Nouveaux Agents (v1.9)
+
+#### Renommages One Piece
+
+- `monitoring` -> **Enel** (`/enel`, alias `/monitoring` conserve)
+- `feature-flags` -> **Ivankov** (`/ivankov`, alias `/feature-flags` conserve)
+- 8 pipelines renommes en navires OP (Thousand Sunny, Merry, Polar Tang, Oro Jackson, Baratie, Pluton, Ohara, Maxim) avec aliases retro-compatibles
+
+#### 10 Nouveaux Agents Metier
+
+| Agent | Commande | Domaine |
+|-------|----------|---------|
+| Crocodile | `/crocodile` | Cloud AWS (EC2, S3, Lambda, CDK, Well-Architected) |
+| Doflamingo | `/doflamingo` | Event-Driven (Kafka, RabbitMQ, CQRS, Saga) |
+| Kizaru | `/kizaru` | Cloud Azure (App Service, Functions, AKS, Bicep) |
+| Fujitora | `/fujitora` | Accessibilite a11y (WCAG 2.2, ARIA, RGAA) |
+| Katakuri | `/katakuri` | AI/ML Ops (MLflow, Kubeflow, model serving) |
+| Big Mom | `/big-mom` | Agile Coach / Scrum (ceremonies, velocity, SAFe) |
+| Hawkins | `/hawkins` | BI & Data Viz (Power BI, Tableau, Metabase) |
+| Magellan | `/magellan` | DBA (PostgreSQL, MySQL, MongoDB, Redis) |
+| Caesar | `/caesar` | Chaos Engineering (Chaos Monkey, Litmus, GameDay) |
+| Aokiji | `/aokiji` | Cloud GCP (Cloud Run, GKE, BigQuery, Terraform) |
+
+#### Routage Intelligent Inter-Agents
+
+Chaque agent possede une table de routage vers ses agents complementaires. Quand une demande sort du perimetre d'un agent, celui-ci suggere ou invoque l'agent le plus adapte via `Skill`. Cela forme une toile complete ou aucun domaine IT n'est orphelin. `/one_piece` reste le routeur central universel.
 
 ---
 
@@ -484,7 +541,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-Le script copie les 42 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
+Le script copie les 56 dossiers de skills dans `~/.claude/skills/`. Si un agent existe deja, il est mis a jour.
 
 **Alternative (v1.5+)** — Installer un agent individuel avec le CLI :
 
@@ -730,7 +787,9 @@ mugiwara uninstall <agent>
 | v1.5.0 | 2026-03-04 | MINOR | Plugin system : CLI mugiwara, registry.yaml, 40 manifests, SHA256 checksums, pipeline depends, Franky code review |
 | v1.6.0 | 2026-03-05 | MINOR | Dashboard web : SPA Svelte + API Express, vues Agents/Pipelines/Sessions/Stats, 116 tests, job CI #5 |
 | v1.7.0 | 2026-03-05 | MINOR | Governance & Release : agents monitoring + feature-flags, pipeline release, conventional commits, schema JSON, CHANGELOG auto, 42 agents, 7 jobs CI |
+| v1.8.0 | 2026-03-06 | MINOR | Infrastructure & Cloud : agents Iceburg (Docker), Paulie (IIS), Sabo (Firebase), Coby (infra-reseau), 46 agents, 11 jobs CI |
+| v1.9.0 | 2026-03-06 | MINOR | Routage intelligent, renommages OP (Enel, Ivankov, navires), 10 nouveaux agents metier (Cloud x3, Event-Driven, a11y, AI/ML, Agile, BI, DBA, Chaos), 56 agents, 78 entrees registry, 16 jobs CI, 582 tests |
 
 *v1.1.0 aurait du etre v1.0.1 (correction de bug). Voir VERSIONING.md pour la retrospective.
 
-Pour le plan strategique v1.7 a v2.0, voir [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md).
+Pour le plan strategique et la roadmap detaillee, voir [docs/roadmap/](./docs/roadmap/).

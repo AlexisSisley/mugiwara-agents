@@ -1,0 +1,21 @@
+name: polar-tang
+version: 1.9.0
+description: Polar Tang — Pipeline de reponse d'urgence production (Chopper > Franky > Jinbe > Usopp)
+category: pipeline
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends:
+  - chopper
+  - franky
+  - jinbe
+  - usopp
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - pipeline
+  - incident
+  - emergency
+checksum:
+  SKILL.md: ""

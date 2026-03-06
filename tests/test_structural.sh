@@ -61,13 +61,15 @@ section() {
 
 # ── Expected agents (source of truth) ──────────────────────
 EXPECTED_AGENTS=(
-    ace api-postman bartholomew bon-clay brook chopper
-    discovery doc-hunt docker feature-flags firebase franky iis incident
-    infra-reseau jinbe law law-sql
-    luffy modernize monitoring morgans mugiwara nami onboard one_piece
-    perona pre-launch robin sanji sanji-design sanji-dotnet
+    ace aokiji api-postman baratie bartholomew big-mom bon-clay brook caesar chopper
+    coby crocodile discovery doc-hunt docker doflamingo enel
+    feature-flags firebase franky fujitora hawkins iis iceburg incident
+    infra-reseau ivankov jinbe katakuri kizaru law law-sql
+    luffy magellan maxim merry modernize monitoring morgans mugiwara nami
+    ohara onboard one_piece oro-jackson paulie
+    perona pluton polar-tang pre-launch robin sabo sanji sanji-design sanji-dotnet
     sanji-flutter sanji-go sanji-i18n sanji-java sanji-python
-    sanji-rust sanji-ts senor-pink shanks usopp vegapunk
+    sanji-rust sanji-ts senor-pink shanks thousand-sunny usopp vegapunk
     vivi yamato zorro
 )
 

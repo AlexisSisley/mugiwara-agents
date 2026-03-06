@@ -1,6 +1,6 @@
 name: feature-flags
-version: 1.7.0
-description: Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery
+version: 1.9.0
+description: Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery [alias retro-compatible: ivankov]
 category: infrastructure
 author: AlexisSisley
 license: MIT
@@ -16,4 +16,4 @@ tags:
   - progressive-delivery
   - toggles
 checksum:
-  SKILL.md: "0e7ba82527469dcdf26737093c497d789554629e53692744044697e9bf8fe750"
+  SKILL.md: ""

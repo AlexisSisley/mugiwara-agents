@@ -1,0 +1,26 @@
+name: hawkins
+version: 1.9.0
+description: Hawkins — BI & Data Visualization (Metabase, Superset, Looker, Power BI, Tableau, DAX/MDX, data storytelling, KPI dashboards)
+category: data
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - bi
+  - data-viz
+  - power-bi
+  - tableau
+  - metabase
+  - superset
+  - looker
+  - dax
+  - mdx
+  - kpi
+  - dashboard
+  - data-storytelling
+checksum:
+  SKILL.md: ""

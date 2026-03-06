@@ -1,0 +1,26 @@
+name: crocodile
+version: 1.9.0
+description: Crocodile — Architecte Cloud AWS (EC2, S3, Lambda, RDS, CloudFront, IAM, CDK/CloudFormation, Well-Architected Framework)
+category: cloud
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - aws
+  - ec2
+  - s3
+  - lambda
+  - rds
+  - dynamodb
+  - cloudfront
+  - iam
+  - cdk
+  - cloudformation
+  - vpc
+  - well-architected
+checksum:
+  SKILL.md: ""

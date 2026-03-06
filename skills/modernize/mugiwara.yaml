@@ -1,6 +1,6 @@
 name: modernize
-version: 1.5.0
-description: Pipeline de modernisation de stack technique
+version: 1.9.0
+description: Pipeline de modernisation de stack technique [alias retro-compatible: pluton]
 category: pipeline
 author: AlexisSisley
 license: MIT
@@ -17,4 +17,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: "fec34ca44da0af7394cc2cc4725d4e984fc1fb06900ed8737b1e27ca22f0f4b3"
+  SKILL.md: ""

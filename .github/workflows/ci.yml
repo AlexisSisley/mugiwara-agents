@@ -2,9 +2,10 @@
 # Mugiwara Agents - CI Pipeline
 # ============================================================
 # Runs all test suites on every push to main and pull request.
-# 11 parallel jobs: smoke tests, functional tests (dry-run),
+# 16 parallel jobs: smoke tests, functional tests (dry-run),
 # hooks tests, plugin system tests, monitoring, feature-flags,
-# dashboard, docker, iis, firebase, infra-reseau.
+# dashboard, docker, iis, firebase, infra-reseau,
+# big-mom, hawkins, magellan, caesar, aokiji.
 #
 # No secrets or API keys required — all tests run offline.
 # ============================================================
@@ -229,3 +230,73 @@ jobs:
         run: |
           chmod +x tests/infra-reseau/test_infra_reseau.sh
           bash tests/infra-reseau/test_infra_reseau.sh
+
+  # ── Job 12: Big Mom Agent Tests (v1.9 P2) ──────────────────
+  big-mom-tests:
+    name: Big Mom Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Big Mom agent tests
+        run: |
+          chmod +x tests/big-mom/test_big_mom.sh
+          bash tests/big-mom/test_big_mom.sh
+
+  # ── Job 13: Hawkins Agent Tests (v1.9 P2) ──────────────────
+  hawkins-tests:
+    name: Hawkins Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Hawkins agent tests
+        run: |
+          chmod +x tests/hawkins/test_hawkins.sh
+          bash tests/hawkins/test_hawkins.sh
+
+  # ── Job 14: Magellan Agent Tests (v1.9 P2) ─────────────────
+  magellan-tests:
+    name: Magellan Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Magellan agent tests
+        run: |
+          chmod +x tests/magellan/test_magellan.sh
+          bash tests/magellan/test_magellan.sh
+
+  # ── Job 15: Caesar Agent Tests (v1.9 P3) ───────────────────
+  caesar-tests:
+    name: Caesar Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Caesar agent tests
+        run: |
+          chmod +x tests/caesar/test_caesar.sh
+          bash tests/caesar/test_caesar.sh
+
+  # ── Job 16: Aokiji Agent Tests (v1.9 P3) ───────────────────
+  aokiji-tests:
+    name: Aokiji Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Aokiji agent tests
+        run: |
+          chmod +x tests/aokiji/test_aokiji.sh
+          bash tests/aokiji/test_aokiji.sh

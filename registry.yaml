@@ -11,8 +11,8 @@ agents:
     description: "Performance Engineer et specialiste en optimisation systeme"
     category: performance
   api-postman:
-    version: 1.5.0
-    description: "Pipeline Bartholomew > Perona > Senor Pink (API Analyze > Postman > E2E)"
+    version: 1.9.0
+    description: "Pipeline Bartholomew > Perona > Senor Pink (API Analyze > Postman > E2E) [alias retro-compatible: maxim]"
     category: pipeline
   bartholomew:
     version: 1.5.0
@@ -30,6 +30,7 @@ agents:
     version: 1.5.0
     description: "Urgentiste specialise en diagnostic et resolution de bugs"
     category: debugging
+  # --- v1.8 agents ---
   iceburg:
     version: 1.8.0
     description: "Iceburg — Maitre Charpentier Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, conteneurs Windows)"
@@ -38,18 +39,6 @@ agents:
     version: 1.8.0
     description: "Agent Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, securite conteneurs) [alias: iceburg]"
     category: infrastructure
-  discovery:
-    version: 1.5.0
-    description: "Pipeline de decouverte produit (Vivi + Zorro)"
-    category: pipeline
-  doc-hunt:
-    version: 1.5.0
-    description: "Pipeline de recherche et redaction de documentation"
-    category: pipeline
-  franky:
-    version: 1.5.0
-    description: "Senior Code Reviewer et Expert en Cybersecurite"
-    category: security
   paulie:
     version: 1.8.0
     description: "Paulie — Charpentier IIS (web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell)"
@@ -58,10 +47,14 @@ agents:
     version: 1.8.0
     description: "Agent IIS (web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell) [alias: paulie]"
     category: infrastructure
-  incident:
-    version: 1.5.0
-    description: "Pipeline de reponse d'urgence production"
-    category: pipeline
+  sabo:
+    version: 1.8.0
+    description: "Sabo — Chef Revolutionnaire Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)"
+    category: cloud
+  firebase:
+    version: 1.8.0
+    description: "Agent Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite) [alias: sabo]"
+    category: cloud
   coby:
     version: 1.8.0
     description: "Coby — Capitaine de la Marine, Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau)"
@@ -70,6 +63,165 @@ agents:
     version: 1.8.0
     description: "Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau) [alias: coby]"
     category: infrastructure
+  # --- v1.9 renamed agents ---
+  enel:
+    version: 1.9.0
+    description: "Enel — Dieu Omniscient du Monitoring & Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)"
+    category: monitoring
+  monitoring:
+    version: 1.9.0
+    description: "Agent Monitoring et Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices) [alias retro-compatible: enel]"
+    category: monitoring
+  ivankov:
+    version: 1.9.0
+    description: "Ivankov — Revolutionnaire des Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery"
+    category: infrastructure
+  feature-flags:
+    version: 1.9.0
+    description: "Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery [alias retro-compatible: ivankov]"
+    category: infrastructure
+  # --- v1.9 new agents (P0) ---
+  crocodile:
+    version: 1.9.0
+    description: "Crocodile — Architecte Cloud AWS (EC2, S3, Lambda, RDS, CloudFront, IAM, CDK/CloudFormation, Well-Architected Framework)"
+    category: cloud
+  doflamingo:
+    version: 1.9.0
+    description: "Doflamingo — Architecte Event-Driven (Kafka, RabbitMQ, NATS, event sourcing, CQRS, saga patterns, schema registry)"
+    category: architecture
+  # --- v1.9 new agents (P1) ---
+  kizaru:
+    version: 1.9.0
+    description: "Kizaru — Architecte Cloud Azure (App Service, Functions, Cosmos DB, AKS, DevOps, Bicep/ARM, Entra ID, couts)"
+    category: cloud
+  azure:
+    version: 1.9.0
+    description: "Agent Cloud Azure (App Service, Functions, Cosmos DB, AKS, DevOps, Bicep/ARM, Entra ID) [alias: kizaru]"
+    category: cloud
+  fujitora:
+    version: 1.9.0
+    description: "Fujitora — Expert Accessibilite a11y (WCAG 2.2 AA/AAA, ARIA, RGAA 4.1, axe-core, Lighthouse, remediation)"
+    category: quality
+  a11y:
+    version: 1.9.0
+    description: "Agent Accessibilite (WCAG 2.2 AA/AAA, ARIA, RGAA 4.1, axe-core, Lighthouse) [alias: fujitora]"
+    category: quality
+  katakuri:
+    version: 1.9.0
+    description: "Katakuri — AI/ML Ops (MLflow, Kubeflow, feature stores, model serving, drift detection, experiment tracking, GPU optimization)"
+    category: ai-ml
+  mlops:
+    version: 1.9.0
+    description: "Agent AI/ML Ops (MLflow, Kubeflow, feature stores, model serving, drift detection) [alias: katakuri]"
+    category: ai-ml
+  # --- v1.9 new agents (P2) ---
+  big-mom:
+    version: 1.9.0
+    description: "Big Mom — Agile Coach & Scrum Master (ceremonies, sprint planning, retrospectives, velocity tracking, team health, Jira/Linear, SAFe)"
+    category: management
+  agile:
+    version: 1.9.0
+    description: "Agent Agile Coach & Scrum Master (ceremonies, sprint planning, retrospectives, velocity, SAFe) [alias: big-mom]"
+    category: management
+  hawkins:
+    version: 1.9.0
+    description: "Hawkins — BI & Data Visualization (Metabase, Superset, Looker, Power BI, Tableau, DAX/MDX, data storytelling, KPI dashboards)"
+    category: data
+  bi:
+    version: 1.9.0
+    description: "Agent BI & Data Visualization (Power BI, Tableau, Metabase, Superset, Looker, DAX/MDX) [alias: hawkins]"
+    category: data
+  magellan:
+    version: 1.9.0
+    description: "Magellan — DBA (PostgreSQL, MySQL, MongoDB, Redis tuning, backup/restore, replication, sharding, migration, monitoring)"
+    category: data
+  dba:
+    version: 1.9.0
+    description: "Agent DBA (PostgreSQL, MySQL, MongoDB, Redis, backup, replication, sharding, migration) [alias: magellan]"
+    category: data
+  # --- v1.9 new agents (P3) ---
+  caesar:
+    version: 1.9.0
+    description: "Caesar — Chaos Engineering (Chaos Monkey, Litmus, Gremlin, GameDay planning, steady-state hypothesis, blast radius, resilience scoring)"
+    category: performance
+  chaos:
+    version: 1.9.0
+    description: "Agent Chaos Engineering (Chaos Monkey, Litmus, Gremlin, GameDay, resilience scoring) [alias: caesar]"
+    category: performance
+  aokiji:
+    version: 1.9.0
+    description: "Aokiji — Architecte Cloud GCP (Cloud Run, GKE, BigQuery, Cloud Functions, Pub/Sub, Terraform GCP, IAM, couts)"
+    category: cloud
+  gcp:
+    version: 1.9.0
+    description: "Agent Cloud GCP (Cloud Run, GKE, BigQuery, Cloud Functions, Pub/Sub, Terraform GCP) [alias: aokiji]"
+    category: cloud
+  # --- v1.9 renamed pipelines (navires) ---
+  thousand-sunny:
+    version: 1.9.0
+    description: "Thousand Sunny — Pipeline d'analyse integral (Zorro > Sanji > Nami > Franky > Luffy)"
+    category: pipeline
+  mugiwara:
+    version: 1.9.0
+    description: "Pipeline d'analyse integral (Zorro > Sanji > Nami > Franky > Luffy) [alias retro-compatible: thousand-sunny]"
+    category: pipeline
+  merry:
+    version: 1.9.0
+    description: "Merry — Pipeline de decouverte produit (Vivi + Mugiwara)"
+    category: pipeline
+  discovery:
+    version: 1.9.0
+    description: "Pipeline de decouverte produit (Vivi + Mugiwara) [alias retro-compatible: merry]"
+    category: pipeline
+  polar-tang:
+    version: 1.9.0
+    description: "Polar Tang — Pipeline de reponse d'urgence production (Chopper > Franky > Jinbe > Usopp)"
+    category: pipeline
+  incident:
+    version: 1.9.0
+    description: "Pipeline de reponse d'urgence production [alias retro-compatible: polar-tang]"
+    category: pipeline
+  oro-jackson:
+    version: 1.9.0
+    description: "Oro Jackson — Pipeline de verification avant mise en production (Nami > Franky > Jinbe > Usopp > Ace > Brook)"
+    category: pipeline
+  pre-launch:
+    version: 1.9.0
+    description: "Pipeline de verification avant mise en production [alias retro-compatible: oro-jackson]"
+    category: pipeline
+  baratie:
+    version: 1.9.0
+    description: "Baratie — Pipeline de decouverte codebase pour nouveau developpeur (Robin > Franky > Brook)"
+    category: pipeline
+  onboard:
+    version: 1.9.0
+    description: "Pipeline de decouverte codebase pour nouveau developpeur [alias retro-compatible: baratie]"
+    category: pipeline
+  pluton:
+    version: 1.9.0
+    description: "Pluton — Pipeline de modernisation de stack technique (Yamato > Robin > Law > Sanji > Shanks > Usopp)"
+    category: pipeline
+  modernize:
+    version: 1.9.0
+    description: "Pipeline de modernisation de stack technique [alias retro-compatible: pluton]"
+    category: pipeline
+  ohara:
+    version: 1.9.0
+    description: "Ohara — Pipeline de recherche et redaction de documentation (Yamato > Brook)"
+    category: pipeline
+  doc-hunt:
+    version: 1.9.0
+    description: "Pipeline de recherche et redaction de documentation [alias retro-compatible: ohara]"
+    category: pipeline
+  maxim:
+    version: 1.9.0
+    description: "Maxim — Pipeline API Analyze > Postman Collection > E2E Tests (Bartholomew > Perona > Senor Pink)"
+    category: pipeline
+  # --- Remaining core agents ---
+  franky:
+    version: 1.5.0
+    description: "Senior Code Reviewer et Expert en Cybersecurite"
+    category: security
   jinbe:
     version: 1.5.0
     description: "Auditeur SecOps et consultant en conformite reglementaire"
@@ -86,42 +238,14 @@ agents:
     version: 1.5.0
     description: "Program Manager et Capitaine de l'equipage"
     category: management
-  modernize:
-    version: 1.5.0
-    description: "Pipeline de modernisation de stack technique"
-    category: pipeline
-  feature-flags:
-    version: 1.7.0
-    description: "Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery"
-    category: infrastructure
-  sabo:
-    version: 1.8.0
-    description: "Sabo — Chef Revolutionnaire Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)"
-    category: cloud
-  firebase:
-    version: 1.8.0
-    description: "Agent Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite) [alias: sabo]"
-    category: cloud
-  monitoring:
-    version: 1.7.0
-    description: "Agent Monitoring et Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)"
-    category: infrastructure
   morgans:
     version: 1.5.0
     description: "Generateur d'emails de release QA et mise en production"
     category: writing
-  mugiwara:
-    version: 1.5.0
-    description: "Pipeline d'analyse integral (Zorro > Sanji > Nami > Luffy)"
-    category: pipeline
   nami:
     version: 1.5.0
     description: "Lead QA Senior certifiee ISTQB Expert"
     category: qa
-  onboard:
-    version: 1.5.0
-    description: "Pipeline de decouverte codebase pour nouveau developpeur"
-    category: pipeline
   one_piece:
     version: 1.5.0
     description: "Routeur intelligent de l'equipage"
@@ -130,10 +254,6 @@ agents:
     version: 1.5.0
     description: "Creatrice de Collections Postman"
     category: qa
-  pre-launch:
-    version: 1.5.0
-    description: "Pipeline de verification avant mise en production"
-    category: pipeline
   robin:
     version: 1.5.0
     description: "Experte en cartographie de systemes complexes et reverse-engineering"

@@ -1,6 +1,6 @@
 name: doc-hunt
-version: 1.5.0
-description: Pipeline de recherche et redaction de documentation
+version: 1.9.0
+description: Pipeline de recherche et redaction de documentation [alias retro-compatible: ohara]
 category: pipeline
 author: AlexisSisley
 license: MIT
@@ -13,4 +13,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: "81d1e426101691033bae8c8a313a8a7fcfed9027f814d4c6df680fc30cb98b8a"
+  SKILL.md: ""

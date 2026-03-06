@@ -1,13 +1,13 @@
 # Mugiwara Agents - One Piece Crew for Claude Code CLI
 
 [![CI](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/AlexisSisley/mugiwara-agents/actions/workflows/ci.yml)
-![Version](https://img.shields.io/badge/version-1.8.0-blue)
-![Agents](https://img.shields.io/badge/agents-46-orange)
+![Version](https://img.shields.io/badge/version-1.9.0-blue)
+![Agents](https://img.shields.io/badge/agents-56%2F56-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > Transform your Claude Code CLI into a full project analysis powerhouse with the Straw Hat crew!
 
-**Mugiwara Agents** is a collection of 46 specialized AI agents (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece character. Together, they form a complete software engineering pipeline — from product discovery to deployment and infrastructure management, with shortcut pipelines for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. A **web dashboard** provides real-time observability of agent invocations, sessions, and pipeline executions. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
+**Mugiwara Agents** is a collection of **56 specialized AI agents** (Skills) for [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code), each modeled after a One Piece character. Together, they form a complete software engineering pipeline — from product discovery to deployment, cloud infrastructure, AI/ML, data, accessibility, and chaos engineering — with shortcut pipelines (named after One Piece ships!) for common workflows. A built-in **plugin CLI** (`mugiwara`) lets you install, update and manage agents individually. A **web dashboard** provides real-time observability of agent invocations, sessions, and pipeline executions. **Intelligent inter-agent routing** ensures every request finds the right expert. Don't know which agent to call? Just use `/one_piece` — the smart router finds the right nakama for you.
 
 ## The Crew
 
@@ -41,8 +41,8 @@
 | **Senor Pink** | `/senor-pink` | E2E Test Collection Creator | Hard-Boiled tests that make you cry. Generates chained Postman E2E test collections with workflow sequencing, dynamic variable chaining, advanced assertions, and Newman/CI-CD integration. |
 | **Law-SQL** | `/law-sql` | SQL Specialist & Doc-to-SQL | The Surgeon of Death operates on data with surgical SQL precision. Converts documents (Excel, Word, CSV, specs) into SQL scripts, optimizes queries, migrates between SQL dialects (PostgreSQL, MySQL, SQL Server, Oracle, SQLite). |
 | **Morgans** | `/morgans` | Release Email Generator | Big News Morgans broadcasts every release. Generates professional release emails for QA (test-oriented) and Production (stakeholder-oriented) deployments, with changelog classification, test perimeters, rollback plans, and post-deployment checklists. |
-| **Monitoring** | `/monitoring` | Monitoring & Alerting Engineer | Observability expert. Configures Prometheus scraping, Grafana dashboards, alerting rules, PagerDuty/OpsGenie escalation policies, and monitoring best practices. |
-| **Feature-Flags** | `/feature-flags` | Feature Flags Strategist | Progressive rollout expert. Designs env-based, Unleash, and LaunchDarkly feature flag strategies, A/B testing, rollout plans, and flag lifecycle management. |
+| **Enel** | `/enel` | Monitoring & Alerting Engineer | Observability expert. Configures Prometheus scraping, Grafana dashboards, alerting rules, PagerDuty/OpsGenie escalation policies, and monitoring best practices. (alias: `/monitoring`) |
+| **Ivankov** | `/ivankov` | Feature Flags Strategist | Progressive rollout expert. Designs env-based, Unleash, and LaunchDarkly feature flag strategies, A/B testing, rollout plans, and flag lifecycle management. (alias: `/feature-flags`) |
 
 ### Infrastructure Agents (v1.8)
 
@@ -52,6 +52,21 @@
 | **Paulie** | `/paulie` | `/iis` | IIS specialist. web.config, application pools, SSL/TLS bindings, URL Rewrite, Application Request Routing (ARR), Web Deploy, PowerShell IIS management. |
 | **Sabo** | `/sabo` | `/firebase` | Firebase architect. Authentication (Email, Google, Anonymous, Custom Claims), Firestore (modeling, queries, indexes, Security Rules), Hosting, Cloud Functions, Storage, FCM, Extensions, Emulator Suite. |
 | **Coby** | `/coby` | `/infra-reseau` | Infrastructure network engineer. Firewall (iptables, pf, Windows Firewall), DNS (BIND, Windows DNS), load balancing (HAProxy, Nginx, Azure LB), VPN (WireGuard, IPSec, OpenVPN), VLAN, SD-WAN. |
+
+### New Metier Agents (v1.9)
+
+| Agent | Command | Role | Specialty |
+|-------|---------|------|-----------|
+| **Crocodile** | `/crocodile` | Cloud AWS Architect | EC2, S3, Lambda, RDS, CloudFront, IAM, CDK/CloudFormation, Well-Architected Framework, cost optimization. |
+| **Doflamingo** | `/doflamingo` | Event-Driven Architect | Kafka, RabbitMQ, NATS, event sourcing, CQRS, saga patterns, dead letter queues, schema registry. |
+| **Kizaru** | `/kizaru` | Cloud Azure Architect | App Service, Functions, Cosmos DB, AKS, Azure DevOps, Bicep/ARM, Azure AD, cost management. (alias: `/azure`) |
+| **Fujitora** | `/fujitora` | Accessibility Expert (a11y) | WCAG 2.2 AA/AAA, ARIA, axe/Lighthouse audits, remediation, RGAA compliance, assistive tech testing. (alias: `/a11y`) |
+| **Katakuri** | `/katakuri` | AI/ML Ops Engineer | MLflow, Kubeflow, feature stores, model serving, drift detection, experiment tracking, GPU optimization. (alias: `/mlops`) |
+| **Big Mom** | `/big-mom` | Agile Coach / Scrum Master | Ceremonies, sprint planning, retrospectives, velocity, team health, Jira/Linear workflows, SAFe. (alias: `/agile`) |
+| **Hawkins** | `/hawkins` | BI & Data Visualization | Metabase, Superset, Looker, Power BI, Tableau, DAX/MDX, data storytelling, KPI dashboards. (alias: `/bi`) |
+| **Magellan** | `/magellan` | Database Administrator | PostgreSQL, MySQL, MongoDB, Redis tuning, backup/restore, replication, sharding, migration, monitoring. (alias: `/dba`) |
+| **Caesar** | `/caesar` | Chaos Engineer | Chaos Monkey, Litmus, Gremlin, GameDay planning, steady-state hypothesis, blast radius, resilience scoring. (alias: `/chaos`) |
+| **Aokiji** | `/aokiji` | Cloud GCP Architect | Cloud Run, GKE, BigQuery, Cloud Functions, Pub/Sub, Terraform GCP, IAM, cost optimization. (alias: `/gcp`) |
 
 ### Sanji's Kitchen — Specialist Sous-Chefs
 
@@ -73,22 +88,22 @@ Sanji automatically routes to the right sous-chef based on the chosen stack. Eac
 
 Pre-built orchestration pipelines that chain multiple agents for common workflows.
 
-| Pipeline | Command | Agents Chain | Use Case |
-|----------|---------|-------------|----------|
-| **Incident** | `/incident` | Chopper → Franky → Jinbe → Usopp | Production emergency response: diagnose, fix, secure, deploy |
-| **Pre-Launch** | `/pre-launch` | Nami → Franky → Jinbe → Usopp → Ace → Brook | Pre-production checklist: test, audit, secure, infra, performance, docs |
-| **Onboard** | `/onboard` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
-| **Modernize** | `/modernize` | Yamato → Robin → Law → Sanji → Shanks → Usopp | Stack modernization: trends, current state, data architecture, new architecture, migration strategy, infra migration |
-| **Discovery** | `/discovery` | Vivi → Mugiwara | Product discovery to scaffold: user research, then full pipeline (Zorro specs included in Mugiwara) |
-| **Doc-Hunt** | `/doc-hunt` | Yamato → Brook | Documentation hunting: web search for API/lib docs, then structured Markdown output |
-| **Api-Postman** | `/api-postman` | Bartholomew → Perona → Senor Pink | API to Postman pipeline: analyze API code, generate Postman collection, add E2E tests |
+| Pipeline | Command | Ship Alias | Agents Chain | Use Case |
+|----------|---------|-----------|-------------|----------|
+| **Incident** | `/incident` | `/polar-tang` | Chopper → Franky → Jinbe → Usopp | Production emergency response: diagnose, fix, secure, deploy |
+| **Pre-Launch** | `/pre-launch` | `/oro-jackson` | Nami → Franky → Jinbe → Usopp → Ace → Brook | Pre-production checklist: test, audit, secure, infra, performance, docs |
+| **Onboard** | `/onboard` | `/baratie` | Robin → Franky → Brook | New developer onboarding: map system, identify debt, generate guide |
+| **Modernize** | `/modernize` | `/pluton` | Yamato → Robin → Law → Sanji → Shanks → Usopp | Stack modernization: trends, current state, data architecture, new architecture, migration strategy, infra migration |
+| **Discovery** | `/discovery` | `/merry` | Vivi → Mugiwara | Product discovery to scaffold: user research, then full pipeline (Zorro specs included in Mugiwara) |
+| **Doc-Hunt** | `/doc-hunt` | `/ohara` | Yamato → Brook | Documentation hunting: web search for API/lib docs, then structured Markdown output |
+| **Api-Postman** | `/api-postman` | `/maxim` | Bartholomew → Perona → Senor Pink | API to Postman pipeline: analyze API code, generate Postman collection, add E2E tests |
 
 ### Orchestrator
 
 | Agent | Command | Role | Specialty |
 |-------|---------|------|-----------|
 | **One Piece** | `/one_piece` | Smart Router | Intelligent dispatcher. Describe any problem and it automatically routes to the best agent(s) or pipeline(s). No need to know the crew — just describe your need. |
-| **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the core analysis agents in sequence (Zorro, Sanji, Nami, Franky code review, Luffy) from a single problem statement. The whole crew at once! |
+| **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the core analysis agents in sequence (Zorro, Sanji, Nami, Franky code review, Luffy) from a single problem statement. The whole crew at once! (alias: `/thousand-sunny`) |
 
 ## Quick Start
 
@@ -590,7 +605,7 @@ Since v1.5, Mugiwara Agents ships with a **plugin management system** that treat
 | Component | File | Description |
 |-----------|------|-------------|
 | **CLI** | `bin/mugiwara` | Bash CLI with 6 commands: `list`, `install`, `uninstall`, `update`, `search`, `info` |
-| **Registry** | `registry.yaml` | Central index of all 50 agents (46 unique + 4 OP aliases) with version, description and category |
+| **Registry** | `registry.yaml` | Central index of all 78 agents (56 unique + aliases) with version, description and category |
 | **Manifests** | `skills/*/mugiwara.yaml` | Per-agent metadata: name, version, description, category, files, SHA256 checksums, dependencies |
 | **Core libs** | `lib/*.sh` | Modular shell libraries (core, registry, manifest, installer, commands) |
 
@@ -662,7 +677,7 @@ Since v1.7, the project enforces **Conventional Commits** via commitlint + Husky
 - `CHANGELOG.md` — Auto-generated changelog (v1.0 to v1.7)
 - `.github/workflows/release.yml` — Automated release pipeline
 
-**Test coverage:** 46 agents validated, 11 CI jobs (smoke, functional, hooks, plugin, dashboard, monitoring, feature-flags, docker, iis, firebase, infra-reseau).
+**Test coverage:** 56 agents validated, 16 CI jobs (smoke, functional, hooks, plugin, dashboard, monitoring, feature-flags, docker, iis, firebase, infra-reseau, big-mom, hawkins, magellan, caesar, aokiji), 582 structural tests.
 
 ## Infrastructure Agents (v1.8)
 
@@ -673,16 +688,38 @@ Since v1.8, the project covers the full deployment lifecycle with four new infra
 - **Sabo** (`/sabo` or `/firebase`) -- Firebase platform (Auth, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)
 - **Coby** (`/coby` or `/infra-reseau`) -- Network infrastructure (firewall, DNS, load balancing, VPN, VLAN, SD-WAN)
 
-Each agent has both a One Piece character name and a technical alias. The registry contains 50 entries (46 unique agents + 4 aliases). 138 syntax validation tests cover Dockerfile, YAML, XML, JSON, and Firebase Security Rules.
+Each agent has both a One Piece character name and a technical alias. 138 syntax validation tests cover Dockerfile, YAML, XML, JSON, and Firebase Security Rules.
+
+## Intelligent Routing & New Metier Agents (v1.9)
+
+The v1.9 release brings three major changes:
+
+**Renaming** (Phase 1 - delivered) — All agents now have One Piece character names (`monitoring` -> **Enel**, `feature-flags` -> **Ivankov**). All 8 pipelines are renamed after One Piece ships (Thousand Sunny, Merry, Polar Tang, Oro Jackson, Baratie, Pluton, Ohara, Maxim) with backward-compatible aliases.
+
+**10 new metier agents** (10/10 delivered — all Phases complete):
+- **Crocodile** (`/crocodile`) — Cloud AWS (EC2, S3, Lambda, CDK, Well-Architected)
+- **Doflamingo** (`/doflamingo`) — Event-Driven Architecture (Kafka, RabbitMQ, CQRS, Saga)
+- **Kizaru** (`/kizaru`, alias `/azure`) — Cloud Azure (App Service, Functions, AKS, Bicep)
+- **Fujitora** (`/fujitora`, alias `/a11y`) — Accessibility a11y (WCAG 2.2, ARIA, RGAA)
+- **Katakuri** (`/katakuri`, alias `/mlops`) — AI/ML Ops (MLflow, Kubeflow, model serving)
+- **Big Mom** (`/big-mom`, alias `/agile`) — Agile Coach / Scrum (ceremonies, velocity, SAFe)
+- **Hawkins** (`/hawkins`, alias `/bi`) — BI & Data Visualization (Power BI, Tableau, Metabase)
+- **Magellan** (`/magellan`, alias `/dba`) — DBA (PostgreSQL, MySQL, MongoDB, Redis tuning)
+- **Caesar** (`/caesar`, alias `/chaos`) — Chaos Engineering (Chaos Monkey, Litmus, GameDay)
+- **Aokiji** (`/aokiji`, alias `/gcp`) — Cloud GCP (Cloud Run, GKE, BigQuery, Terraform GCP)
+
+**Intelligent inter-agent routing** — Every agent has a routing table pointing to complementary agents. When a request falls outside an agent's scope, it suggests (or invokes) the best-suited colleague. This forms a complete web where no IT domain is orphaned. `/one_piece` remains the universal entry point.
+
+**Volume:** 56 unique agents created, 78 registry entries (with aliases), 8 ship-named pipelines, 16 CI jobs, 582 structural tests.
 
 ## Testing & CI/CD (v1.4+)
 
-The project is validated by eleven parallel CI jobs on every push and PR:
+The project is validated by sixteen parallel CI jobs on every push and PR:
 
 | Suite | File | Description |
 |-------|------|-------------|
-| Smoke tests | `tests/test_structural.sh` | 342+ structural assertions (file existence, YAML validity, field coherence) |
-| Functional tests | `tests/functional/run-functional-tests.sh` | Dry-run execution of all 46 agents with output validation |
+| Smoke tests | `tests/test_structural.sh` | 582 structural assertions (file existence, YAML validity, field coherence) |
+| Functional tests | `tests/functional/run-functional-tests.sh` | Dry-run execution of all 56 agents with output validation |
 | Hooks tests | `tests/hooks/test-hooks.sh` | Automated tests for the 6 Claude Code hooks (logging, validation, notifications) |
 | Plugin tests | `tests/plugin/test_cli.sh` | CLI and plugin system validation (commands, manifests, registry) |
 | Dashboard tests | `dashboard/` (via `npm test`) | 116 unit + integration tests for the web dashboard (Vitest) |
@@ -692,6 +729,11 @@ The project is validated by eleven parallel CI jobs on every push and PR:
 | IIS tests | `tests/iis/test_iis.sh` | web.config XML validation, configuration coherence checks |
 | Firebase tests | `tests/firebase/test_firebase.sh` | firebase.json, Security Rules syntax, firestore.indexes.json validation |
 | Infra-reseau tests | `tests/infra-reseau/test_infra_reseau.sh` | Firewall rules, DNS config, load balancer config validation |
+| Big Mom tests | `tests/big-mom/test_big_mom.sh` | Agile Coach agent validation (SKILL.md, manifest, routing) |
+| Hawkins tests | `tests/hawkins/test_hawkins.sh` | BI & Data Viz agent validation (SKILL.md, manifest, routing) |
+| Magellan tests | `tests/magellan/test_magellan.sh` | DBA agent validation (SKILL.md, manifest, routing) |
+| Caesar tests | `tests/caesar/test_caesar.sh` | Chaos Engineering agent validation (SKILL.md, manifest, routing) |
+| Aokiji tests | `tests/aokiji/test_aokiji.sh` | Cloud GCP agent validation (SKILL.md, manifest, routing) |
 
 The CI pipeline is defined in `.github/workflows/ci.yml` and runs on Ubuntu with `jq` installed. The release pipeline (`.github/workflows/release.yml`) automates changelog generation, Morgans email, git tagging, and deployment.
 
@@ -742,7 +784,7 @@ mugiwara-agents/
 │   ├── plan-v1.4-v2.0.md        # Strategic roadmap v1.4 → v2.0
 │   └── roadmap/                  # Per-version release notes
 ├── tests/
-│   ├── test_structural.sh        # Smoke tests (342+ assertions)
+│   ├── test_structural.sh        # Smoke tests (582 assertions)
 │   ├── functional/               # Functional tests (dry-run)
 │   ├── hooks/                    # Hooks tests
 │   ├── plugin/                   # Plugin system tests
@@ -753,7 +795,7 @@ mugiwara-agents/
 ├── schemas/                      # JSON Schemas (v1.7)
 │   ├── agent-event.schema.json  #   JSONL log event schema
 │   └── validate-jsonl.sh        #   Schema validator
-├── skills/                       # 50 agents (46 unique + 4 OP aliases) — each with SKILL.md + mugiwara.yaml
+├── skills/                       # 56 agents + aliases — each with SKILL.md + mugiwara.yaml
 ├── registry.yaml                 # Central agent index (v1.5)
 ├── install.sh                    # Full installation script
 ├── uninstall.sh                  # Uninstallation script
@@ -773,9 +815,9 @@ mugiwara-agents/
 | [documentation.md](./documentation.md) | Full technical documentation (Diataxis framework) |
 | [VERSIONING.md](./VERSIONING.md) | Semantic Versioning policy with decision tree |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | Contributor guide with commit conventions |
-| [CHANGELOG.md](./CHANGELOG.md) | Auto-generated changelog (v1.0 -> v1.8) |
+| [CHANGELOG.md](./CHANGELOG.md) | Auto-generated changelog (v1.0 -> v1.9) |
 | [docs/mcp-servers.md](./docs/mcp-servers.md) | MCP Servers installation guide (9 servers) |
-| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 -> v1.8) |
+| [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 -> v1.9) |
 | [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md) | Strategic plan through v2.0 |
 
 ## License

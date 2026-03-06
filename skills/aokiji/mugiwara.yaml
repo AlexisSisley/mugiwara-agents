@@ -1,0 +1,25 @@
+name: aokiji
+version: 1.9.0
+description: Aokiji — Architecte Cloud GCP (Cloud Run, GKE, BigQuery, Cloud Functions, Pub/Sub, Terraform GCP, IAM, couts)
+category: cloud
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - gcp
+  - cloud-run
+  - gke
+  - bigquery
+  - cloud-functions
+  - pubsub
+  - terraform
+  - iam
+  - cloud-storage
+  - cloud-sql
+  - cost-optimization
+checksum:
+  SKILL.md: ""

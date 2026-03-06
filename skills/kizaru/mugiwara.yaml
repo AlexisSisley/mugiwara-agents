@@ -1,0 +1,25 @@
+name: kizaru
+version: 1.9.0
+description: Kizaru — Architecte Cloud Azure (App Service, Functions, Cosmos DB, AKS, DevOps, Bicep/ARM, Entra ID, couts)
+category: cloud
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - azure
+  - app-service
+  - functions
+  - cosmos-db
+  - aks
+  - bicep
+  - arm-templates
+  - azure-devops
+  - entra-id
+  - well-architected
+  - cost-optimization
+checksum:
+  SKILL.md: ""

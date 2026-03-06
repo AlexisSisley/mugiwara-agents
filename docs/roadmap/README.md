@@ -19,6 +19,7 @@ Suivi des evolutions du projet. Chaque section documente les ajouts, modificatio
 | v1.6 | 2026-03-05 | [v1.6.md](./v1.6.md) | Dashboard & Observabilite — SPA web Svelte + API Express, 116 tests, job CI #5 |
 | v1.7 | 2026-03-05 | [v1.7.md](./v1.7.md) | Governance & Release — agents monitoring + feature-flags, pipeline release, conventional commits, schema JSON, CHANGELOG auto |
 | v1.8 | 2026-04 | [v1.8.md](./v1.8.md) | Infrastructure, Cloud & Deploiement — agents docker, iis, firebase, infra-reseau, orchestration, conteneurs Windows |
+| v1.9 | 2026-03 | [v1.9.md](./v1.9.md) | Routage Intelligent, Renommages OP & 10 Nouveaux Agents Metier — 56 agents, pipelines navires, toile inter-agents |
 
 ---
 
@@ -54,4 +55,8 @@ Idees et taches a venir (non priorisees) :
 - [ ] Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN) (v1.8)
 - [ ] Integration Docker + IIS (conteneurs Windows) (v1.8)
 - [ ] Integration Monitoring + Infra + Firebase (dashboards Grafana) (v1.8)
+- [ ] Renommage monitoring -> Enel, feature-flags -> Ivankov (v1.9)
+- [ ] 8 pipelines renommes en navires OP (Thousand Sunny, Merry, Polar Tang, etc.) (v1.9)
+- [ ] 10 nouveaux agents metier : Crocodile (AWS), Doflamingo (Event-Driven), Kizaru (Azure), Fujitora (a11y), Katakuri (AI/ML), Big Mom (Agile), Hawkins (BI), Magellan (DBA), Caesar (Chaos), Aokiji (GCP) (v1.9)
+- [ ] Routage intelligent inter-agents — toile complete des metiers IT (v1.9)
 - [ ] Site Docusaurus, marketplace d'agents (v2.0)

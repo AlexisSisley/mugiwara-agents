@@ -1,6 +1,6 @@
 name: incident
-version: 1.5.0
-description: Pipeline de reponse d'urgence production
+version: 1.9.0
+description: Pipeline de reponse d'urgence production [alias retro-compatible: polar-tang]
 category: pipeline
 author: AlexisSisley
 license: MIT
@@ -15,4 +15,4 @@ requires:
   mugiwara-cli: ">=1.5.0"
 tags: []
 checksum:
-  SKILL.md: "92629ace6dce18cf7b7932bd070b6efeb971079bcae6b3b422e02873d631a872"
+  SKILL.md: ""

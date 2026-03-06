@@ -1,0 +1,19 @@
+name: ivankov
+version: 1.9.0
+description: Ivankov — Revolutionnaire des Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery
+category: infrastructure
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - feature-flags
+  - unleash
+  - launchdarkly
+  - progressive-delivery
+  - toggles
+checksum:
+  SKILL.md: ""

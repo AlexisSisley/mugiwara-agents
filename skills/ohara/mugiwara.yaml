@@ -1,0 +1,18 @@
+name: ohara
+version: 1.9.0
+description: Ohara — Pipeline de recherche et redaction de documentation (Yamato > Brook)
+category: pipeline
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends:
+  - yamato
+  - brook
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - pipeline
+  - documentation
+checksum:
+  SKILL.md: ""
