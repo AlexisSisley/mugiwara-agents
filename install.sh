@@ -35,7 +35,7 @@ fi
 mkdir -p "$SKILLS_DIR"
 
 # List of crew members
-CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans monitoring feature-flags api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay)
+CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans monitoring feature-flags api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay docker firebase iis infra-reseau iceburg sabo paulie coby)
 ROLES=(
     "Business Analyst"
     "Architect & Tech Lead"
@@ -79,6 +79,14 @@ ROLES=(
     "Pipeline: Documentation Hunting"
     "Smart Router"
     "... 🤫"
+    "Docker & Containerization"
+    "Firebase & Google Cloud"
+    "IIS & Windows Server"
+    "Infrastructure Reseau"
+    "Iceburg — Maitre Charpentier Docker"
+    "Sabo — Chef Revolutionnaire Firebase"
+    "Paulie — Charpentier IIS"
+    "Coby — Capitaine Reseau"
 )
 
 echo -e "  Installing crew members to ${BLUE}$SKILLS_DIR${NC}"

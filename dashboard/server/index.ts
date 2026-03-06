@@ -29,8 +29,15 @@ app.use('/api', pipelinesRouter);
 app.use('/api', statsRouter);
 
 // ── API 404 handler ───────────────────────────────────────────
+// "People's dreams... don't ever end!" — Blackbeard
+// (Neither do 404s, apparently.)
 app.use('/api', (_req, res) => {
-  res.status(404).json({ error: 'not_found', message: 'API endpoint not found' });
+  res.status(404).json({
+    error: 'not_found',
+    message: 'API endpoint not found',
+    // If you found this, you sailed too far. Turn back, nakama.
+    hint: process.env['ENABLE_EGGS'] !== 'false' ? 'The One Piece is not at this endpoint.' : undefined,
+  });
 });
 
 // ── Static Files (Svelte build) ──────────────────────────────

@@ -102,17 +102,18 @@ Le projet mugiwara-agents a livre 4 versions en une journee (2026-03-02), passan
 | Pipeline Release | Changelog auto + morgans + tag + deploy | `/vegapunk` |
 | Audit ecosysteme | Health-check complet apres ajouts | `/vegapunk` |
 
-### Phase 4b — v1.8 : Infrastructure, Docker & IIS (Avril 2026)
+### Phase 4b — v1.8 : Infrastructure, Cloud, Docker & IIS (Avril 2026)
 
-**Objectif** : Couvrir l'infrastructure reseau, la containerisation Docker et le deploiement IIS.
+**Objectif** : Couvrir l'infrastructure reseau, la containerisation Docker, le deploiement IIS et les services cloud Firebase.
 
 | Tache | Description | Agent suggere |
 |-------|-------------|---------------|
 | Agent Docker | Dockerfile, docker-compose, orchestration Swarm/K8s, Helm charts | `/vegapunk` |
 | Agent IIS | web.config, application pools, SSL/TLS, URL Rewrite, Web Deploy, PowerShell | `/vegapunk` + `/sanji-dotnet` |
+| Agent Firebase | Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Extensions, Emulator Suite | `/vegapunk` + `/sanji-ts` |
 | Agent Infrastructure Reseau | Firewall (iptables, pf, Windows Firewall), DNS, load balancing (HAProxy, Nginx), VPN, VLAN | `/vegapunk` |
 | Integration Docker + IIS | Conteneurs Windows Server Core, IIS dans Docker | `/vegapunk` |
-| Integration Monitoring + Infra | Dashboards Grafana pour Docker (cAdvisor), IIS (perfmon), reseau (SNMP) | `/vegapunk` |
+| Integration Monitoring + Infra + Firebase | Dashboards Grafana pour Docker (cAdvisor), IIS (perfmon), reseau (SNMP), Firebase (usage, latence) | `/vegapunk` |
 
 ### Phase 5 — v2.0 : Maturite ecosysteme (Septembre 2026)
 
@@ -135,6 +136,6 @@ Mars 2026       : v1.4 — Tests fonctionnels & CI/CD          [DONE]
 Mars 2026       : v1.5 — Plugin System                       [DONE]
 Mars 2026       : v1.6 — Dashboard Web                       [DONE]
 Mars 2026       : v1.7 — Nouveaux agents & pipelines         [EN COURS]
-Avril 2026      : v1.8 — Infrastructure, Docker & IIS       [PLANNED]
+Avril 2026      : v1.8 — Infrastructure, Cloud, Docker & IIS [PLANNED]
 Septembre 2026  : v2.0 — Maturite ecosysteme
 ```

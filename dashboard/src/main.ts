@@ -17,4 +17,11 @@ if (import.meta.env.VITE_ENABLE_EGGS !== 'false') {
   import('./__eggs__/konami').then((egg) => egg.activate());
 }
 
+// ── Easter Egg: Nakama Roll Call (lazy-loaded) ───────────────
+// Triple-click the version number in the sidebar to reveal crew roster.
+// Disable with VITE_ENABLE_EGGS=false in .env
+if (import.meta.env.VITE_ENABLE_EGGS !== 'false') {
+  import('./__eggs__/nakama-roll').then((egg) => egg.activate());
+}
+
 export default app;

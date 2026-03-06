@@ -3,7 +3,7 @@
 # Auto-generated index of all available agents
 # ============================================================
 version: 1
-updated: "2026-03-05T00:00:00Z"
+updated: "2026-03-06T00:00:00Z"
 base_url: "https://raw.githubusercontent.com/AlexisSisley/mugiwara-agents/main"
 agents:
   ace:
@@ -30,6 +30,14 @@ agents:
     version: 1.5.0
     description: "Urgentiste specialise en diagnostic et resolution de bugs"
     category: debugging
+  iceburg:
+    version: 1.8.0
+    description: "Iceburg — Maitre Charpentier Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, conteneurs Windows)"
+    category: infrastructure
+  docker:
+    version: 1.8.0
+    description: "Agent Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, securite conteneurs) [alias: iceburg]"
+    category: infrastructure
   discovery:
     version: 1.5.0
     description: "Pipeline de decouverte produit (Vivi + Zorro)"
@@ -42,10 +50,26 @@ agents:
     version: 1.5.0
     description: "Senior Code Reviewer et Expert en Cybersecurite"
     category: security
+  paulie:
+    version: 1.8.0
+    description: "Paulie — Charpentier IIS (web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell)"
+    category: infrastructure
+  iis:
+    version: 1.8.0
+    description: "Agent IIS (web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell) [alias: paulie]"
+    category: infrastructure
   incident:
     version: 1.5.0
     description: "Pipeline de reponse d'urgence production"
     category: pipeline
+  coby:
+    version: 1.8.0
+    description: "Coby — Capitaine de la Marine, Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau)"
+    category: infrastructure
+  infra-reseau:
+    version: 1.8.0
+    description: "Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau) [alias: coby]"
+    category: infrastructure
   jinbe:
     version: 1.5.0
     description: "Auditeur SecOps et consultant en conformite reglementaire"
@@ -70,6 +94,14 @@ agents:
     version: 1.7.0
     description: "Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery"
     category: infrastructure
+  sabo:
+    version: 1.8.0
+    description: "Sabo — Chef Revolutionnaire Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)"
+    category: cloud
+  firebase:
+    version: 1.8.0
+    description: "Agent Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite) [alias: sabo]"
+    category: cloud
   monitoring:
     version: 1.7.0
     description: "Agent Monitoring et Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)"

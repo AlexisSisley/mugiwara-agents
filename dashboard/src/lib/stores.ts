@@ -1,6 +1,11 @@
 // ============================================================
 // Svelte Stores - Reactive state with 30s polling
 // ============================================================
+//
+// If you're reading this, you've navigated the Grand Line of our codebase.
+// The treasure you seek is not gold or silver — it's reactive state.
+// "A man's dream never dies!" — Marshall D. Teach
+//
 
 import { writable } from 'svelte/store';
 import { api } from './api/client';

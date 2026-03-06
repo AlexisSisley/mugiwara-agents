@@ -1,0 +1,24 @@
+name: coby
+version: 1.8.0
+description: Coby — Capitaine de la Marine, Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau)
+category: infrastructure
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - firewall
+  - dns
+  - load-balancing
+  - vpn
+  - vlan
+  - haproxy
+  - nginx
+  - wireguard
+  - iptables
+  - network
+checksum:
+  SKILL.md: "0a4d920643bedd7f72e81d6052fbab2744558dc591c767016c9b50e8d20be18c"

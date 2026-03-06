@@ -9,9 +9,9 @@
   }
 
   const navItems: NavItem[] = [
-    { path: '/', label: 'Agents', icon: '\u{1F465}', crew: 'Monitoring' },
-    { path: '/pipelines', label: 'Pipelines', icon: '\u{1F680}', crew: 'Workflows' },
-    { path: '/sessions', label: 'Sessions', icon: '\u{1F4CB}', crew: 'Activity' },
+    { path: '/', label: 'Agents', icon: '👥', crew: 'Monitoring' },
+    { path: '/pipelines', label: 'Pipelines', icon: '🚀', crew: 'Workflows' },
+    { path: '/sessions', label: 'Sessions', icon: '📋', crew: 'Activity' },
   ];
 
   function navigate(path: string) {
@@ -23,7 +23,7 @@
 <nav class="sidebar">
   <div class="sidebar-brand">
     <div class="brand-circle">
-      <span class="brand-icon anim-float">\u{1F4CA}</span>
+      <span class="brand-icon anim-float">📊</span>
     </div>
     <div class="brand-text-group">
       <span class="brand-text manga">MUGIWARA</span>

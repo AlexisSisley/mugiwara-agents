@@ -1,0 +1,22 @@
+name: paulie
+version: 1.8.0
+description: Paulie — Charpentier IIS (web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell)
+category: infrastructure
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - iis
+  - web-config
+  - windows-server
+  - ssl
+  - application-pool
+  - url-rewrite
+  - aspnet
+  - powershell
+checksum:
+  SKILL.md: "af0f0e0398bc97dc05dcc1642f9c46273bed6cd5c43c156d5b643ac83e0b1019"

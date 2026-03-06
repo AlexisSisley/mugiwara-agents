@@ -1,0 +1,22 @@
+name: firebase
+version: 1.8.0
+description: Agent Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)
+category: cloud
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - firebase
+  - firestore
+  - authentication
+  - security-rules
+  - cloud-functions
+  - hosting
+  - storage
+  - fcm
+checksum:
+  SKILL.md: "95034196fad7ea6c665dfcc7a994dd508bea269c0636c3ea32681aab7f5fa632"

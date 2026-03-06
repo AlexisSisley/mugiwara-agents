@@ -1,0 +1,23 @@
+name: iceburg
+version: 1.8.0
+description: Iceburg — Maitre Charpentier Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, conteneurs Windows)
+category: infrastructure
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - docker
+  - dockerfile
+  - docker-compose
+  - kubernetes
+  - helm
+  - swarm
+  - containers
+  - orchestration
+  - iis-windows
+checksum:
+  SKILL.md: "9bb154808e160d4d6e7f159667dda2195ef2c3696dfe5e5963c2a52cf85130e9"

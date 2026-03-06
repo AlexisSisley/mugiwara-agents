@@ -2,8 +2,9 @@
 # Mugiwara Agents - CI Pipeline
 # ============================================================
 # Runs all test suites on every push to main and pull request.
-# Five parallel jobs: smoke tests, functional tests (dry-run),
-# hooks tests, plugin system tests, and dashboard tests.
+# 11 parallel jobs: smoke tests, functional tests (dry-run),
+# hooks tests, plugin system tests, monitoring, feature-flags,
+# dashboard, docker, iis, firebase, infra-reseau.
 #
 # No secrets or API keys required — all tests run offline.
 # ============================================================
@@ -172,3 +173,59 @@ jobs:
       - name: Build frontend
         working-directory: dashboard
         run: npx vite build
+
+  # ── Job 8: Docker Agent Tests ──────────────────────────────
+  docker-tests:
+    name: Docker Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run docker agent tests
+        run: |
+          chmod +x tests/docker/test_docker.sh
+          bash tests/docker/test_docker.sh
+
+  # ── Job 9: IIS Agent Tests ────────────────────────────────
+  iis-tests:
+    name: IIS Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run IIS agent tests
+        run: |
+          chmod +x tests/iis/test_iis.sh
+          bash tests/iis/test_iis.sh
+
+  # ── Job 10: Firebase Agent Tests ──────────────────────────
+  firebase-tests:
+    name: Firebase Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Firebase agent tests
+        run: |
+          chmod +x tests/firebase/test_firebase.sh
+          bash tests/firebase/test_firebase.sh
+
+  # ── Job 11: Infrastructure Reseau Agent Tests ─────────────
+  infra-reseau-tests:
+    name: Infra Reseau Agent Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run infra-reseau agent tests
+        run: |
+          chmod +x tests/infra-reseau/test_infra_reseau.sh
+          bash tests/infra-reseau/test_infra_reseau.sh

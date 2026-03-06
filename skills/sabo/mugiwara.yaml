@@ -1,0 +1,22 @@
+name: sabo
+version: 1.8.0
+description: Sabo — Chef Revolutionnaire Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)
+category: cloud
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - firebase
+  - firestore
+  - authentication
+  - security-rules
+  - cloud-functions
+  - hosting
+  - storage
+  - fcm
+checksum:
+  SKILL.md: "f7f7e4074670d68a8aff1447f6cd48249df0740dc6d70c265b3e99384c5f79ea"
