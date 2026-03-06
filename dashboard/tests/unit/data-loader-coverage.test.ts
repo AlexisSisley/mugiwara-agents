@@ -211,10 +211,12 @@ describe('data-loader - full coverage', () => {
 
     it('should detect existing data files', () => {
       const status = getDataFileStatus();
-      // In the real project, these files should exist
-      expect(status.agents).toBe(true);
-      expect(status.sessions).toBe(true);
+      // registry.yaml is tracked in git and always exists
       expect(status.registry).toBe(true);
+      // agents.jsonl and sessions.jsonl are in logs/ (gitignored)
+      // so they may not exist in CI — just check they return booleans
+      expect(typeof status.agents).toBe('boolean');
+      expect(typeof status.sessions).toBe('boolean');
     });
   });
 

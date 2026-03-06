@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "description": "Prompts de test minimaux pour les 40 agents mugiwara-agents",
-    "version": "1.4.0",
+    "description": "Prompts de test minimaux pour les 70 agents mugiwara-agents",
+    "version": "1.9.0",
     "note": "Chaque prompt est concu pour produire un output rapide et validable. En mode dry-run, seule la structure est verifiee (pas d'appel LLM)."
   },
   "agents": [
@@ -244,6 +244,186 @@
       "prompt": "Genere un test unitaire pour la fonction suivante: function add(a, b) { return a + b; }",
       "min_output_length": 50,
       "description": "Specialiste tests unitaires"
+    },
+    {
+      "name": "aokiji",
+      "prompt": "Propose une architecture GCP minimale avec Cloud Run pour un service API.",
+      "min_output_length": 50,
+      "description": "Architecte Cloud GCP"
+    },
+    {
+      "name": "baratie",
+      "prompt": "Lance un onboarding codebase pour un nouveau developpeur sur ce projet.",
+      "min_output_length": 50,
+      "description": "Pipeline onboarding (navire)"
+    },
+    {
+      "name": "big-mom",
+      "prompt": "Propose un sprint planning pour une equipe de 5 developpeurs sur 2 semaines.",
+      "min_output_length": 50,
+      "description": "Agile Coach & Scrum Master"
+    },
+    {
+      "name": "caesar",
+      "prompt": "Propose un plan de chaos engineering pour tester la resilience d'un service API.",
+      "min_output_length": 50,
+      "description": "Chaos Engineering"
+    },
+    {
+      "name": "coby",
+      "prompt": "Propose une configuration firewall minimale pour un serveur web.",
+      "min_output_length": 50,
+      "description": "Infrastructure Reseau"
+    },
+    {
+      "name": "crocodile",
+      "prompt": "Propose une architecture AWS minimale avec Lambda et API Gateway.",
+      "min_output_length": 50,
+      "description": "Architecte Cloud AWS"
+    },
+    {
+      "name": "docker",
+      "prompt": "Genere un Dockerfile multi-stage pour une application Node.js.",
+      "min_output_length": 50,
+      "description": "Agent Docker"
+    },
+    {
+      "name": "doflamingo",
+      "prompt": "Propose une architecture event-driven avec Kafka pour un systeme de commandes.",
+      "min_output_length": 50,
+      "description": "Architecte Event-Driven"
+    },
+    {
+      "name": "enel",
+      "prompt": "Configure un stack de monitoring Prometheus + Grafana pour un service API.",
+      "min_output_length": 50,
+      "description": "Monitoring & Alerting"
+    },
+    {
+      "name": "feature-flags",
+      "prompt": "Implemente un systeme de feature flags env-based pour un projet Node.js.",
+      "min_output_length": 50,
+      "description": "Agent Feature Flags"
+    },
+    {
+      "name": "firebase",
+      "prompt": "Configure Firebase Authentication avec les regles Firestore de base.",
+      "min_output_length": 50,
+      "description": "Agent Firebase"
+    },
+    {
+      "name": "fujitora",
+      "prompt": "Audite l'accessibilite WCAG 2.2 AA d'un formulaire de contact HTML.",
+      "min_output_length": 50,
+      "description": "Expert Accessibilite a11y"
+    },
+    {
+      "name": "hawkins",
+      "prompt": "Propose un dashboard KPI minimal pour suivre les metriques business d'un SaaS.",
+      "min_output_length": 50,
+      "description": "BI & Data Visualization"
+    },
+    {
+      "name": "iceburg",
+      "prompt": "Genere un docker-compose.yml pour une stack Node.js + PostgreSQL + Redis.",
+      "min_output_length": 50,
+      "description": "Maitre Charpentier Docker"
+    },
+    {
+      "name": "iis",
+      "prompt": "Genere un web.config IIS minimal pour une application ASP.NET.",
+      "min_output_length": 50,
+      "description": "Agent IIS"
+    },
+    {
+      "name": "infra-reseau",
+      "prompt": "Propose une configuration DNS et load balancing pour un service haute disponibilite.",
+      "min_output_length": 50,
+      "description": "Agent Infrastructure Reseau"
+    },
+    {
+      "name": "ivankov",
+      "prompt": "Configure un systeme de feature flags avec Unleash pour un projet web.",
+      "min_output_length": 50,
+      "description": "Revolutionnaire des Feature Flags"
+    },
+    {
+      "name": "katakuri",
+      "prompt": "Propose un pipeline MLOps avec MLflow pour le tracking d'experiences.",
+      "min_output_length": 50,
+      "description": "AI/ML Ops"
+    },
+    {
+      "name": "kizaru",
+      "prompt": "Propose une architecture Azure minimale avec App Service et Cosmos DB.",
+      "min_output_length": 50,
+      "description": "Architecte Cloud Azure"
+    },
+    {
+      "name": "magellan",
+      "prompt": "Propose une strategie de backup et replication pour une base PostgreSQL.",
+      "min_output_length": 50,
+      "description": "DBA"
+    },
+    {
+      "name": "maxim",
+      "prompt": "Lance le pipeline API Analyze > Postman > E2E pour un endpoint GET /users.",
+      "min_output_length": 50,
+      "description": "Pipeline API (navire)"
+    },
+    {
+      "name": "merry",
+      "prompt": "Lance une decouverte produit pour une application mobile de suivi fitness.",
+      "min_output_length": 50,
+      "description": "Pipeline decouverte (navire)"
+    },
+    {
+      "name": "monitoring",
+      "prompt": "Configure des alertes Prometheus pour un service API avec des SLOs.",
+      "min_output_length": 50,
+      "description": "Agent Monitoring"
+    },
+    {
+      "name": "ohara",
+      "prompt": "Lance la recherche et redaction de documentation pour ce projet.",
+      "min_output_length": 50,
+      "description": "Pipeline documentation (navire)"
+    },
+    {
+      "name": "oro-jackson",
+      "prompt": "Lance la verification pre-production pour un service API REST.",
+      "min_output_length": 50,
+      "description": "Pipeline pre-launch (navire)"
+    },
+    {
+      "name": "paulie",
+      "prompt": "Configure un application pool IIS pour une application .NET 8.",
+      "min_output_length": 50,
+      "description": "Charpentier IIS"
+    },
+    {
+      "name": "pluton",
+      "prompt": "Lance la modernisation d'un stack technique legacy PHP vers Node.js.",
+      "min_output_length": 50,
+      "description": "Pipeline modernisation (navire)"
+    },
+    {
+      "name": "polar-tang",
+      "prompt": "Lance la reponse d'urgence pour un service en erreur 500.",
+      "min_output_length": 50,
+      "description": "Pipeline incident (navire)"
+    },
+    {
+      "name": "sabo",
+      "prompt": "Configure Firebase Hosting et Cloud Functions pour un projet web.",
+      "min_output_length": 50,
+      "description": "Chef Revolutionnaire Firebase"
+    },
+    {
+      "name": "thousand-sunny",
+      "prompt": "Orchestre l'analyse integrale d'un endpoint GET /products.",
+      "min_output_length": 50,
+      "description": "Pipeline analyse integral (navire)"
     }
   ]
 }

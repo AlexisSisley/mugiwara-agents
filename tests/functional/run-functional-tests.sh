@@ -138,10 +138,10 @@ fi
 
 # P1.3 - Verifier le nombre d'agents dans le fichier
 AGENT_COUNT=$(jq '.agents | length' "$PROMPTS_FILE" | tr -d '\r')
-if [ "$AGENT_COUNT" -eq 40 ]; then
-    pass "test-prompts.json contient 40 agents"
+if [ "$AGENT_COUNT" -eq 70 ]; then
+    pass "test-prompts.json contient 70 agents"
 else
-    fail "test-prompts.json contient $AGENT_COUNT agents (attendu: 40)"
+    fail "test-prompts.json contient $AGENT_COUNT agents (attendu: 70)"
 fi
 
 # P1.4 - Verifier que validate-output.sh existe

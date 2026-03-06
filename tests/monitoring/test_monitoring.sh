@@ -199,17 +199,17 @@ if [ -f "$MONITORING_DIR/mugiwara.yaml" ]; then
     fi
 
     # T3.2 - Version field
-    if echo "$MANIFEST" | grep -q "^version: 1.7.0"; then
-        pass "Manifest has version 1.7.0"
+    if echo "$MANIFEST" | grep -q "^version: 1.9.0"; then
+        pass "Manifest has version 1.9.0"
     else
-        fail "Manifest version is not 1.7.0"
+        fail "Manifest version is not 1.9.0"
     fi
 
     # T3.3 - Category field
-    if echo "$MANIFEST" | grep -q "^category: infrastructure"; then
-        pass "Manifest has category: infrastructure"
+    if echo "$MANIFEST" | grep -q "^category: monitoring"; then
+        pass "Manifest has category: monitoring"
     else
-        fail "Manifest category is not 'infrastructure'"
+        fail "Manifest category is not 'monitoring'"
     fi
 
     # T3.4 - Checksum field
@@ -257,18 +257,18 @@ if [ -f "$REGISTRY" ]; then
 
     # T4.2 - registry version matches manifest
     REG_VERSION=$(grep -A 3 "^  monitoring:" "$REGISTRY" | grep "version:" | awk '{print $2}')
-    if [ "$REG_VERSION" = "1.7.0" ]; then
-        pass "Registry version matches manifest (1.7.0)"
+    if [ "$REG_VERSION" = "1.9.0" ]; then
+        pass "Registry version matches manifest (1.9.0)"
     else
-        fail "Registry version mismatch (got: $REG_VERSION, expected: 1.7.0)"
+        fail "Registry version mismatch (got: $REG_VERSION, expected: 1.9.0)"
     fi
 
     # T4.3 - registry category matches
     REG_CAT=$(grep -A 3 "^  monitoring:" "$REGISTRY" | grep "category:" | awk '{print $2}')
-    if [ "$REG_CAT" = "infrastructure" ]; then
-        pass "Registry category matches manifest (infrastructure)"
+    if [ "$REG_CAT" = "monitoring" ]; then
+        pass "Registry category matches manifest (monitoring)"
     else
-        fail "Registry category mismatch (got: $REG_CAT, expected: infrastructure)"
+        fail "Registry category mismatch (got: $REG_CAT, expected: monitoring)"
     fi
 else
     fail "registry.yaml not found"
