@@ -137,5 +137,6 @@ Mars 2026       : v1.5 — Plugin System                       [DONE]
 Mars 2026       : v1.6 — Dashboard Web                       [DONE]
 Mars 2026       : v1.7 — Nouveaux agents & pipelines         [DONE]
 Mars 2026       : v1.8 — Infrastructure, Cloud, Docker & IIS [DONE]
+Mars 2026       : v1.9 — Routage, Renommages & 10 agents     [EN COURS — audit 09/03 : agents 10/10, routage 8/56, tests P0+P1 0/5, tags manquants]
 Septembre 2026  : v2.0 — Maturite ecosysteme
 ```

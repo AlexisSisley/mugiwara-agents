@@ -154,9 +154,9 @@ agents complementaires, compose une chaine ad-hoc :
 1. Annonce la chaine et la raison
 2. Invoque le premier agent via l'outil Skill, capture l'output
 3. Invoque le deuxieme agent via l'outil Skill en lui passant le contexte du premier dans `args`
-4. (Optionnel) Invoque un troisieme agent via l'outil Skill
+4. (Optionnel) Continue la chaine en invoquant les agents suivants via l'outil Skill, en passant le contexte accumule
 
-**Limite stricte : 3 agents maximum.** Au-dela, recommande un pipeline existant
+**Limite stricte : 6 agents maximum.** Au-dela, recommande un pipeline existant
 ou suggere a l'utilisateur de lancer les agents un par un.
 
 ### Clarification (confiance basse)

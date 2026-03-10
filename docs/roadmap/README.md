@@ -18,8 +18,8 @@ Suivi des evolutions du projet. Chaque section documente les ajouts, modificatio
 | v1.5 | 2026-03-04 | [v1.5.md](./v1.5.md) | Plugin system — CLI mugiwara, registry, manifests, SHA256, pipeline depends |
 | v1.6 | 2026-03-05 | [v1.6.md](./v1.6.md) | Dashboard & Observabilite — SPA web Svelte + API Express, 116 tests, job CI #5 |
 | v1.7 | 2026-03-05 | [v1.7.md](./v1.7.md) | Governance & Release — agents monitoring + feature-flags, pipeline release, conventional commits, schema JSON, CHANGELOG auto |
-| v1.8 | 2026-04 | [v1.8.md](./v1.8.md) | Infrastructure, Cloud & Deploiement — agents docker, iis, firebase, infra-reseau, orchestration, conteneurs Windows |
-| v1.9 | 2026-03 | [v1.9.md](./v1.9.md) | Routage Intelligent, Renommages OP & 10 Nouveaux Agents Metier — 56 agents, pipelines navires, toile inter-agents |
+| v1.8 | 2026-03-06 | [v1.8.md](./v1.8.md) | Infrastructure, Cloud & Deploiement — agents docker, iis, firebase, infra-reseau, orchestration, conteneurs Windows |
+| v1.9 | 2026-03 (en cours) | [v1.9.md](./v1.9.md) | Routage Intelligent, Renommages OP & 10 Nouveaux Agents Metier — 56 agents, pipelines navires, toile inter-agents. **Audit 09/03 : 10/10 agents crees, routage 8/56, tests P0+P1 manquants, tags non crees** |
 
 ---
 
@@ -49,14 +49,17 @@ Idees et taches a venir (non priorisees) :
 - [x] Nouveaux agents (monitoring/alerting, feature flags) (done v1.7)
 - [x] Pipeline Release automatise (changelog + morgans + tag + deploy) (done v1.7)
 - [x] Audit ecosysteme post-v1.7 (done v1.7)
-- [ ] Agent Docker (Dockerfile, docker-compose, orchestration Swarm/K8s) (v1.8)
-- [ ] Agent IIS (web.config, pools, SSL, URL Rewrite, deploiement) (v1.8)
-- [ ] Agent Firebase (Auth, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Extensions) (v1.8)
-- [ ] Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN) (v1.8)
-- [ ] Integration Docker + IIS (conteneurs Windows) (v1.8)
-- [ ] Integration Monitoring + Infra + Firebase (dashboards Grafana) (v1.8)
-- [ ] Renommage monitoring -> Enel, feature-flags -> Ivankov (v1.9)
-- [ ] 8 pipelines renommes en navires OP (Thousand Sunny, Merry, Polar Tang, etc.) (v1.9)
-- [ ] 10 nouveaux agents metier : Crocodile (AWS), Doflamingo (Event-Driven), Kizaru (Azure), Fujitora (a11y), Katakuri (AI/ML), Big Mom (Agile), Hawkins (BI), Magellan (DBA), Caesar (Chaos), Aokiji (GCP) (v1.9)
-- [ ] Routage intelligent inter-agents — toile complete des metiers IT (v1.9)
+- [x] Agent Docker (Dockerfile, docker-compose, orchestration Swarm/K8s) (done v1.8)
+- [x] Agent IIS (web.config, pools, SSL, URL Rewrite, deploiement) (done v1.8)
+- [x] Agent Firebase (Auth, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Extensions) (done v1.8)
+- [x] Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN) (done v1.8)
+- [x] Integration Docker + IIS (conteneurs Windows) (done v1.8)
+- [x] Integration Monitoring + Infra + Firebase (dashboards Grafana) (done v1.8)
+- [x] Renommage monitoring -> Enel, feature-flags -> Ivankov (done v1.9)
+- [x] 8 pipelines renommes en navires OP (Thousand Sunny, Merry, Polar Tang, etc.) (done v1.9)
+- [x] 10 nouveaux agents metier crees (done v1.9) : Crocodile (AWS), Doflamingo (Event-Driven), Kizaru (Azure), Fujitora (a11y), Katakuri (AI/ML), Big Mom (Agile), Hawkins (BI), Magellan (DBA), Caesar (Chaos), Aokiji (GCP)
+- [ ] Routage intelligent inter-agents — toile complete des metiers IT (v1.9 partiel : 8/56 agents, reste a injecter dans agents existants + P0)
+- [ ] Tests + CI pour agents P0+P1 : crocodile, doflamingo, kizaru, fujitora, katakuri (v1.9)
+- [ ] Aliases registry manquants : crocodile/aws, doflamingo/event-driven (v1.9)
+- [ ] Tags git v1.8.0 et v1.9.0 a creer (v1.9)
 - [ ] Site Docusaurus, marketplace d'agents (v2.0)

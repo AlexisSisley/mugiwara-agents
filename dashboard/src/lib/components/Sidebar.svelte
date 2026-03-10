@@ -56,7 +56,7 @@
   <div class="sidebar-footer">
     <div class="footer-divider"></div>
     <span class="footer-quote">Mugiwara Agents Dashboard</span>
-    <span class="version mono">v0.1.0</span>
+    <span class="version mono">v1.9.0</span>
   </div>
 </nav>
 
