@@ -2,6 +2,7 @@ name: law
 version: 1.5.0
 description: Data Engineer et Architecte Analytics
 category: data
+role: agent
 author: AlexisSisley
 license: MIT
 files:

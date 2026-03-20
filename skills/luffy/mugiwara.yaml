@@ -2,6 +2,7 @@ name: luffy
 version: 1.5.0
 description: Program Manager et Capitaine de l'equipage
 category: management
+role: agent
 author: AlexisSisley
 license: MIT
 files:

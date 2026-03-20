@@ -2,6 +2,8 @@ name: firebase
 version: 1.8.0
 description: Agent Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)
 category: cloud
+role: alias
+alias_of: sabo
 author: AlexisSisley
 license: MIT
 files:

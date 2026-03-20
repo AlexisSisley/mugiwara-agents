@@ -2,6 +2,7 @@ name: iceburg
 version: 1.8.0
 description: Iceburg — Maitre Charpentier Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, conteneurs Windows)
 category: infrastructure
+role: agent
 author: AlexisSisley
 license: MIT
 files:

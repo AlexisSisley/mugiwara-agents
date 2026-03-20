@@ -2,6 +2,8 @@ name: infra-reseau
 version: 1.8.0
 description: Agent Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau)
 category: infrastructure
+role: alias
+alias_of: coby
 author: AlexisSisley
 license: MIT
 files:

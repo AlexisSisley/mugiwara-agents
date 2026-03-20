@@ -2,6 +2,7 @@ name: aokiji
 version: 1.9.0
 description: Aokiji — Architecte Cloud GCP (Cloud Run, GKE, BigQuery, Cloud Functions, Pub/Sub, Terraform GCP, IAM, couts)
 category: cloud
+role: agent
 author: AlexisSisley
 license: MIT
 files:

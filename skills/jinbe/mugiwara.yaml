@@ -2,6 +2,7 @@ name: jinbe
 version: 1.5.0
 description: Auditeur SecOps et consultant en conformite reglementaire
 category: security
+role: agent
 author: AlexisSisley
 license: MIT
 files:

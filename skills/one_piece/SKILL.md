@@ -228,6 +228,70 @@ sauvegarde le contexte de la session courante :
 4. **Scope par projet** : le fichier memoire est global. Le champ "Projet" permet de
    filtrer le contexte pertinent lors du chargement (Phase 0).
 
+## Phase 5 — Relais Interactif (Questions & Decisions en Suspens)
+
+**Apres la sauvegarde memoire**, analyse la sortie de l'agent route pour detecter
+s'il reste des **questions ouvertes, demandes de decision ou points en suspens**.
+One Piece ne doit jamais se taire quand l'agent a produit des elements qui
+necessitent une reponse de l'utilisateur.
+
+### Detection des Points en Suspens
+
+Parcours la sortie de l'agent et identifie :
+- Des **questions explicites** posees a l'utilisateur (phrases interrogatives, demandes de choix)
+- Des **decisions a prendre** (alternatives proposees, trade-offs presentes sans tranchage)
+- Des **points bloquants** (informations manquantes, prerequis non verifies)
+- Des **recommandations conditionnelles** ("si X alors Y, sinon Z" sans resolution)
+- Des **prochaines etapes** qui necessitent validation ou priorisation
+
+Si **aucun point en suspens** n'est detecte, passe directement aux Cas Particuliers.
+La phase est terminee.
+
+### Format de Relais Interactif
+
+Pour **chaque point en suspens detecte**, presente le bloc suivant a l'utilisateur :
+
+```
+---
+**Contexte :** [Resume en 2-3 phrases de ce qui a ete fait par l'agent, ou on en est
+dans le processus, et ce qui reste a faire]
+
+**Question :** [La question ou demande de decision, reformulee clairement]
+
+| # | Option | Recommandation |
+|---|--------|----------------|
+| 1 | [Choix A - le plus probable/recommande] | ⭐ Recommande — [justification courte basee sur le contexte et l'expertise de l'agent] |
+| 2 | [Choix B - alternative viable] | [justification courte] |
+| 3 | [Choix C - si pertinent] | [justification courte] |
+| A | **Autre** — Proposer une reponse differente | Tape ta reponse en texte libre |
+| P | **Demande personnalisee** — Formuler ta propre demande | Decris exactement ce que tu veux |
+
+> Choisis une option (1, 2, 3, A ou P) pour continuer.
+---
+```
+
+### Regles du Relais Interactif
+
+1. **Ne jamais ignorer** une question de l'agent sous pretexte que la memoire est
+   sauvegardee. Si l'agent a pose une question, l'utilisateur doit la voir.
+2. **Reformuler si necessaire** : si la question de l'agent est trop technique ou
+   noyee dans un long output, reformule-la de maniere claire et accessible.
+3. **Recommandations basees sur le contexte** : utilise le contexte de la session
+   (memoire chargee en Phase 0, sujet en cours, expertise de l'agent invoque) pour
+   marquer l'option la plus pertinente avec une justification.
+4. **Toujours proposer "Autre" et "Demande personnalisee"** : l'utilisateur ne doit
+   jamais etre enferme dans les options proposees.
+5. **Conserver le contexte complet** : le bloc "Contexte" doit rappeler ce qui a ete
+   fait, ou on en est, et ce qui reste a faire — pour que l'utilisateur ne perde
+   jamais le fil.
+6. **Plusieurs questions = plusieurs blocs** : si l'agent a produit plusieurs points
+   en suspens, presente un bloc par question, dans l'ordre de priorite.
+7. **Attendre la reponse** : apres avoir presente les questions, attends que
+   l'utilisateur reponde avant de continuer. Ne lance aucun agent supplementaire.
+8. **Traitement de la reponse** : quand l'utilisateur repond, si la reponse necessite
+   de re-invoquer l'agent ou un autre agent, effectue le routage adequat en passant
+   la reponse de l'utilisateur dans le contexte des `args`.
+
 ## Cas Particuliers
 
 ### Demande hors-perimetre

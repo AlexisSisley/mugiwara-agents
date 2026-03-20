@@ -2,6 +2,7 @@ name: perona
 version: 1.5.0
 description: Creatrice de Collections Postman
 category: qa
+role: agent
 author: AlexisSisley
 license: MIT
 files:

@@ -2,6 +2,7 @@ name: sanji-ts
 version: 1.5.0
 description: Sous-Chef specialise TypeScript / Node.js
 category: architecture
+role: agent
 author: AlexisSisley
 license: MIT
 files:

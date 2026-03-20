@@ -2,6 +2,7 @@ name: franky
 version: 1.5.0
 description: Senior Code Reviewer et Expert en Cybersecurite
 category: security
+role: agent
 author: AlexisSisley
 license: MIT
 files:

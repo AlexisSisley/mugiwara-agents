@@ -1,0 +1,21 @@
+name: azure
+version: 1.9.0
+description: "Agent Cloud Azure (App Service, Functions, Cosmos DB, AKS, DevOps, Bicep/ARM, Entra ID) [alias: kizaru]"
+category: cloud
+role: alias
+alias_of: kizaru
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - azure
+  - cloud
+  - bicep
+  - aks
+  - devops
+checksum:
+  SKILL.md: ""

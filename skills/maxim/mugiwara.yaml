@@ -2,6 +2,7 @@ name: maxim
 version: 1.9.0
 description: Maxim — Pipeline API Analyze > Postman Collection > E2E Tests (Bartholomew > Perona > Senor Pink)
 category: pipeline
+role: pipeline
 author: AlexisSisley
 license: MIT
 files:

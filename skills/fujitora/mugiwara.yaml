@@ -2,6 +2,7 @@ name: fujitora
 version: 1.9.0
 description: Fujitora — Expert Accessibilite a11y (WCAG 2.2 AA/AAA, ARIA, RGAA 4.1, axe-core, Lighthouse, remediation)
 category: quality
+role: agent
 author: AlexisSisley
 license: MIT
 files:

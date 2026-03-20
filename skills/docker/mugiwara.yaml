@@ -2,6 +2,8 @@ name: docker
 version: 1.8.0
 description: Agent Docker (Dockerfile multi-stage, docker-compose, Swarm, Kubernetes, Helm, securite conteneurs)
 category: infrastructure
+role: alias
+alias_of: iceburg
 author: AlexisSisley
 license: MIT
 files:

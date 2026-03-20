@@ -2,6 +2,7 @@ name: coby
 version: 1.8.0
 description: Coby — Capitaine de la Marine, Infrastructure Reseau (firewall, DNS, load balancing, VPN, VLAN, diagnostic reseau)
 category: infrastructure
+role: agent
 author: AlexisSisley
 license: MIT
 files:

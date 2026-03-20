@@ -2,6 +2,7 @@ name: bartholomew
 version: 1.5.0
 description: Analyseur d'API Locale, architecte logiciel
 category: analysis
+role: agent
 author: AlexisSisley
 license: MIT
 files:

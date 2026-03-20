@@ -2,6 +2,7 @@ name: zorro
 version: 1.5.0
 description: Business Analyst et Chef de Projet Senior
 category: analysis
+role: agent
 author: AlexisSisley
 license: MIT
 files:

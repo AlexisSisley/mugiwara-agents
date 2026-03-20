@@ -2,6 +2,7 @@ name: oro-jackson
 version: 1.9.0
 description: Oro Jackson — Pipeline de verification avant mise en production (Nami > Franky > Jinbe > Usopp > Ace > Brook)
 category: pipeline
+role: pipeline
 author: AlexisSisley
 license: MIT
 files:

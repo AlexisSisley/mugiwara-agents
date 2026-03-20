@@ -61,11 +61,11 @@ section() {
 
 # ── Expected agents (source of truth) ──────────────────────
 EXPECTED_AGENTS=(
-    ace aokiji api-postman baratie bartholomew big-mom bon-clay brook caesar chopper
-    coby crocodile discovery doc-hunt docker doflamingo enel
-    feature-flags firebase franky fujitora hawkins iis iceburg incident
+    a11y ace agile aokiji api-postman azure baratie bartholomew bi big-mom bon-clay brook caesar chaos chopper
+    coby crocodile dba discovery doc-hunt docker doflamingo enel
+    feature-flags firebase franky fujitora gcp hawkins iis iceburg incident
     infra-reseau ivankov jinbe katakuri kizaru law law-sql
-    luffy magellan maxim merry modernize monitoring morgans mugiwara nami
+    luffy magellan maxim merry mlops modernize monitoring morgans mugiwara nami
     ohara onboard one_piece oro-jackson paulie
     perona pluton polar-tang poneglyph pre-launch prod-listener rayleigh robin sabo sanji sanji-design sanji-dotnet
     sanji-flutter sanji-go sanji-i18n sanji-java sanji-python
@@ -290,47 +290,48 @@ done
 # ════════════════════════════════════════════════════════════
 section "Test Suite 5: Script Parity"
 
-# T5.1 - Extract CREW from install.sh
-install_crew_line=$(grep '^CREW=' "$INSTALL_SH" | head -1)
+# T5.1 - Extract CREW from lib/crew.sh (single source of truth)
+CREW_SH="$PROJECT_ROOT/lib/crew.sh"
+install_crew_line=$(grep '^CREW=' "$CREW_SH" | head -1)
 install_crew=$(echo "$install_crew_line" | sed 's/CREW=(//' | sed 's/)//' | tr ' ' '\n' | sort)
 install_count=$(echo "$install_crew" | wc -l)
 
-# T5.2 - Extract CREW from uninstall.sh
-uninstall_crew_line=$(grep '^CREW=' "$UNINSTALL_SH" | head -1)
+# T5.2 - Extract CREW from lib/crew.sh (uninstall.sh also sources lib/crew.sh)
+uninstall_crew_line=$(grep '^CREW=' "$CREW_SH" | head -1)
 uninstall_crew=$(echo "$uninstall_crew_line" | sed 's/CREW=(//' | sed 's/)//' | tr ' ' '\n' | sort)
 uninstall_count=$(echo "$uninstall_crew" | wc -l)
 
-# T5.3 - install.sh has all expected agents
+# T5.3 - lib/crew.sh has all expected agents
 if [ "$install_count" -eq "${#EXPECTED_AGENTS[@]}" ]; then
-    pass "install.sh CREW has ${#EXPECTED_AGENTS[@]} agents"
+    pass "lib/crew.sh CREW has ${#EXPECTED_AGENTS[@]} agents"
 else
-    fail "install.sh CREW has $install_count agents (expected ${#EXPECTED_AGENTS[@]})"
+    fail "lib/crew.sh CREW has $install_count agents (expected ${#EXPECTED_AGENTS[@]})"
 fi
 
-# T5.4 - uninstall.sh has all expected agents
-if [ "$uninstall_count" -eq "${#EXPECTED_AGENTS[@]}" ]; then
-    pass "uninstall.sh CREW has ${#EXPECTED_AGENTS[@]} agents"
+# T5.4 - install.sh and uninstall.sh both source lib/crew.sh
+if grep -q 'source.*lib/crew.sh' "$INSTALL_SH" && grep -q 'source.*lib/crew.sh' "$UNINSTALL_SH"; then
+    pass "install.sh and uninstall.sh both source lib/crew.sh"
 else
-    fail "uninstall.sh CREW has $uninstall_count agents (expected ${#EXPECTED_AGENTS[@]})"
+    fail "install.sh or uninstall.sh does not source lib/crew.sh"
 fi
 
-# T5.5 - install.sh and uninstall.sh have same agents
+# T5.5 - CREW list is consistent (install = uninstall since both source same file)
 diff_result=$(diff <(echo "$install_crew") <(echo "$uninstall_crew") || true)
 if [ -z "$diff_result" ]; then
-    pass "install.sh and uninstall.sh CREW lists are identical"
+    pass "CREW lists are identical (single source of truth)"
 else
-    fail "install.sh and uninstall.sh CREW lists differ:"
+    fail "CREW lists differ (unexpected):"
     echo "$diff_result"
 fi
 
-# T5.6 - install.sh CREW matches skills/ directories
+# T5.6 - lib/crew.sh CREW matches skills/ directories
 skills_dirs=$(ls -1 "$SKILLS_DIR" | sort)
 install_sorted=$(echo "$install_crew" | sort)
 diff_dirs=$(diff <(echo "$install_sorted") <(echo "$skills_dirs") || true)
 if [ -z "$diff_dirs" ]; then
-    pass "install.sh CREW matches skills/ directories exactly"
+    pass "lib/crew.sh CREW matches skills/ directories exactly"
 else
-    fail "install.sh CREW does not match skills/ directories:"
+    fail "lib/crew.sh CREW does not match skills/ directories:"
     echo "$diff_dirs"
 fi
 

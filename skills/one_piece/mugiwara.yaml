@@ -2,6 +2,7 @@ name: one_piece
 version: 1.5.0
 description: Routeur intelligent de l'equipage
 category: router
+role: router
 author: AlexisSisley
 license: MIT
 files:

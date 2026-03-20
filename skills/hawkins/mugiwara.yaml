@@ -2,6 +2,7 @@ name: hawkins
 version: 1.9.0
 description: Hawkins — BI & Data Visualization (Metabase, Superset, Looker, Power BI, Tableau, DAX/MDX, data storytelling, KPI dashboards)
 category: data
+role: agent
 author: AlexisSisley
 license: MIT
 files:

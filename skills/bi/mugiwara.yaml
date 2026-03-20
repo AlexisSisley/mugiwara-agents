@@ -1,0 +1,21 @@
+name: bi
+version: 1.9.0
+description: "Agent BI & Data Visualization (Power BI, Tableau, Metabase, Superset, Looker, DAX/MDX) [alias: hawkins]"
+category: data
+role: alias
+alias_of: hawkins
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - bi
+  - powerbi
+  - tableau
+  - metabase
+  - data-visualization
+checksum:
+  SKILL.md: ""

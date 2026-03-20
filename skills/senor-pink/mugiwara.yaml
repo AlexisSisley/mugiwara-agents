@@ -2,6 +2,7 @@ name: senor-pink
 version: 1.5.0
 description: Createur de Tests End-to-End Postman
 category: qa
+role: agent
 author: AlexisSisley
 license: MIT
 files:

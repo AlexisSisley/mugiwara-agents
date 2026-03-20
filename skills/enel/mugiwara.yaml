@@ -2,6 +2,7 @@ name: enel
 version: 1.9.0
 description: Enel — Dieu Omniscient du Monitoring & Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices)
 category: monitoring
+role: agent
 author: AlexisSisley
 license: MIT
 files:

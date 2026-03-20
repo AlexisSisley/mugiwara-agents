@@ -2,6 +2,7 @@ name: ohara
 version: 1.9.0
 description: Ohara — Pipeline de recherche et redaction de documentation (Yamato > Brook)
 category: pipeline
+role: pipeline
 author: AlexisSisley
 license: MIT
 files:

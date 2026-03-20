@@ -4,7 +4,7 @@
 # All agent names and roles defined once, used everywhere
 # ============================================================
 
-CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans monitoring feature-flags api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay docker firebase iis infra-reseau iceburg sabo paulie coby enel ivankov thousand-sunny merry polar-tang oro-jackson baratie pluton ohara maxim crocodile doflamingo kizaru fujitora katakuri big-mom hawkins magellan caesar aokiji rayleigh prod-listener poneglyph)
+CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans monitoring feature-flags api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay docker firebase iis infra-reseau iceburg sabo paulie coby enel ivankov thousand-sunny merry polar-tang oro-jackson baratie pluton ohara maxim crocodile doflamingo kizaru fujitora katakuri big-mom hawkins magellan caesar aokiji rayleigh prod-listener poneglyph azure a11y mlops agile bi dba chaos gcp)
 
 ROLES=(
     "Business Analyst"
@@ -80,4 +80,12 @@ ROLES=(
     "Rayleigh — Sentinelle de Production"
     "Prod Listener [alias: rayleigh]"
     "Poneglyph — Analyste de Documents"
+    "Cloud Azure [alias: kizaru]"
+    "Accessibilite a11y [alias: fujitora]"
+    "AI/ML Ops [alias: katakuri]"
+    "Agile Coach [alias: big-mom]"
+    "BI & Data Visualization [alias: hawkins]"
+    "DBA [alias: magellan]"
+    "Chaos Engineering [alias: caesar]"
+    "Cloud GCP [alias: aokiji]"
 )

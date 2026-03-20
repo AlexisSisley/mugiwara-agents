@@ -2,6 +2,7 @@ name: law-sql
 version: 1.5.0
 description: Specialiste SQL et convertisseur Doc-to-SQL
 category: data
+role: agent
 author: AlexisSisley
 license: MIT
 files:

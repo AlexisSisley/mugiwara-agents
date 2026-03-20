@@ -2,6 +2,7 @@ name: rayleigh
 version: 2.0.0
 description: "Rayleigh — Sentinelle de Production, auto-fix et escalade intelligente"
 category: monitoring
+role: agent
 author: AlexisSisley
 license: MIT
 files:

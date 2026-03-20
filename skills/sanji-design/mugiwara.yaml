@@ -2,6 +2,7 @@ name: sanji-design
 version: 1.5.0
 description: Sous-Chef Directeur Artistique et UI/UX Designer Senior
 category: architecture
+role: agent
 author: AlexisSisley
 license: MIT
 files:

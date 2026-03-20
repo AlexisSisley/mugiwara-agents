@@ -2,6 +2,7 @@ name: sanji
 version: 1.5.0
 description: Architecte Logiciel Senior et Chef de Cuisine Technique
 category: architecture
+role: agent
 author: AlexisSisley
 license: MIT
 files:

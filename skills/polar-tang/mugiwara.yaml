@@ -2,6 +2,7 @@ name: polar-tang
 version: 1.9.0
 description: Polar Tang — Pipeline de reponse d'urgence production (Chopper > Franky > Jinbe > Usopp)
 category: pipeline
+role: pipeline
 author: AlexisSisley
 license: MIT
 files:

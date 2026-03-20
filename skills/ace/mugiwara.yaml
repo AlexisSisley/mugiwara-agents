@@ -2,6 +2,7 @@ name: ace
 version: 1.5.0
 description: Performance Engineer et specialiste en optimisation systeme
 category: performance
+role: agent
 author: AlexisSisley
 license: MIT
 files:

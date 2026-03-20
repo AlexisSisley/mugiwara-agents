@@ -1,0 +1,21 @@
+name: mlops
+version: 1.9.0
+description: "Agent AI/ML Ops (MLflow, Kubeflow, feature stores, model serving, drift detection) [alias: katakuri]"
+category: ai-ml
+role: alias
+alias_of: katakuri
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - mlops
+  - mlflow
+  - kubeflow
+  - ai
+  - ml
+checksum:
+  SKILL.md: ""

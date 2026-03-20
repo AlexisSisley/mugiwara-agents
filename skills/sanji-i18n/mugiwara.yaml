@@ -2,6 +2,7 @@ name: sanji-i18n
 version: 1.5.0
 description: Sous-Chef Expert en Traduction Localisee et Contextuelle
 category: architecture
+role: agent
 author: AlexisSisley
 license: MIT
 files:

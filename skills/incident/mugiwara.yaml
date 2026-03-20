@@ -2,6 +2,7 @@ name: incident
 version: 1.9.0
 description: Pipeline de reponse d'urgence production [alias retro-compatible: polar-tang]
 category: pipeline
+role: pipeline
 author: AlexisSisley
 license: MIT
 files:

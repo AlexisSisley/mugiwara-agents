@@ -2,6 +2,7 @@ name: magellan
 version: 1.9.0
 description: Magellan — DBA (PostgreSQL, MySQL, MongoDB, Redis tuning, backup/restore, replication, sharding, migration, monitoring)
 category: data
+role: agent
 author: AlexisSisley
 license: MIT
 files:

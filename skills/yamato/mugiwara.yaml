@@ -2,6 +2,7 @@ name: yamato
 version: 1.5.0
 description: Expert en veille technologique strategique
 category: intelligence
+role: agent
 author: AlexisSisley
 license: MIT
 files:

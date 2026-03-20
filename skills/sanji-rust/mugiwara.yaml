@@ -2,6 +2,7 @@ name: sanji-rust
 version: 1.5.0
 description: Sous-Chef specialise Rust
 category: architecture
+role: agent
 author: AlexisSisley
 license: MIT
 files:

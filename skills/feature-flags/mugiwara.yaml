@@ -2,6 +2,8 @@ name: feature-flags
 version: 1.9.0
 description: Agent Feature Flags (env-based, Unleash, LaunchDarkly) pour progressive delivery [alias retro-compatible: ivankov]
 category: infrastructure
+role: alias
+alias_of: ivankov
 author: AlexisSisley
 license: MIT
 files:

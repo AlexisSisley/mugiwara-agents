@@ -2,6 +2,7 @@ name: brook
 version: 1.5.0
 description: Technical Writer de haut niveau
 category: writing
+role: agent
 author: AlexisSisley
 license: MIT
 files:

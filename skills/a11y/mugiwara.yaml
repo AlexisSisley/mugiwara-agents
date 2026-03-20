@@ -1,0 +1,21 @@
+name: a11y
+version: 1.9.0
+description: "Agent Accessibilite (WCAG 2.2 AA/AAA, ARIA, RGAA 4.1, axe-core, Lighthouse) [alias: fujitora]"
+category: quality
+role: alias
+alias_of: fujitora
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - accessibility
+  - wcag
+  - aria
+  - rgaa
+  - a11y
+checksum:
+  SKILL.md: ""

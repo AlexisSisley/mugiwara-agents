@@ -2,6 +2,7 @@ name: morgans
 version: 1.5.0
 description: Generateur d'emails de release QA et mise en production
 category: writing
+role: agent
 author: AlexisSisley
 license: MIT
 files:

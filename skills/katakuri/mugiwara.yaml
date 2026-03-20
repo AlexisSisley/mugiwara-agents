@@ -2,6 +2,7 @@ name: katakuri
 version: 1.9.0
 description: Katakuri — AI/ML Ops (MLflow, Kubeflow, feature stores, model serving, drift detection, experiment tracking, GPU optimization)
 category: ai-ml
+role: agent
 author: AlexisSisley
 license: MIT
 files:

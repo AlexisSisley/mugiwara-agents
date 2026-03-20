@@ -2,6 +2,7 @@ name: sabo
 version: 1.8.0
 description: Sabo — Chef Revolutionnaire Firebase (Authentication, Firestore, Security Rules, Hosting, Cloud Functions, Storage, FCM, Emulator Suite)
 category: cloud
+role: agent
 author: AlexisSisley
 license: MIT
 files:

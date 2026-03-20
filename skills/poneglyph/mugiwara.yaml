@@ -2,6 +2,7 @@ name: poneglyph
 version: 2.0.0
 description: "Poneglyph — Analyste de Documents (PDF, specs, contrats, configs, logs, data)"
 category: analysis
+role: agent
 author: AlexisSisley
 license: MIT
 files:

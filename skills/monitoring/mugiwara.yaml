@@ -2,6 +2,8 @@ name: monitoring
 version: 1.9.0
 description: Agent Monitoring et Alerting (Prometheus, Grafana, PagerDuty, OpsGenie, SRE best practices) [alias retro-compatible: enel]
 category: monitoring
+role: alias
+alias_of: enel
 author: AlexisSisley
 license: MIT
 files:

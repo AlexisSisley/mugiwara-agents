@@ -2,6 +2,7 @@ name: baratie
 version: 1.9.0
 description: Baratie — Pipeline de decouverte codebase pour nouveau developpeur (Robin > Franky > Brook)
 category: pipeline
+role: pipeline
 author: AlexisSisley
 license: MIT
 files:

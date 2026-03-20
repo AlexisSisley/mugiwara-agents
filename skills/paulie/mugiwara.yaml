@@ -2,6 +2,7 @@ name: paulie
 version: 1.8.0
 description: Paulie — Charpentier IIS (web.config, application pools, SSL/TLS, URL Rewrite, ARR, deploiement PowerShell)
 category: infrastructure
+role: agent
 author: AlexisSisley
 license: MIT
 files:

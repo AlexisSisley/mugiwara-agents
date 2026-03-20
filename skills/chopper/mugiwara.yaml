@@ -2,6 +2,7 @@ name: chopper
 version: 1.5.0
 description: Urgentiste specialise en diagnostic et resolution de bugs
 category: debugging
+role: agent
 author: AlexisSisley
 license: MIT
 files:

@@ -2,6 +2,7 @@ name: doflamingo
 version: 1.9.0
 description: Doflamingo — Architecte Event-Driven (Kafka, RabbitMQ, NATS, event sourcing, CQRS, saga patterns, schema registry)
 category: architecture
+role: agent
 author: AlexisSisley
 license: MIT
 files:

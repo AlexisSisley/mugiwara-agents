@@ -2,6 +2,7 @@ name: bon-clay
 version: 1.5.0
 description: Architecte d'Easter Eggs et Maitre des Secrets Caches
 category: meta
+role: agent
 author: AlexisSisley
 license: MIT
 files:

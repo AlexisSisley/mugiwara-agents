@@ -2,6 +2,7 @@ name: nami
 version: 1.5.0
 description: Lead QA Senior certifiee ISTQB Expert
 category: qa
+role: agent
 author: AlexisSisley
 license: MIT
 files:
