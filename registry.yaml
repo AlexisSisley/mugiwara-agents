@@ -217,6 +217,19 @@ agents:
     version: 1.9.0
     description: "Maxim — Pipeline API Analyze > Postman Collection > E2E Tests (Bartholomew > Perona > Senor Pink)"
     category: pipeline
+  # --- v2.0 agents ---
+  rayleigh:
+    version: 2.0.0
+    description: "Rayleigh — Sentinelle de Production (Dark King), auto-fix et escalade intelligente des logs"
+    category: monitoring
+  prod-listener:
+    version: 2.0.0
+    description: "Agent Sentinelle de Production (surveillance des logs, auto-fix et escalade) [alias: rayleigh]"
+    category: monitoring
+  poneglyph:
+    version: 2.0.0
+    description: "Poneglyph — Analyste de Documents (PDF, specs, contrats, configs, logs, data)"
+    category: analysis
   # --- Remaining core agents ---
   franky:
     version: 1.5.0

@@ -60,7 +60,12 @@ export type AgentCategory =
   | 'router'
   | 'meta'
   | 'performance'
-  | 'intelligence';
+  | 'intelligence'
+  | 'infrastructure'
+  | 'cloud'
+  | 'monitoring'
+  | 'quality'
+  | 'ai-ml';
 
 export const CATEGORY_COLORS: Record<AgentCategory, string> = {
   pipeline: '#818CF8',
@@ -78,6 +83,11 @@ export const CATEGORY_COLORS: Record<AgentCategory, string> = {
   meta: '#94A3B8',
   performance: '#F87171',
   intelligence: '#A78BFA',
+  infrastructure: '#7C8DB5',
+  cloud: '#38BDF8',
+  monitoring: '#F59E0B',
+  quality: '#10B981',
+  'ai-ml': '#E879F9',
 } as const;
 
 // ── Derived Entities ──────────────────────────────────────────

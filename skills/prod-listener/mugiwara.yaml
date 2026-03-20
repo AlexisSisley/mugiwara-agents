@@ -1,0 +1,19 @@
+name: prod-listener
+version: 2.0.0
+description: "Agent Sentinelle de Production (surveillance des logs, auto-fix et escalade) [alias: rayleigh]"
+category: monitoring
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - production
+  - monitoring
+  - auto-fix
+  - alerting
+  - log-analysis
+checksum:
+  SKILL.md: ""

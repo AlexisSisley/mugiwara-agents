@@ -67,7 +67,7 @@ EXPECTED_AGENTS=(
     infra-reseau ivankov jinbe katakuri kizaru law law-sql
     luffy magellan maxim merry modernize monitoring morgans mugiwara nami
     ohara onboard one_piece oro-jackson paulie
-    perona pluton polar-tang pre-launch robin sabo sanji sanji-design sanji-dotnet
+    perona pluton polar-tang poneglyph pre-launch prod-listener rayleigh robin sabo sanji sanji-design sanji-dotnet
     sanji-flutter sanji-go sanji-i18n sanji-java sanji-python
     sanji-rust sanji-ts senor-pink shanks thousand-sunny usopp vegapunk
     vivi yamato zorro

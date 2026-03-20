@@ -1,0 +1,21 @@
+name: rayleigh
+version: 2.0.0
+description: "Rayleigh — Sentinelle de Production, auto-fix et escalade intelligente"
+category: monitoring
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+tags:
+  - production
+  - monitoring
+  - auto-fix
+  - alerting
+  - log-analysis
+  - triage
+  - sentinel
+checksum:
+  SKILL.md: ""

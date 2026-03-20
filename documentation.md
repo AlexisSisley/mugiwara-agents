@@ -207,7 +207,7 @@ Chaine ad-hoc recommandee :
 | 26 | Bartholomew | `/bartholomew` | Local API Analyzer | Read, Glob, Grep, Bash(cat/wc/file/ls/tree) |
 | 27 | Perona | `/perona` | Postman Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
 | 28 | Senor Pink | `/senor-pink` | E2E Test Collection Creator | Read, Glob, Grep, Bash(cat/wc/file/ls) |
-| 29 | Morgans | `/morgans` | Release Email Generator (QA & Prod) | Read, Glob, Grep, Bash(git log/diff/tag/show/ls) |
+| 29 | Morgans | `/morgans` | Release Email Generator (QA & Prod) + Templates HTML Gmail/Outlook | Read, Glob, Grep, Bash(git log/diff/tag/show/ls) |
 | 30 | Enel | `/enel` (alias `/monitoring`) | Monitoring & Alerting Engineer | Read, Write, Glob, Grep, Bash(cat/ls/file) |
 | 31 | Ivankov | `/ivankov` (alias `/feature-flags`) | Feature Flags Strategist | Read, Write, Glob, Grep, Bash(cat/ls/file) |
 
@@ -250,7 +250,7 @@ Chaine ad-hoc recommandee :
 
 | # | Agent | Commande | Role | Tools autorises |
 |---|-------|----------|------|-----------------|
-| 52 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline | Read, Glob, Grep, Skill |
+| 52 | One Piece | `/one_piece` | Routeur intelligent — dispatche vers le bon agent/pipeline, chaines ad-hoc jusqu'a 6 agents | Read, Glob, Grep, Skill |
 
 ### 2.7 Configuration commune
 
@@ -488,7 +488,7 @@ Le fichier `schemas/agent-event.schema.json` definit le contrat de donnees entre
 Le pipeline Release automatise le cycle de livraison :
 1. Bump de version (SemVer)
 2. Generation du CHANGELOG
-3. Email de release via Morgans
+3. Email de release via Morgans (texte brut + HTML Gmail/Outlook)
 4. Creation du tag git
 5. Deploiement
 
@@ -526,7 +526,7 @@ Le pipeline est semi-automatique : il prepare tout mais attend une validation hu
 
 #### Routage Intelligent Inter-Agents
 
-Chaque agent possede une table de routage vers ses agents complementaires. Quand une demande sort du perimetre d'un agent, celui-ci suggere ou invoque l'agent le plus adapte via `Skill`. Cela forme une toile complete ou aucun domaine IT n'est orphelin. `/one_piece` reste le routeur central universel.
+Chaque agent possede une table de routage vers ses agents complementaires. Quand une demande sort du perimetre d'un agent, celui-ci suggere ou invoque l'agent le plus adapte via `Skill`. Cela forme une toile complete ou aucun domaine IT n'est orphelin. `/one_piece` reste le routeur central universel et peut composer des **chaines ad-hoc de 2 a 6 agents** quand aucun pipeline pre-configure ne correspond au besoin.
 
 ---
 
@@ -678,7 +678,7 @@ Pour juste analyser l'API sans generer de collection :
 /morgans qa v2.3.0 - Nouveau module de facturation avec integration Stripe
 ```
 
-Morgans collecte le contexte de release (version, changelog, git log), classifie les changements, et genere un email structure pret a envoyer a l'equipe QA avec les zones de test recommandees.
+Morgans collecte le contexte de release (version, changelog, git log), classifie les changements, et genere un email structure pret a envoyer a l'equipe QA avec les zones de test recommandees. Chaque email est produit en **deux formats** : texte brut structure ET template HTML compatible Gmail et Outlook (CSS inline, mise en page `<table>`, polices systeme), avec instructions de copier-coller.
 
 Pour un email de mise en production :
 
@@ -686,7 +686,7 @@ Pour un email de mise en production :
 /morgans prod v2.3.0 - Deploiement du module facturation
 ```
 
-Si le type n'est pas specifie, Morgans genere les deux emails (QA + Production).
+Si le type n'est pas specifie, Morgans genere les deux emails (QA + Production), chacun en texte brut et en HTML.
 
 ### Comment convertir un document en SQL
 
@@ -709,6 +709,8 @@ One Piece analyse votre demande et route automatiquement vers le bon agent ou pi
 - **Nouvelle idee de projet** → route vers `/discovery` (Vivi → Mugiwara)
 - **Code a auditer** → route vers `/franky`
 - **Stack a moderniser** → route vers `/modernize`
+
+One Piece peut aussi composer des **chaines ad-hoc de 2 a 6 agents** quand aucun pipeline pre-configure ne correspond exactement au besoin. Il invoque les agents en sequence en passant le contexte accumule.
 
 Si One Piece hesite entre plusieurs options, il vous presente un tableau de choix et vous laisse decider. Vous pouvez aussi nommer directement un agent :
 

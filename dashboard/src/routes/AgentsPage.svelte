@@ -31,6 +31,7 @@
     'pipeline', 'analysis', 'architecture', 'security', 'qa',
     'writing', 'debugging', 'management', 'data', 'devops',
     'refactoring', 'router', 'meta', 'performance', 'intelligence',
+    'infrastructure', 'cloud', 'monitoring', 'quality', 'ai-ml',
   ];
 
   function buildParams(): Record<string, string> {

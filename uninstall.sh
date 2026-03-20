@@ -5,13 +5,13 @@
 
 set -e
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source shared constants (single source of truth)
+source "$SCRIPT_DIR/lib/colors.sh"
+source "$SCRIPT_DIR/lib/crew.sh"
 
 SKILLS_DIR="$HOME/.claude/skills"
-CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans monitoring feature-flags api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay docker firebase iis infra-reseau iceburg sabo paulie coby enel ivankov thousand-sunny merry polar-tang oro-jackson baratie pluton ohara maxim crocodile doflamingo kizaru fujitora katakuri big-mom hawkins magellan caesar aokiji)
 
 echo ""
 echo -e "${RED}  Mugiwara Agents - Uninstall${NC}"
@@ -34,11 +34,26 @@ for member in "${CREW[@]}"; do
     fi
 done
 
+# Clean up lock files in ~/.mugiwara/installed/
+LOCK_DIR="$HOME/.mugiwara/installed"
+if [ -d "$LOCK_DIR" ]; then
+    lock_removed=0
+    for lock_file in "$LOCK_DIR"/*.lock; do
+        if [ -f "$lock_file" ]; then
+            rm -f "$lock_file"
+            lock_removed=$((lock_removed + 1))
+        fi
+    done
+    if [ "$lock_removed" -gt 0 ]; then
+        echo ""
+        echo -e "  ${RED}[-]${NC} Removed $lock_removed lock file(s) from $LOCK_DIR"
+    fi
+fi
+
 # Clean up hooks
 echo ""
 echo -e "  ${YELLOW}Cleaning up hooks...${NC}"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOOKS_DIR="$SCRIPT_DIR/.claude/hooks"
 
 if [ -d "$HOOKS_DIR" ]; then

@@ -10,7 +10,7 @@ disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Skill
+allowed-tools: Read, Glob, Grep, Skill, Bash
 ---
 
 # One Piece — Routeur Intelligent de l'Equipage Mugiwara
@@ -24,6 +24,37 @@ tu analyses, tu routes, tu dispatches.
 ## Demande de l'utilisateur
 
 **Probleme / Besoin :** $ARGUMENTS
+
+## Phase 0 — Chargement de la Memoire Contextuelle
+
+Avant toute classification, charge le contexte des sessions precedentes :
+
+1. Verifie si le fichier `~/.mugiwara/one_piece_memory.md` existe (via Bash :
+   `test -f ~/.mugiwara/one_piece_memory.md && echo EXISTS || echo NONE`)
+2. S'il existe, lis-le avec Read pour recuperer l'historique des interactions
+3. Extrais les informations pertinentes pour la demande courante :
+   - Dernier agent invoque et son resultat
+   - Sujet/projet en cours de discussion
+   - Decisions prises precedemment
+   - Agents deja utilises dans la session de travail courante
+
+### Utilisation du Contexte pour le Routage
+
+Le contexte charge influence le routage de 3 manieres :
+
+- **Continuite de sujet** : si la demande est vague mais que la memoire montre un
+  sujet recent (ex: "continue", "et maintenant ?", "la suite"), route vers le meme
+  agent ou le suivant dans la chaine logique
+- **Desambiguation** : si deux routes sont possibles, le contexte peut lever
+  l'ambiguite (ex: "optimise ca" -> performance si dernier contexte = Ace, code
+  quality si dernier contexte = Franky)
+- **Enrichissement des args** : quand tu invoques un agent, inclus dans `args` le
+  contexte pertinent de la memoire (ex: "L'utilisateur travaille sur le module
+  auth depuis 3 sessions. Dernier diagnostic Chopper: memory leak dans le pool
+  de connexions.")
+
+Si le fichier memoire n'existe pas, c'est une premiere interaction — continue
+normalement sans contexte additionnel.
 
 ## Phase 1 — Classification de l'Intent
 
@@ -72,6 +103,8 @@ le meilleur match.
 | Tests E2E Postman | "tests E2E", "end-to-end postman", "tests d'integration API", "collection E2E", "newman", "workflow E2E", "chaining postman", "tests bout en bout" | `/senor-pink` |
 | Email de release | "email release", "release QA", "release prod", "email mise en prod", "email MEP", "notification release", "email deploiement", "email recette", "communiquer la release", "morgans" | `/morgans` |
 | Easter eggs & secrets | "easter egg", "secret", "surprise", "konami", "clin d'oeil", "hidden", "cache dans le code", "mini-jeu cache", "bon-clay", "bon clay" | `/bon-clay` |
+| Surveillance production / logs | "surveiller les logs", "logs de prod", "sentinelle", "auto-fix", "triage erreur", "watcher", "log analysis", "rayleigh", "prod-listener", "health check production", "erreurs recurrentes", "log monitoring" | `/rayleigh` |
+| Analyse de documents | "analyser document", "resume PDF", "lire spec", "extraire informations", "comparer documents", "audit document", "poneglyph", "dechiffrer", "analyser fichier", "resume fichier", "contrat", "spec technique" | `/poneglyph` |
 
 ### Routage direct si agent nomme
 
@@ -118,6 +151,8 @@ Quand deux routes semblent possibles, applique ces regles :
 9. **Perona vs Senor Pink** : si l'utilisateur veut une collection Postman basique (requetes individuelles, import rapide) → `/perona` ; si l'utilisateur veut des tests E2E (workflows chainees, assertions avancees, chaining, Newman, CI/CD) → `/senor-pink`
 10. **Bon-Clay** : ne jamais router vers `/bon-clay` sauf si l'utilisateur mentionne explicitement "easter egg", "surprise", "secret cache", "konami" ou "bon-clay". Ce n'est pas un agent de travail, c'est un agent fun.
 11. **Law vs Law-SQL** : si le besoin concerne l'architecture data (ETL, dbt, warehouse, pipeline, orchestration) -> `/law` ; si le besoin concerne des requetes SQL brutes, la conversion de fichiers doc/excel en SQL, l'optimisation de requetes, ou la migration de dialecte SQL -> `/law-sql`
+12. **Rayleigh vs Enel vs Incident** : si le besoin est de surveiller/analyser des logs de production et auto-fixer des erreurs → `/rayleigh` ; si le besoin est de configurer le monitoring/alerting (Prometheus, Grafana, dashboards, SLO) → `/enel` ; si c'est un incident actif en production (service down, crash) → `/incident`
+13. **Poneglyph vs Robin** : si le besoin est d'analyser un document specifique (PDF, spec, contrat, fichier de config, CSV) → `/poneglyph` ; si le besoin est de cartographier un systeme entier (architecture, modules, dependances) → `/robin`
 
 ## Phase 3 — Execution
 
@@ -163,6 +198,35 @@ ou suggere a l'utilisateur de lancer les agents un par un.
 
 Presente le tableau d'options (voir Phase 2) et attends le choix de l'utilisateur.
 Ne lance rien tant que l'utilisateur n'a pas choisi.
+
+## Phase 4 — Sauvegarde de la Memoire Contextuelle
+
+**Apres chaque routage execute** (pas apres une clarification ou une demande d'aide),
+sauvegarde le contexte de la session courante :
+
+1. Cree le dossier `~/.mugiwara/` s'il n'existe pas (via Bash : `mkdir -p ~/.mugiwara`)
+2. Ajoute une entree au fichier `~/.mugiwara/one_piece_memory.md` via Bash en appendant
+   le bloc suivant au fichier :
+
+```
+---
+### [YYYY-MM-DD HH:MM] — Session
+- **Demande** : [resume court de la demande utilisateur]
+- **Route** : [agent ou pipeline invoque]
+- **Confiance** : [haute/moyenne/basse]
+- **Sujet** : [theme principal - ex: "API authentification", "migration PostgreSQL"]
+- **Projet** : [nom du projet si identifiable depuis le cwd ou la demande]
+- **Resultat** : [succes/echec/en-cours + resume 1 ligne du livrable produit]
+- **Contexte pour la suite** : [1-2 phrases sur ce qui serait utile pour la prochaine session]
+---
+```
+
+3. **Limite de taille** : conserve uniquement les 20 dernieres entrees. Si le fichier
+   depasse 20 entrees, supprime les plus anciennes (via Bash) pour eviter que le
+   fichier ne grossisse indefiniment.
+
+4. **Scope par projet** : le fichier memoire est global. Le champ "Projet" permet de
+   filtrer le contexte pertinent lors du chargement (Phase 0).
 
 ## Cas Particuliers
 
@@ -211,6 +275,8 @@ faire (ex: "aide", "help", "qu'est-ce que tu sais faire ?", "liste les agents",
 | | Perona | `/perona` | Collection Postman |
 | | Senor Pink | `/senor-pink` | Tests E2E Postman |
 | | Morgans | `/morgans` | Release Email Generator (QA & Prod) |
+| | Rayleigh | `/rayleigh` | Sentinelle de Production (auto-fix & escalade) |
+| | Poneglyph | `/poneglyph` | Analyste de Documents (PDF, specs, contrats) |
 | | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer |
 | **Pipelines** | Mugiwara | `/mugiwara` | Pipeline complet (Zorro → Sanji → Nami → Luffy) |
 | | Discovery | `/discovery` | Product Discovery (Vivi → Mugiwara) |

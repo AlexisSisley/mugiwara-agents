@@ -65,6 +65,11 @@
   --cat-meta: #94A3B8;
   --cat-performance: #F87171;
   --cat-intelligence: #A78BFA;
+  --cat-infrastructure: #7C8DB5;
+  --cat-cloud: #38BDF8;
+  --cat-monitoring: #F59E0B;
+  --cat-quality: #10B981;
+  --cat-ai-ml: #E879F9;
 
   /* Typography — Manga: Bangers for headings, Inter for body */
   --font-manga: 'Bangers', 'Impact', cursive;

@@ -40,7 +40,7 @@
 | **Perona** | `/perona` | Postman Collection Creator | The Ghost Princess creates perfect API replicas. Generates complete Postman Collection JSON v2.1.0 from API specs, Bartholomew analysis, or Swagger/OpenAPI. Ready-to-import with variables, headers, bodies, and automated tests. |
 | **Senor Pink** | `/senor-pink` | E2E Test Collection Creator | Hard-Boiled tests that make you cry. Generates chained Postman E2E test collections with workflow sequencing, dynamic variable chaining, advanced assertions, and Newman/CI-CD integration. |
 | **Law-SQL** | `/law-sql` | SQL Specialist & Doc-to-SQL | The Surgeon of Death operates on data with surgical SQL precision. Converts documents (Excel, Word, CSV, specs) into SQL scripts, optimizes queries, migrates between SQL dialects (PostgreSQL, MySQL, SQL Server, Oracle, SQLite). |
-| **Morgans** | `/morgans` | Release Email Generator | Big News Morgans broadcasts every release. Generates professional release emails for QA (test-oriented) and Production (stakeholder-oriented) deployments, with changelog classification, test perimeters, rollback plans, and post-deployment checklists. |
+| **Morgans** | `/morgans` | Release Email Generator | Big News Morgans broadcasts every release. Generates professional release emails for QA (test-oriented) and Production (stakeholder-oriented) deployments, with changelog classification, test perimeters, rollback plans, and post-deployment checklists. Produces both **plain text and HTML templates** compatible with Gmail and Outlook (inline CSS, table layout), with copy-paste instructions. |
 | **Enel** | `/enel` | Monitoring & Alerting Engineer | Observability expert. Configures Prometheus scraping, Grafana dashboards, alerting rules, PagerDuty/OpsGenie escalation policies, and monitoring best practices. (alias: `/monitoring`) |
 | **Ivankov** | `/ivankov` | Feature Flags Strategist | Progressive rollout expert. Designs env-based, Unleash, and LaunchDarkly feature flag strategies, A/B testing, rollout plans, and flag lifecycle management. (alias: `/feature-flags`) |
 
@@ -102,7 +102,7 @@ Pre-built orchestration pipelines that chain multiple agents for common workflow
 
 | Agent | Command | Role | Specialty |
 |-------|---------|------|-----------|
-| **One Piece** | `/one_piece` | Smart Router | Intelligent dispatcher. Describe any problem and it automatically routes to the best agent(s) or pipeline(s). No need to know the crew — just describe your need. |
+| **One Piece** | `/one_piece` | Smart Router | Intelligent dispatcher. Describe any problem and it automatically routes to the best agent(s) or pipeline(s). Can compose **ad-hoc chains of up to 6 agents** when no pre-built pipeline matches. No need to know the crew — just describe your need. |
 | **Mugiwara** | `/mugiwara` | Full Pipeline | Runs the core analysis agents in sequence (Zorro, Sanji, Nami, Franky code review, Luffy) from a single problem statement. The whole crew at once! (alias: `/thousand-sunny`) |
 
 ## Quick Start
@@ -239,7 +239,7 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 /law-sql Convert this Excel spec file to a PostgreSQL migration script
 /law-sql Optimize this slow query that takes 30s on our users table
 
-# Release Communication - Morgans generates release emails
+# Release Communication - Morgans generates release emails (plain text + HTML Gmail/Outlook)
 /morgans qa v2.3.0 - New billing module with Stripe integration
 /morgans prod v2.3.0 - Production deployment of billing module
 ```
@@ -364,8 +364,8 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 
 **Release Communication:**
 ```
-1. /morgans qa [version]    -> Generate QA release email (test-oriented)
-2. /morgans prod [version]  -> Generate production release email (stakeholder-oriented)
+1. /morgans qa [version]    -> Generate QA release email (plain text + HTML Gmail/Outlook)
+2. /morgans prod [version]  -> Generate production release email (plain text + HTML Gmail/Outlook)
 ```
 
 **Agent Quality Pipeline:**
@@ -551,6 +551,8 @@ Type `/` in Claude Code and you should see all crew members in the autocomplete 
 - Change classification (Features, Fixes, Security, Performance, Breaking, Tech Debt)
 - QA release emails (test-oriented, with recommended test perimeters and scenarios)
 - Production release emails (stakeholder-oriented, with impact metrics and rollback plans)
+- **Dual format output**: plain text structured emails AND HTML templates compatible with Gmail and Outlook (inline CSS, `<table>` layout, system fonts, MSO conditional comments)
+- Copy-paste instructions for Gmail, Outlook Desktop, and Outlook Web (OWA)
 - Dual generation mode (both QA + Prod emails when type is not specified)
 - Placeholder management for missing information
 - Language adaptation (matches input language)
@@ -708,7 +710,7 @@ The v1.9 release brings three major changes:
 - **Caesar** (`/caesar`, alias `/chaos`) — Chaos Engineering (Chaos Monkey, Litmus, GameDay)
 - **Aokiji** (`/aokiji`, alias `/gcp`) — Cloud GCP (Cloud Run, GKE, BigQuery, Terraform GCP)
 
-**Intelligent inter-agent routing** — Every agent has a routing table pointing to complementary agents. When a request falls outside an agent's scope, it suggests (or invokes) the best-suited colleague. This forms a complete web where no IT domain is orphaned. `/one_piece` remains the universal entry point.
+**Intelligent inter-agent routing** — Every agent has a routing table pointing to complementary agents. When a request falls outside an agent's scope, it suggests (or invokes) the best-suited colleague. This forms a complete web where no IT domain is orphaned. `/one_piece` remains the universal entry point and can compose **ad-hoc chains of up to 6 agents** when no pre-built pipeline matches the request.
 
 **Volume:** 56 unique agents created, 78 registry entries (with aliases), 8 ship-named pipelines, 16 CI jobs, 582 structural tests.
 

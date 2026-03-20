@@ -17,15 +17,9 @@ DEFAULT_REGISTRY_REPO="AlexisSisley/mugiwara-agents"
 DEFAULT_REGISTRY_BRANCH="main"
 CACHE_TTL=3600  # 1 hour in seconds
 
-# ── Colors ───────────────────────────────────────────────────
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-DIM='\033[2m'
-NC='\033[0m'
+# ── Colors (sourced from shared constants) ───────────────────
+LIB_DIR_CORE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$LIB_DIR_CORE/colors.sh"
 
 # ── Output helpers ───────────────────────────────────────────
 info() {

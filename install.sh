@@ -6,15 +6,13 @@
 
 set -e
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source shared constants (single source of truth)
+source "$SCRIPT_DIR/lib/colors.sh"
+source "$SCRIPT_DIR/lib/crew.sh"
 
 SKILLS_DIR="$HOME/.claude/skills"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$SCRIPT_DIR/skills"
 
 echo ""
@@ -34,80 +32,7 @@ fi
 # Create skills directory if it doesn't exist
 mkdir -p "$SKILLS_DIR"
 
-# List of crew members
-CREW=(zorro sanji sanji-dotnet sanji-flutter sanji-python sanji-ts sanji-rust sanji-go sanji-java sanji-design sanji-i18n nami luffy franky robin chopper brook usopp jinbe yamato vegapunk shanks vivi ace law law-sql bartholomew perona senor-pink morgans monitoring feature-flags api-postman incident pre-launch onboard modernize mugiwara discovery doc-hunt one_piece bon-clay docker firebase iis infra-reseau iceburg sabo paulie coby enel ivankov thousand-sunny merry polar-tang oro-jackson baratie pluton ohara maxim crocodile doflamingo kizaru fujitora katakuri big-mom hawkins magellan caesar aokiji)
-ROLES=(
-    "Business Analyst"
-    "Architect & Tech Lead"
-    "Sous-Chef C#/.NET"
-    "Sous-Chef Flutter/Dart"
-    "Sous-Chef Python"
-    "Sous-Chef TypeScript/Node.js"
-    "Sous-Chef Rust"
-    "Sous-Chef Go"
-    "Sous-Chef Java/Kotlin"
-    "Sous-Chef Design & UI/UX"
-    "Sous-Chef Traduction & i18n"
-    "QA Lead"
-    "Captain / Program Manager"
-    "Code Reviewer"
-    "System Cartographer"
-    "Debugger & Diagnostician"
-    "Technical Writer"
-    "DevOps & IaC"
-    "SecOps & Compliance"
-    "Tech Intelligence & Dashboard"
-    "Meta-Auditor & Agent Engineer"
-    "Refactoring & Migration Expert"
-    "Product Manager & UX"
-    "Performance Engineer"
-    "Data Engineer & Analytics"
-    "SQL Specialist & Doc-to-SQL Converter"
-    "Local API Analyzer"
-    "Postman Collection Creator"
-    "E2E Test Collection Creator"
-    "Release Email Generator (QA & Prod)"
-    "Monitoring & Alerting [alias: enel]"
-    "Feature Flags [alias: ivankov]"
-    "Pipeline: API [alias: maxim]"
-    "Pipeline: Incident [alias: polar-tang]"
-    "Pipeline: Pre-Launch [alias: oro-jackson]"
-    "Pipeline: Onboarding [alias: baratie]"
-    "Pipeline: Modernization [alias: pluton]"
-    "Full Pipeline [alias: thousand-sunny]"
-    "Pipeline: Discovery [alias: merry]"
-    "Pipeline: Doc Hunting [alias: ohara]"
-    "Smart Router"
-    "... 🤫"
-    "Docker & Containerization"
-    "Firebase & Google Cloud"
-    "IIS & Windows Server"
-    "Infrastructure Reseau"
-    "Iceburg — Maitre Charpentier Docker"
-    "Sabo — Chef Revolutionnaire Firebase"
-    "Paulie — Charpentier IIS"
-    "Coby — Capitaine Reseau"
-    "Enel — Dieu Omniscient Monitoring"
-    "Ivankov — Revolutionnaire Feature Flags"
-    "Thousand Sunny — Pipeline Principal"
-    "Merry — Pipeline Decouverte"
-    "Polar Tang — Pipeline Incident"
-    "Oro Jackson — Pipeline Pre-Launch"
-    "Baratie — Pipeline Onboarding"
-    "Pluton — Pipeline Modernisation"
-    "Ohara — Pipeline Documentation"
-    "Maxim — Pipeline API Postman"
-    "Crocodile — Cloud AWS"
-    "Doflamingo — Event-Driven Architecture"
-    "Kizaru — Cloud Azure"
-    "Fujitora — Accessibilite a11y"
-    "Katakuri — AI/ML Ops"
-    "Big Mom — Agile Coach & Scrum Master"
-    "Hawkins — BI & Data Visualization"
-    "Magellan — DBA (Database Admin)"
-    "Caesar — Chaos Engineering"
-    "Aokiji — Cloud GCP"
-)
+# CREW and ROLES are sourced from lib/crew.sh
 
 echo -e "  Installing crew members to ${BLUE}$SKILLS_DIR${NC}"
 echo ""
@@ -152,9 +77,9 @@ else
     echo -e "  ${GREEN}[+]${NC} jq found"
 fi
 
-# Copy hooks to project .claude/hooks/
+# Copy hooks to user's project .claude/hooks/
 HOOKS_SOURCE="$SCRIPT_DIR/.claude/hooks"
-HOOKS_DEST="$SCRIPT_DIR/.claude/hooks"
+HOOKS_DEST="$HOME/.claude/hooks"
 
 if [ -d "$HOOKS_SOURCE" ]; then
     mkdir -p "$HOOKS_DEST"

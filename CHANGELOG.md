@@ -12,6 +12,8 @@ Entries for v1.0.0 through v1.6.0 were written retroactively from roadmaps and g
 ## [Unreleased]
 
 ### Added
+- **Morgans : Templates HTML Gmail & Outlook** -- L'agent `/morgans` genere desormais des templates HTML complets (QA + Production), compatibles Gmail et Outlook (CSS inline, mise en page `<table>`, polices systeme), en plus du format texte brut. Instructions de copier-coller incluses.
+- **One Piece : Limite chaine ad-hoc augmentee a 6 agents** -- Le routeur intelligent `/one_piece` peut desormais composer des chaines ad-hoc de 2 a 6 agents (contre 2-3 precedemment), offrant plus de flexibilite dans l'orchestration dynamique.
 - **Agent Big Mom** (`/big-mom` ou `/agile`) -- Agile Coach / Scrum Master : ceremonies, sprint planning, retrospectives, velocity tracking, SAFe, Jira/Linear workflows, team health
 - **Agent Hawkins** (`/hawkins` ou `/bi`) -- BI & Data Viz : Power BI, Tableau, Metabase, Superset, Looker, DAX/MDX, data storytelling, KPI dashboards
 - **Agent Magellan** (`/magellan` ou `/dba`) -- DBA : PostgreSQL, MySQL, MongoDB, Redis tuning, backup/restore, replication, sharding, monitoring
