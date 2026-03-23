@@ -26,7 +26,7 @@ description: >
     <The assistant uses the Agent tool to launch the one_piece agent to analyze the problem and dispatch to the optimal specialist agent.>
   
 model: opus
-color: yellow
+color: gray
 memory: project
 ---
 

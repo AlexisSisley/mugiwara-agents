@@ -20,7 +20,7 @@ description: >
     <The assistant uses the Agent tool to launch the sanji agent to analyze the errors and route to the appropriate sub-chef specialist for corrections (FIX mode).>
   
 model: opus
-color: blue
+color: yellow
 memory: project
 ---
 

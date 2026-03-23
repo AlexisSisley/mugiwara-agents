@@ -20,7 +20,7 @@ description: >
     <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the jinbe agent to proactively audit the authentication middleware changes for security vulnerabilities.>
   
 model: opus
-color: orange
+color: blue
 memory: user
 ---
 

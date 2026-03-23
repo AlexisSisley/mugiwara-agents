@@ -20,7 +20,7 @@ description: >
     <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the chopper agent to investigate the database timeout in the test and identify the root cause.>
   
 model: opus
-color: red
+color: pink
 memory: project
 ---
 

@@ -16,7 +16,7 @@ description: >
     <The assistant uses the Agent tool to launch the robin agent to trace and document the data flow across microservices.>
   
 model: opus
-color: cyan
+color: purple
 memory: project
 ---
 

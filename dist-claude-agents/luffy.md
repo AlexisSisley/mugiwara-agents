@@ -16,7 +16,7 @@ description: >
     <The assistant uses the Agent tool to launch the luffy agent to create a phased delivery roadmap with feature tables, dependency graph, critical path, and success KPIs.>
   
 model: opus
-color: pink
+color: red
 memory: project
 ---
 

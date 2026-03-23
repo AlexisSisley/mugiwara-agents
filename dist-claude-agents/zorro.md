@@ -20,7 +20,7 @@ description: >
     <The assistant uses the Agent tool to launch the zorro agent to analyze the requirements document, extract user stories, and produce a risk evaluation matrix.>
   
 model: opus
-color: cyan
+color: green
 memory: project
 ---
 

@@ -20,7 +20,7 @@ description: >
     <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the nami agent to proactively verify the completed API endpoints against the plan requirements.>
   
 model: opus
-color: green
+color: orange
 memory: user
 ---
 

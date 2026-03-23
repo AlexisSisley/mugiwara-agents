@@ -90,6 +90,7 @@ const ONE_PIECE_EXAMPLES = [
 
 const ELEVATED_DESCRIPTIONS = {
   chopper: {
+    color: 'pink',
     description: `Use this agent when the user encounters a bug, error, stack trace, or unexpected behavior. This agent should be used proactively when error messages or stack traces appear in conversation.
 
 Covers: root cause analysis (RCA), stack trace diagnosis, log analysis, CPU/memory profiling, hypothesis-driven debugging, and monitoring recommendations.`,
@@ -115,6 +116,7 @@ Covers: root cause analysis (RCA), stack trace diagnosis, log analysis, CPU/memo
   },
 
   franky: {
+    color: 'cyan',
     description: `Use this agent when code has been written or modified and needs a thorough review. This agent should be used proactively after any significant code change to catch quality, security, and maintainability issues before they reach production.
 
 Covers: SOLID/DRY/KISS principles, OWASP Top 10 vulnerabilities, technical debt assessment, anti-pattern detection, optimization opportunities, and cybersecurity audit.`,
@@ -140,6 +142,7 @@ Covers: SOLID/DRY/KISS principles, OWASP Top 10 vulnerabilities, technical debt 
   },
 
   nami: {
+    color: 'orange',
     description: `Use this agent when a major project step has been completed and needs QA verification, or when the user needs test planning, test strategy, or coverage analysis. This agent should be used proactively after feature completion to verify builds and tests pass.
 
 Covers: ISTQB methodology, test planning, build verification, PASS/FAIL verdicts, edge case detection, regression testing strategy, and feedback loops with developers.`,
@@ -165,6 +168,7 @@ Covers: ISTQB methodology, test planning, build verification, PASS/FAIL verdicts
   },
 
   jinbe: {
+    color: 'blue',
     description: `Use this agent for security audits, threat modeling, and compliance verification. This agent should be used proactively when code touches authentication, user data, or exposed APIs.
 
 Covers: STRIDE threat modeling, OWASP Top 10, RGPD/SOC2/ISO27001 compliance, vulnerability assessment, pentesting strategy, and regulatory impact analysis.`,
@@ -190,6 +194,7 @@ Covers: STRIDE threat modeling, OWASP Top 10, RGPD/SOC2/ISO27001 compliance, vul
   },
 
   robin: {
+    color: 'purple',
     description: `Use this agent when the user needs to understand a codebase, reverse-engineer system logic, or map architecture and dependencies. This is ideal when arriving on a new project or needing to understand complex system flows.
 
 Covers: system cartography, dependency mapping, business logic extraction, ADR (Architecture Decision Records) documentation, and architecture visualization.`,
@@ -209,6 +214,7 @@ Covers: system cartography, dependency mapping, business logic extraction, ADR (
   },
 
   zorro: {
+    color: 'green',
     description: `Use this agent when the user needs business analysis, functional specifications, user stories, or acceptance criteria. Expert in transforming vague business problems into rigorous structured specifications.
 
 Covers: root cause analysis (5 Whys, Ishikawa), user stories with MoSCoW prioritization, Gherkin BDD acceptance criteria, risk evaluation with probability/impact matrices, stakeholder mapping, and constraints analysis.`,
@@ -233,6 +239,7 @@ Covers: root cause analysis (5 Whys, Ishikawa), user stories with MoSCoW priorit
   },
 
   sanji: {
+    color: 'yellow',
     description: `Use this agent when the user needs system architecture design, tech stack selection, or project scaffolding. This is the lead architect who designs the full system, then delegates scaffolding to specialized sub-chefs (sanji-ts, sanji-python, sanji-dotnet, etc.).
 
 Covers: comparative stack selection (7 stacks scored on 5 criteria), architecture diagrams (ASCII), API design (REST/gRPC/GraphQL), data modeling, security patterns (OWASP Top 10), scalability strategy, and project directory creation.`,
@@ -257,6 +264,7 @@ Covers: comparative stack selection (7 stacks scored on 5 criteria), architectur
   },
 
   luffy: {
+    color: 'red',
     description: `Use this agent when multiple analyses (business, technical, QA) have been completed and need to be synthesized into a unified strategic roadmap. The Captain consolidates all perspectives into actionable decisions.
 
 Covers: executive summary, cross-functional alignment matrix, conflict arbitrage between speed/quality/security, 3-phase delivery roadmap (MVP/V1/V2), resource estimation, KPIs, consolidated risk registry, communication plan, and decision journal.`,
@@ -304,7 +312,7 @@ const CATEGORY_COLORS = {
   a11y:           'green',
   agile:          'pink',
   itsm:            'blue',
-  router:         'yellow',
+  router:         'gray',
   pipeline:       'pink',
   'ai-ml':        'cyan',
   meta:           'purple',
@@ -878,7 +886,8 @@ function convertAgent(skillName, outputDir, dryRun) {
 
   const { fields, body } = parsed;
   const category = manifest.category || 'analysis';
-  const color = CATEGORY_COLORS[category] || 'blue';
+  const color = (ELEVATED_DESCRIPTIONS[skillName] && ELEVATED_DESCRIPTIONS[skillName].color)
+    || CATEGORY_COLORS[category] || 'blue';
   const model = fields.model || 'opus';
 
   // Generate description

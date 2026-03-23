@@ -20,7 +20,7 @@ description: >
     <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the franky agent to proactively review the newly written code against quality and security standards.>
   
 model: opus
-color: orange
+color: cyan
 memory: user
 ---
 
