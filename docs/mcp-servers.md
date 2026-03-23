@@ -16,6 +16,7 @@
    - [Figma (Optionnel)](#37-figma)
    - [Notion (Optionnel)](#38-notion)
    - [Docker (Optionnel)](#39-docker)
+   - [GLPI (Optionnel)](#310-glpi)
 4. [Configuration recommandee par cas d'usage](#4-configuration-recommandee-par-cas-dusage)
 
 ---
@@ -59,6 +60,7 @@ Les MCP Servers ne sont pas obligatoires. Les agents fonctionnent parfaitement s
 | Optionnel | [Figma](#37-figma) | HTTP | sanji-design | Import de maquettes Figma |
 | Optionnel | [Notion](#38-notion) | HTTP | robin, brook | Lecture/ecriture de pages Notion |
 | Optionnel | [Docker](#39-docker) | stdio | usopp, ace | Gestion de conteneurs Docker |
+| Optionnel | [GLPI](#310-glpi) | stdio | smoker | Tickets ITSM, incidents, demandes |
 
 ---
 
@@ -357,6 +359,80 @@ Verifiez que `docker` apparait dans la liste MCP et que Docker est bien en cours
 
 ---
 
+### 3.10 GLPI
+
+**Priorite : Optionnel**
+
+Connecte Claude Code a votre instance GLPI pour lire et gerer les tickets, incidents, demandes et changements. Permet a l'agent `/smoker` de recuperer les tickets et de les dispatcher vers les bons agents Mugiwara.
+
+**Agents beneficiaires** : `/smoker` (triage et dispatch de tickets GLPI), pipeline `/incident` (tickets d'urgence production)
+
+**Prerequis** :
+- Node.js >= 18
+- Une instance GLPI avec l'API REST activee
+- Un App-Token et un User-Token GLPI
+
+**Activer l'API REST GLPI (si pas encore fait)** :
+
+1. Connectez-vous a GLPI en tant qu'administrateur
+2. Allez dans **Configuration > Generale > API**
+3. Activez l'**API REST** (cochez "Activer l'API Rest")
+4. Dans la section **Clients API**, cliquez sur **Ajouter un client API** :
+   - Nom : `mugiwara-agents`
+   - Active : Oui
+   - Copiez le **App-Token** genere
+5. Allez dans **Administration > Utilisateurs > [votre utilisateur]**
+6. Dans l'onglet **Parametres**, section **Acces distant** :
+   - Cliquez sur **Regenerer** a cote de "Jeton d'API distant"
+   - Copiez le **User-Token** genere
+7. Testez avec curl :
+
+```bash
+curl -s -H "Content-Type: application/json" \
+  -H "App-Token: VOTRE_APP_TOKEN" \
+  -H "Authorization: user_token VOTRE_USER_TOKEN" \
+  https://glpi.votre-entreprise.com/apirest.php/initSession
+```
+
+Si vous recevez un `session_token`, l'API est fonctionnelle.
+
+**Installation du MCP Server** :
+
+```bash
+# Depuis la racine du projet mugiwara-agents, builder le serveur
+cd mcp-servers/mcp-glpi && npm install && npm run build && cd ../..
+
+# Ajouter le serveur MCP (adaptez le chemin)
+claude mcp add glpi -- cmd /c node C:/chemin/vers/mugiwara-agents/mcp-servers/mcp-glpi/dist/index.js
+```
+
+**Configuration** (variables d'environnement) :
+
+Ajoutez ces variables a votre environnement systeme ou a un fichier `.env` :
+
+```
+GLPI_URL=https://glpi.votre-entreprise.com
+GLPI_APP_TOKEN=votre-app-token
+GLPI_USER_TOKEN=votre-user-token
+GLPI_READ_ONLY=true
+```
+
+> **Securite** : `GLPI_READ_ONLY=true` est le defaut — seules les lectures sont autorisees. Passez a `false` uniquement si vous voulez que Smoker puisse mettre a jour les tickets et poster des suivis.
+
+**Verification** :
+
+```bash
+claude mcp list
+```
+
+Verifiez que `glpi` apparait dans la liste des serveurs connectes. Puis testez :
+
+```
+/smoker list
+```
+
+---
+
 ## 4. Configuration recommandee par cas d'usage
 
 Vous n'avez pas besoin d'installer tous les MCP Servers. Choisissez en fonction de votre activite principale.
@@ -440,9 +516,10 @@ Si vous gerez des applications en production :
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 claude mcp add docker -- cmd /c npx -y @modelcontextprotocol/server-docker
+claude mcp add glpi -- cmd /c node [chemin]/mcp-servers/mcp-glpi/dist/index.js
 ```
 
-**Agents optimises** : Chopper (diagnostic + Sentry), Usopp (deploy + Docker), Franky (fix review + GitHub)
+**Agents optimises** : Chopper (diagnostic + Sentry), Usopp (deploy + Docker), Franky (fix review + GitHub), Smoker (triage tickets GLPI + dispatch)
 
 **Pipeline optimise** : `/incident` (Chopper → Franky → Jinbe → Usopp)
 
