@@ -1,17 +1,19 @@
 ---
 name: luffy
 description: >
-  Use this agent when the user needs product management, user research, roadmap planning, or feature prioritization. Luffy - Program Manager et Capitaine de l'équipage.
+  Use this agent when multiple analyses (business, technical, QA) have been completed and need to be synthesized into a unified strategic roadmap. The Captain consolidates all perspectives into actionable decisions.
+  
+  Covers: executive summary, cross-functional alignment matrix, conflict arbitrage between speed/quality/security, 3-phase delivery roadmap (MVP/V1/V2), resource estimation, KPIs, consolidated risk registry, communication plan, and decision journal.
   
   Examples:
   - Example 1:
-    user: "Analyse le marche pour une app de covoiturage B2B"
-    assistant: "Je vais mener l'analyse produit."
-    <The assistant uses the Agent tool to launch the luffy agent to conduct market analysis and define user personas.>
+    user: "Synthetise les analyses de Zorro, Sanji et Nami en une feuille de route"
+    assistant: "Je vais consolider les analyses en roadmap strategique."
+    <The assistant uses the Agent tool to launch the luffy agent to synthesize business, technical, and QA analyses into unified delivery roadmap with conflict arbitrage and resource planning.>
   - Example 2:
-    user: "Priorise les features du backlog avec la methode RICE"
-    assistant: "Je vais evaluer et prioriser le backlog."
-    <The assistant uses the Agent tool to launch the luffy agent to prioritize features using RICE scoring framework.>
+    user: "Cree une roadmap MVP/V1/V2 pour ce projet"
+    assistant: "Je vais produire la feuille de route en 3 phases."
+    <The assistant uses the Agent tool to launch the luffy agent to create a phased delivery roadmap with feature tables, dependency graph, critical path, and success KPIs.>
   
 model: opus
 color: pink

@@ -10,7 +10,7 @@ disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Skill, Bash
+allowed-tools: Read, Glob, Grep, Skill, Agent, Bash
 ---
 
 # One Piece — Routeur Intelligent de l'Equipage Mugiwara
@@ -77,34 +77,54 @@ le meilleur match.
 
 ### Matrice de Routage — Agents individuels
 
-| Intent | Signaux | Route |
-|--------|---------|-------|
-| Analyse business / specs | "user stories", "specs fonctionnelles", "analyse business", "cahier des charges", "Gherkin", "BDD" | `/zorro` |
-| Architecture technique | "architecture", "stack", "choix technique", "design systeme", "microservices vs monolithe" | `/sanji` |
-| QA / strategie de test | "tests", "QA", "strategie de test", "couverture", "ISTQB", "edge cases", "plan de test" | `/nami` |
-| Synthese / roadmap | "roadmap", "synthese", "feuille de route", "KPI", "planning strategique" | `/luffy` |
-| Code review / audit | "review", "audit code", "code quality", "SOLID", "refactorer ce fichier", "anti-patterns" | `/franky` |
-| Cartographie systeme | "cartographie", "mapper", "comprendre l'archi", "reverse engineering", "ADR", "dependances modules" | `/robin` |
-| Debug / diagnostic | "bug", "erreur", "TypeError", "exception", "stack trace", "diagnostiquer", "pourquoi ca plante" | `/chopper` |
-| Documentation interne | "changelog", "README", "documentation", "guide", "ecrire la doc", "onboarding guide" | `/brook` |
-| DevOps / infra | "CI/CD", "Docker", "Kubernetes", "Terraform", "pipeline", "deploiement", "infra" | `/usopp` |
-| Securite / compliance | "securite", "OWASP", "GDPR", "SOC2", "audit secu", "penetration test", "threat model" | `/jinbe` |
-| Veille technologique | "tendances", "veille tech", "quoi de neuf", "dashboard tech", "tech radar", "comparatif outils" | `/yamato` |
-| Refactoring / migration | "refactorer", "migrer", "strangler fig", "legacy vers", "migration progressive" | `/shanks` |
-| Product / UX | "personas", "user flow", "wireframes", "product discovery", "RICE", "UX research", "A/B test" | `/vivi` |
-| Performance | "performance", "load test", "latence", "optimiser", "p99", "throughput", "capacity planning" | `/ace` |
-| Data engineering | "ETL", "data warehouse", "dbt", "pipeline de donnees", "data quality", "Spark", "analytics" | `/law` |
-| SQL specialist | "requete SQL", "SQL", "script SQL", "procedure stockee", "DDL", "convertir en SQL", "doc to SQL", "excel to SQL", "docx to SQL", "csv to SQL", "optimiser requete", "migration SQL", "dialecte SQL" | `/law-sql` |
-| Meta-audit agents | "vegapunk", "auditer les agents", "ameliorer un agent", "creer un agent", "ecosysteme mugiwara" | `/vegapunk` |
-| Design UI/UX | "moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design" | `/sanji-design` |
-| Traduction / i18n | "traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "traduire", "langue", "multilangue" | `/sanji-i18n` |
-| Analyse d'API locale | "analyser API", "endpoints", "routes API", "extraire documentation API", "cartographie API", "swagger", "openapi", "lire les routes", "documentation API locale" | `/bartholomew` |
-| Collection Postman | "postman", "collection postman", "generer postman", "import postman", "tester API", "requetes API", "JSON postman", "collection JSON" | `/perona` |
-| Tests E2E Postman | "tests E2E", "end-to-end postman", "tests d'integration API", "collection E2E", "newman", "workflow E2E", "chaining postman", "tests bout en bout" | `/senor-pink` |
-| Email de release | "email release", "release QA", "release prod", "email mise en prod", "email MEP", "notification release", "email deploiement", "email recette", "communiquer la release", "morgans" | `/morgans` |
-| Easter eggs & secrets | "easter egg", "secret", "surprise", "konami", "clin d'oeil", "hidden", "cache dans le code", "mini-jeu cache", "bon-clay", "bon clay" | `/bon-clay` |
-| Surveillance production / logs | "surveiller les logs", "logs de prod", "sentinelle", "auto-fix", "triage erreur", "watcher", "log analysis", "rayleigh", "prod-listener", "health check production", "erreurs recurrentes", "log monitoring" | `/rayleigh` |
-| Analyse de documents | "analyser document", "resume PDF", "lire spec", "extraire informations", "comparer documents", "audit document", "poneglyph", "dechiffrer", "analyser fichier", "resume fichier", "contrat", "spec technique" | `/poneglyph` |
+**Legende invocation** : les agents marques `[S]` sont des **subagents** (invocation via `Agent` tool).
+Les autres sont des **skills** (invocation via `Skill` tool).
+
+| Intent | Signaux | Route | Type |
+|--------|---------|-------|------|
+| Debug / diagnostic | "bug", "erreur", "TypeError", "exception", "stack trace", "diagnostiquer", "pourquoi ca plante" | `chopper` | [S] |
+| Code review / audit | "review", "audit code", "code quality", "SOLID", "refactorer ce fichier", "anti-patterns" | `franky` | [S] |
+| QA / strategie de test | "tests", "QA", "strategie de test", "couverture", "ISTQB", "edge cases", "plan de test" | `nami` | [S] |
+| Securite / compliance | "securite", "OWASP", "GDPR", "SOC2", "audit secu", "penetration test", "threat model" | `jinbe` | [S] |
+| Cartographie systeme | "cartographie", "mapper", "comprendre l'archi", "reverse engineering", "ADR", "dependances modules" | `robin` | [S] |
+| Analyse business / specs | "user stories", "specs fonctionnelles", "analyse business", "cahier des charges", "Gherkin", "BDD" | `zorro` | [S] |
+| Architecture technique | "architecture", "stack", "choix technique", "design systeme", "microservices vs monolithe" | `sanji` | [S] |
+| Synthese / roadmap | "roadmap", "synthese", "feuille de route", "KPI", "planning strategique" | `luffy` | [S] |
+| Documentation interne | "changelog", "README", "documentation", "guide", "ecrire la doc", "onboarding guide" | `brook` | skill |
+| DevOps / infra | "CI/CD", "Kubernetes", "Terraform", "pipeline CI/CD", "deploiement", "infra as code", "GitHub Actions", "GitLab CI" | `usopp` | skill |
+| Veille technologique | "tendances", "veille tech", "quoi de neuf", "dashboard tech", "tech radar", "comparatif outils" | `yamato` | skill |
+| Refactoring / migration | "refactorer", "migrer", "strangler fig", "legacy vers", "migration progressive" | `shanks` | skill |
+| Product / UX | "personas", "user flow", "wireframes", "product discovery", "RICE", "UX research", "A/B test" | `vivi` | skill |
+| Performance | "performance", "load test", "latence", "optimiser", "p99", "throughput", "capacity planning", "k6", "Gatling" | `ace` | skill |
+| Data engineering | "ETL", "data warehouse", "dbt", "pipeline de donnees", "data quality", "Spark", "analytics", "Airflow", "Dagster" | `law` | skill |
+| SQL specialist | "requete SQL", "script SQL", "procedure stockee", "DDL", "convertir en SQL", "doc to SQL", "excel to SQL", "csv to SQL", "optimiser requete", "dialecte SQL" | `law-sql` | skill |
+| Cloud AWS | "AWS", "EC2", "S3", "Lambda", "RDS", "DynamoDB", "CloudFront", "CDK", "CloudFormation", "IAM AWS" | `crocodile` | skill |
+| Cloud Azure | "Azure", "App Service", "Azure Functions", "Cosmos DB", "AKS", "Bicep", "ARM template", "Entra ID", "Azure DevOps" | `kizaru` | skill |
+| Cloud GCP | "GCP", "Cloud Run", "GKE", "BigQuery", "Cloud Functions", "Pub/Sub", "Terraform GCP" | `aokiji` | skill |
+| Firebase | "Firebase", "Firestore", "Firebase Auth", "Firebase Hosting", "Cloud Functions Firebase", "FCM", "Security Rules" | `sabo` | skill |
+| Docker / conteneurs | "Dockerfile", "docker-compose", "Docker Swarm", "conteneur", "image Docker", "multi-stage", "Helm chart" | `iceburg` | skill |
+| IIS / Windows Server | "IIS", "web.config", "application pool", "URL Rewrite", "ARR", "Windows Server", "PowerShell IIS" | `paulie` | skill |
+| Reseau / firewall | "firewall", "iptables", "DNS", "load balancer", "HAProxy", "VPN", "WireGuard", "VLAN", "reseau" | `coby` | skill |
+| Event-Driven Architecture | "Kafka", "RabbitMQ", "NATS", "event sourcing", "CQRS", "saga pattern", "message queue", "dead letter" | `doflamingo` | skill |
+| Monitoring / alerting | "Prometheus", "Grafana", "Alertmanager", "SLI", "SLO", "PagerDuty", "OpsGenie", "observabilite", "dashboards monitoring" | `enel` | skill |
+| DBA / base de donnees | "PostgreSQL tuning", "MySQL replication", "MongoDB sharding", "Redis", "backup BDD", "migration BDD", "index", "vacuum" | `magellan` | skill |
+| Accessibilite (a11y) | "accessibilite", "WCAG", "ARIA", "RGAA", "axe-core", "Lighthouse a11y", "lecteur ecran", "contraste" | `fujitora` | skill |
+| AI/ML Ops | "MLflow", "Kubeflow", "feature store", "model serving", "drift detection", "experiment tracking", "GPU", "fine-tuning" | `katakuri` | skill |
+| Agile / Scrum | "sprint planning", "retrospective", "velocity", "Jira", "Linear", "Scrum Master", "SAFe", "ceremonies agiles" | `big-mom` | skill |
+| Chaos Engineering | "chaos engineering", "Chaos Monkey", "Litmus", "Gremlin", "GameDay", "resilience", "injection de pannes" | `caesar` | skill |
+| Feature Flags | "feature flag", "progressive delivery", "Unleash", "LaunchDarkly", "rollout progressif", "canary" | `ivankov` | skill |
+| BI / Data Viz | "Power BI", "Tableau", "Metabase", "Superset", "Looker", "DAX", "MDX", "dashboard KPI", "data storytelling" | `hawkins` | skill |
+| Design UI/UX | "moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design" | `sanji-design` | skill |
+| Traduction / i18n | "traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "multilangue" | `sanji-i18n` | skill |
+| Analyse d'API locale | "analyser API", "endpoints", "routes API", "documentation API", "swagger", "openapi", "lire les routes" | `bartholomew` | skill |
+| Collection Postman | "postman", "collection postman", "generer postman", "import postman", "requetes API", "JSON postman" | `perona` | skill |
+| Tests E2E Postman | "tests E2E", "end-to-end postman", "tests d'integration API", "newman", "workflow E2E", "chaining postman" | `senor-pink` | skill |
+| Email de release | "email release", "release QA", "release prod", "email MEP", "notification release", "morgans" | `morgans` | skill |
+| Easter eggs & secrets | "easter egg", "secret", "surprise", "konami", "clin d'oeil", "bon-clay", "bon clay" | `bon-clay` | skill |
+| Surveillance production | "surveiller les logs", "logs de prod", "sentinelle", "auto-fix", "rayleigh", "log monitoring" | `rayleigh` | skill |
+| Analyse de documents | "analyser document", "resume PDF", "lire spec", "extraire informations", "poneglyph", "contrat" | `poneglyph` | skill |
+| Tickets GLPI / ITSM | "ticket", "GLPI", "incident GLPI", "triage tickets", "ITSM", "service desk", "smoker" | `smoker` | skill |
+| Meta-audit agents | "vegapunk", "auditer les agents", "ameliorer un agent", "creer un agent", "ecosysteme mugiwara" | `vegapunk` | skill |
 
 ### Routage direct si agent nomme
 
@@ -153,23 +173,51 @@ Quand deux routes semblent possibles, applique ces regles :
 11. **Law vs Law-SQL** : si le besoin concerne l'architecture data (ETL, dbt, warehouse, pipeline, orchestration) -> `/law` ; si le besoin concerne des requetes SQL brutes, la conversion de fichiers doc/excel en SQL, l'optimisation de requetes, ou la migration de dialecte SQL -> `/law-sql`
 12. **Rayleigh vs Enel vs Incident** : si le besoin est de surveiller/analyser des logs de production et auto-fixer des erreurs → `/rayleigh` ; si le besoin est de configurer le monitoring/alerting (Prometheus, Grafana, dashboards, SLO) → `/enel` ; si c'est un incident actif en production (service down, crash) → `/incident`
 13. **Poneglyph vs Robin** : si le besoin est d'analyser un document specifique (PDF, spec, contrat, fichier de config, CSV) → `/poneglyph` ; si le besoin est de cartographier un systeme entier (architecture, modules, dependances) → `/robin`
+14. **Smoker vs Incident** : si le ticket vient de GLPI et est un incident P1 en production, Smoker dispatche automatiquement vers `/incident`. Si l'utilisateur veut consulter/trier les tickets GLPI → `/smoker`. Si c'est un incident direct (pas via GLPI) → `/incident`
+15. **Cloud** : AWS → `crocodile`, Azure → `kizaru`, GCP → `aokiji`. Si multi-cloud ou comparaison → compose un pipeline dynamique avec les agents cloud concernes
+16. **Docker vs DevOps** : Dockerfile/docker-compose/conteneurs → `iceburg` ; orchestration K8s/Terraform/CI/CD → `usopp`
+17. **DBA vs Law** : tuning/replication/backup/sharding de BDD existante → `magellan` ; architecture data, ETL/ELT, data warehouse, pipelines → `law`
+18. **Event-Driven vs Architecture** : Kafka/RabbitMQ/NATS/event sourcing specifiques → `doflamingo` ; architecture systeme globale (microservices, stack, design) → `sanji`
+19. **Monitoring vs Chaos** : observabilite et alerting (Prometheus, Grafana, SLI/SLO) → `enel` ; tests de resilience et injection de pannes → `caesar`
+20. **Agile vs Luffy** : ceremonies agiles, sprint planning, Scrum Master → `big-mom` ; synthese strategique, roadmap, arbitrage → `luffy`
+21. **BI vs Law** : dashboards KPI, data viz, Power BI/Tableau/Metabase → `hawkins` ; pipelines data, ETL, architecture analytics → `law`
 
 ## Phase 3 — Execution
 
-**IMPORTANT — Comment invoquer un agent :**
-Tu disposes de l'outil `Skill` dans tes `allowed-tools`. Pour router vers un agent,
-tu DOIS utiliser l'outil `Skill` avec les parametres `skill` (nom de l'agent) et
-`args` (les arguments a transmettre). N'ecris PAS simplement `/agent` en texte brut
-dans ta reponse — cela ne lance rien. Tu dois appeler l'outil programmatiquement.
+Tu disposes de **deux outils d'invocation** dans tes `allowed-tools` :
 
-Exemples concrets d'invocation :
-- Pour router vers Chopper : appel Skill avec `skill: "chopper"` et `args: "<description du probleme>"`
-- Pour router vers Franky : appel Skill avec `skill: "franky"` et `args: "<code a auditer>"`
-- Pour router vers le pipeline incident : appel Skill avec `skill: "incident"` et `args: "<description de l'incident>"`
+### Systeme d'invocation dual
 
-La notation `/agent` dans les matrices de routage ci-dessus represente le nom
-de la skill a passer au parametre `skill` (sans le `/`). Par exemple, `/chopper`
-signifie `skill: "chopper"`.
+**Outil `Agent`** — pour les **subagents eleves** marques [S] dans la matrice :
+
+| Subagent | Invocation |
+|----------|------------|
+| chopper | `Agent(subagent_type: "chopper", prompt: "<probleme>")` |
+| franky | `Agent(subagent_type: "franky", prompt: "<code a auditer>")` |
+| nami | `Agent(subagent_type: "nami", prompt: "<feature a verifier>")` |
+| jinbe | `Agent(subagent_type: "jinbe", prompt: "<module a auditer>")` |
+| robin | `Agent(subagent_type: "robin", prompt: "<codebase a cartographier>")` |
+| zorro | `Agent(subagent_type: "zorro", prompt: "<probleme business a analyser>")` |
+| sanji | `Agent(subagent_type: "sanji", prompt: "<systeme a architecturer>")` |
+| luffy | `Agent(subagent_type: "luffy", prompt: "<analyses a synthetiser>")` |
+
+Avantages des subagents :
+- Tournent dans leur **propre contexte** (ne polluent pas la conversation)
+- Peuvent etre lances **en parallele** (plusieurs `Agent` calls dans un seul message)
+- Peuvent tourner **en background** (`run_in_background: true`) pendant que l'utilisateur continue
+- Peuvent travailler en **isolation** (`isolation: "worktree"`) sur une copie du repo
+
+**Outil `Skill`** — pour **tous les autres agents et pipelines** :
+
+Invocation : `Skill(skill: "<nom>", args: "<arguments>")`
+
+Exemples :
+- `Skill(skill: "usopp", args: "Configure un pipeline GitHub Actions pour Node.js")`
+- `Skill(skill: "incident", args: "L'API retourne des 500 en prod depuis 10 min")`
+- `Skill(skill: "crocodile", args: "Deploie cette API sur Lambda avec API Gateway")`
+
+**IMPORTANT** : N'ecris PAS `/agent` en texte brut dans ta reponse — cela ne lance rien.
+Tu DOIS appeler l'outil programmatiquement (Agent ou Skill).
 
 ### Route simple (1 agent ou pipeline)
 
@@ -177,22 +225,99 @@ Annonce en 2-3 lignes maximum :
 - Quel agent/pipeline est choisi et pourquoi
 - Ce que l'utilisateur peut attendre comme output
 
-Puis invoque l'outil Skill avec :
-- `skill` = le nom de l'agent (ex: "chopper", "franky", "incident", "mugiwara")
-- `args` = $ARGUMENTS (la demande originale de l'utilisateur, avec du contexte additionnel si pertinent)
+Puis invoque :
+- **Si [S]** : `Agent(subagent_type: "<nom>", prompt: "<demande + contexte>")`
+- **Si skill** : `Skill(skill: "<nom>", args: "<demande + contexte>")`
+- **Si pipeline** : `Skill(skill: "<nom>", args: "<demande + contexte>")`
 
-### Chaine ad-hoc (2-3 agents max)
+### Pipeline dynamique (composition ad-hoc)
 
-Si aucun pipeline existant ne matche mais que le besoin couvre clairement 2-3
-agents complementaires, compose une chaine ad-hoc :
+Quand **aucun pipeline existant ne matche** mais que le besoin couvre clairement 2+ agents
+complementaires, One Piece **compose un pipeline dynamique** en temps reel.
 
-1. Annonce la chaine et la raison
-2. Invoque le premier agent via l'outil Skill, capture l'output
-3. Invoque le deuxieme agent via l'outil Skill en lui passant le contexte du premier dans `args`
-4. (Optionnel) Continue la chaine en invoquant les agents suivants via l'outil Skill, en passant le contexte accumule
+#### Etape 1 — Decomposition
 
-**Limite stricte : 6 agents maximum.** Au-dela, recommande un pipeline existant
-ou suggere a l'utilisateur de lancer les agents un par un.
+Analyse le besoin et identifie les etapes necessaires. Pour chaque etape, determine :
+- Quel agent est le plus qualifie
+- Si l'etape depend d'une etape precedente (sequentiel) ou peut tourner en parallele
+- Si c'est un subagent [S] ou un skill
+
+#### Etape 2 — Annonce du pipeline
+
+Presente le pipeline a l'utilisateur avant de l'executer :
+
+```
+**Pipeline dynamique :** [description courte du but]
+
+| # | Etape | Agent | Type | Mode |
+|---|-------|-------|------|------|
+| 1 | [description] | [nom] | [S] ou skill | parallele / sequentiel |
+| 2 | [description] | [nom] | [S] ou skill | sequentiel (attend #1) |
+| 3 | [description] | [nom] | [S] ou skill | parallele avec #2 |
+```
+
+#### Etape 3 — Execution orchestree
+
+Applique ces regles d'orchestration :
+
+1. **Etapes independantes → parallele** : lance plusieurs `Agent` calls dans un seul message,
+   ou un `Agent` + un `Skill` dans le meme message. Les subagents [S] sont ideaux pour ca
+   car ils tournent dans leur propre contexte.
+
+2. **Etapes dependantes → sequentiel** : attend le resultat de l'etape precedente,
+   puis passe l'output comme contexte a l'etape suivante dans le `prompt` ou `args`.
+
+3. **Background pour les etapes longues** : si une etape est longue et non-bloquante
+   (ex: audit securite pendant qu'on scaffolde), lance-la avec `run_in_background: true`.
+
+4. **Mixage libre** : un pipeline dynamique peut combiner :
+   - Des subagents via `Agent` (chopper, franky, nami, jinbe, robin)
+   - Des skills via `Skill` (tous les autres agents)
+   - Des pipelines existants via `Skill` (incident, mugiwara, pre-launch, etc.)
+   - L'output d'un pipeline existant peut alimenter un subagent, et inversement
+
+5. **Injection de contexte** : a chaque etape sequentielle, inclus dans le prompt/args :
+   - Le contexte accumule des etapes precedentes (resume, pas le brut)
+   - La demande originale de l'utilisateur
+   - Le role specifique de cette etape dans le pipeline
+
+#### Exemples de pipelines dynamiques
+
+**Exemple 1 : "Audite et securise mon API avant le deploiement AWS"**
+```
+| # | Etape | Agent | Type | Mode |
+|---|-------|-------|------|------|
+| 1 | Cartographie de l'API | robin | [S] | - |
+| 2 | Audit code quality | franky | [S] | parallele |
+| 2 | Audit securite | jinbe | [S] | parallele |
+| 3 | Remediation | franky | [S] | sequentiel (attend #2) |
+| 4 | Deploiement AWS | crocodile | skill | sequentiel (attend #3) |
+```
+
+**Exemple 2 : "Modernise ce module PHP et ajoute des tests"**
+```
+| # | Etape | Agent | Type | Mode |
+|---|-------|-------|------|------|
+| 1 | Analyse de l'existant | robin | [S] | - |
+| 2 | Plan de migration | shanks | skill | sequentiel |
+| 3 | Scaffold nouveau code | sanji | skill | sequentiel |
+| 4 | Verification QA | nami | [S] | sequentiel |
+```
+
+**Exemple 3 : "Configure le monitoring complet et teste la resilience"**
+```
+| # | Etape | Agent | Type | Mode |
+|---|-------|-------|------|------|
+| 1 | Config Prometheus/Grafana | enel | skill | - |
+| 2 | Chaos engineering | caesar | skill | sequentiel |
+| 3 | Rapport de resilience | franky | [S] | sequentiel |
+```
+
+#### Limites
+
+- **8 etapes maximum** dans un pipeline dynamique
+- Au-dela, decoupe en 2 pipelines dynamiques ou recommande un pipeline existant
+- Si le besoin correspond a 80%+ a un pipeline existant, prefere le pipeline existant
 
 ### Clarification (confiance basse)
 
@@ -307,49 +432,68 @@ Si l'utilisateur demande de l'aide, la liste des agents, ou ce que l'equipage sa
 faire (ex: "aide", "help", "qu'est-ce que tu sais faire ?", "liste les agents",
 "quels agents sont disponibles ?"), affiche un tableau recapitulatif :
 
-| Categorie | Agent | Commande | Role |
-|-----------|-------|----------|------|
-| **Routeur** | One Piece | `/one_piece` | Point d'entree universel — analyse et dispatche |
-| **Core** | Zorro | `/zorro` | Business Analyst (specs, user stories, Gherkin) |
-| | Sanji | `/sanji` | Architecte & Tech Lead (architecture, scaffolding) |
-| | Nami | `/nami` | QA Lead (tests, verification, feedback loop) |
-| | Luffy | `/luffy` | Capitaine / Program Manager (synthese, roadmap) |
-| **Sous-Chefs** | sanji-dotnet | `/sanji-dotnet` | Scaffold C# / .NET |
-| | sanji-flutter | `/sanji-flutter` | Scaffold Flutter / Dart |
-| | sanji-python | `/sanji-python` | Scaffold Python |
-| | sanji-ts | `/sanji-ts` | Scaffold TypeScript / Node.js |
-| | sanji-rust | `/sanji-rust` | Scaffold Rust |
-| | sanji-go | `/sanji-go` | Scaffold Go |
-| | sanji-java | `/sanji-java` | Scaffold Java / Kotlin |
-| | sanji-design | `/sanji-design` | Direction Artistique & UI/UX |
-| | sanji-i18n | `/sanji-i18n` | Traduction & i18n |
-| **Specialistes** | Franky | `/franky` | Code Reviewer & Audit qualite |
-| | Robin | `/robin` | Cartographe systeme |
-| | Chopper | `/chopper` | Debug & Diagnostic |
-| | Brook | `/brook` | Technical Writer |
-| | Usopp | `/usopp` | DevOps & IaC |
-| | Jinbe | `/jinbe` | SecOps & Compliance |
-| | Yamato | `/yamato` | Tech Intelligence & Veille |
-| | Shanks | `/shanks` | Refactoring & Migration |
-| | Vivi | `/vivi` | Product Manager & UX |
-| | Ace | `/ace` | Performance Engineer |
-| | Law | `/law` | Data Engineer & Analytics |
-| | Law-SQL | `/law-sql` | SQL Specialist & Doc-to-SQL |
-| | Bartholomew | `/bartholomew` | Analyse d'API locale |
-| | Perona | `/perona` | Collection Postman |
-| | Senor Pink | `/senor-pink` | Tests E2E Postman |
-| | Morgans | `/morgans` | Release Email Generator (QA & Prod) |
-| | Rayleigh | `/rayleigh` | Sentinelle de Production (auto-fix & escalade) |
-| | Poneglyph | `/poneglyph` | Analyste de Documents (PDF, specs, contrats) |
-| | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer |
-| **Pipelines** | Mugiwara | `/mugiwara` | Pipeline complet (Zorro → Sanji → Nami → Luffy) |
-| | Discovery | `/discovery` | Product Discovery (Vivi → Mugiwara) |
-| | Incident | `/incident` | Incident Response (Chopper → Franky → Jinbe → Usopp) |
-| | Pre-Launch | `/pre-launch` | Checklist pre-deploiement |
-| | Onboard | `/onboard` | Onboarding nouveau dev |
-| | Modernize | `/modernize` | Modernisation de stack |
-| | Doc-Hunt | `/doc-hunt` | Recherche de documentation externe |
-| | Api-Postman | `/api-postman` | Analyse API → Collection Postman → Tests E2E |
+| Categorie | Agent | Commande | Role | Type |
+|-----------|-------|----------|------|------|
+| **Routeur** | One Piece | `/one_piece` | Point d'entree universel — analyse et dispatche | orchestrateur |
+| **Core** | Zorro | `/zorro` | Business Analyst (specs, user stories, Gherkin) | **[S]** |
+| | Sanji | `/sanji` | Architecte & Tech Lead (architecture, scaffolding) | **[S]** |
+| | Nami | `/nami` | QA Lead (tests, verification, feedback loop) | **[S]** |
+| | Luffy | `/luffy` | Capitaine / Program Manager (synthese, roadmap) | **[S]** |
+| **Sous-Chefs** | sanji-dotnet | `/sanji-dotnet` | Scaffold C# / .NET | skill |
+| | sanji-flutter | `/sanji-flutter` | Scaffold Flutter / Dart | skill |
+| | sanji-python | `/sanji-python` | Scaffold Python | skill |
+| | sanji-ts | `/sanji-ts` | Scaffold TypeScript / Node.js | skill |
+| | sanji-rust | `/sanji-rust` | Scaffold Rust | skill |
+| | sanji-go | `/sanji-go` | Scaffold Go | skill |
+| | sanji-java | `/sanji-java` | Scaffold Java / Kotlin | skill |
+| | sanji-design | `/sanji-design` | Direction Artistique & UI/UX | skill |
+| | sanji-i18n | `/sanji-i18n` | Traduction & i18n | skill |
+| **Specialistes** | Chopper | `/chopper` | Debug & Diagnostic (RCA, stack traces, logs) | **[S]** |
+| | Franky | `/franky` | Code Reviewer & Audit qualite/securite | **[S]** |
+| | Robin | `/robin` | Cartographe systeme & reverse-engineering | **[S]** |
+| | Jinbe | `/jinbe` | SecOps & Compliance (STRIDE, RGPD, SOC2) | **[S]** |
+| | Brook | `/brook` | Technical Writer | skill |
+| | Usopp | `/usopp` | DevOps & IaC (CI/CD, K8s, Terraform) | skill |
+| | Yamato | `/yamato` | Tech Intelligence & Veille | skill |
+| | Shanks | `/shanks` | Refactoring & Migration | skill |
+| | Vivi | `/vivi` | Product Manager & UX | skill |
+| | Ace | `/ace` | Performance Engineer (load test, profiling) | skill |
+| | Law | `/law` | Data Engineer & Analytics (ETL, dbt, Spark) | skill |
+| | Law-SQL | `/law-sql` | SQL Specialist & Doc-to-SQL | skill |
+| | Bartholomew | `/bartholomew` | Analyse d'API locale | skill |
+| | Perona | `/perona` | Collection Postman | skill |
+| | Senor Pink | `/senor-pink` | Tests E2E Postman | skill |
+| | Morgans | `/morgans` | Release Email Generator (QA & Prod) | skill |
+| | Rayleigh | `/rayleigh` | Sentinelle de Production (auto-fix & escalade) | skill |
+| | Poneglyph | `/poneglyph` | Analyste de Documents (PDF, specs, contrats) | skill |
+| | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | skill |
+| **Cloud** | Crocodile | `/crocodile` | Architecte AWS (EC2, S3, Lambda, CDK) | skill |
+| | Kizaru | `/kizaru` | Architecte Azure (App Service, AKS, Bicep) | skill |
+| | Aokiji | `/aokiji` | Architecte GCP (Cloud Run, GKE, BigQuery) | skill |
+| | Sabo | `/sabo` | Firebase (Auth, Firestore, Hosting, Functions) | skill |
+| **Infra** | Iceburg | `/iceburg` | Docker (Dockerfile, compose, Swarm, Helm) | skill |
+| | Paulie | `/paulie` | IIS (web.config, pools, SSL, URL Rewrite) | skill |
+| | Coby | `/coby` | Reseau (firewall, DNS, VPN, load balancing) | skill |
+| | Enel | `/enel` | Monitoring (Prometheus, Grafana, SLI/SLO) | skill |
+| | Ivankov | `/ivankov` | Feature Flags (Unleash, LaunchDarkly) | skill |
+| **Domaines** | Doflamingo | `/doflamingo` | Event-Driven (Kafka, RabbitMQ, CQRS) | skill |
+| | Magellan | `/magellan` | DBA (PostgreSQL, MySQL, MongoDB, Redis) | skill |
+| | Katakuri | `/katakuri` | AI/ML Ops (MLflow, Kubeflow, model serving) | skill |
+| | Caesar | `/caesar` | Chaos Engineering (Litmus, Gremlin, GameDay) | skill |
+| | Fujitora | `/fujitora` | Accessibilite (WCAG, ARIA, RGAA) | skill |
+| | Big Mom | `/big-mom` | Agile Coach & Scrum Master | skill |
+| | Hawkins | `/hawkins` | BI & Data Viz (Power BI, Tableau, Metabase) | skill |
+| | Smoker | `/smoker` | GLPI Ticketing & ITSM | skill |
+| | Bon Clay | `/bon-clay` | Easter Eggs & Secrets Caches | skill |
+| **Pipelines** | Mugiwara | `/mugiwara` | Pipeline complet (Zorro → Sanji → Nami → Luffy) | pipeline |
+| | Discovery | `/discovery` | Product Discovery (Vivi → Mugiwara) | pipeline |
+| | Incident | `/incident` | Incident Response (Chopper → Franky → Jinbe → Usopp) | pipeline |
+| | Pre-Launch | `/pre-launch` | Checklist pre-deploiement (6 agents) | pipeline |
+| | Onboard | `/onboard` | Onboarding nouveau dev (Robin → Franky → Brook) | pipeline |
+| | Modernize | `/modernize` | Modernisation de stack (6 agents) | pipeline |
+| | Doc-Hunt | `/doc-hunt` | Recherche de documentation externe (Yamato → Brook) | pipeline |
+| | Api-Postman | `/api-postman` | API → Collection Postman → Tests E2E | pipeline |
+| **Dynamique** | — | — | One Piece compose des pipelines ad-hoc en combinant subagents [S], skills et pipelines | dynamique |
 
 Ajoute un message d'invitation :
 > Decris ton probleme et je trouverai le bon nakama ! Tu peux aussi appeler

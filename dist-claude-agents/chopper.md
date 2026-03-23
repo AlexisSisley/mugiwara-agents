@@ -1,17 +1,23 @@
 ---
 name: chopper
 description: >
-  Use this agent when the user encounters a bug, error, stack trace, or unexpected behavior. Chopper - Urgentiste spécialisé en diagnostic et résolution de bugs.
+  Use this agent when the user encounters a bug, error, stack trace, or unexpected behavior. This agent should be used proactively when error messages or stack traces appear in conversation.
+  
+  Covers: root cause analysis (RCA), stack trace diagnosis, log analysis, CPU/memory profiling, hypothesis-driven debugging, and monitoring recommendations.
   
   Examples:
   - Example 1:
     user: "J'ai une NullPointerException dans le service d'authentification, voici la stack trace"
     assistant: "Je vais diagnostiquer cette NullPointerException."
-    <The assistant uses the Agent tool to launch the chopper agent to perform root cause analysis on the authentication service error.>
+    <The assistant uses the Agent tool to launch the chopper agent to perform root cause analysis on the authentication service error and identify the fix.>
   - Example 2:
     user: "L'API retourne des 500 intermittents depuis ce matin, voici les logs"
     assistant: "Je vais analyser ces erreurs intermittentes."
-    <The assistant uses the Agent tool to launch the chopper agent to analyze the logs and identify the pattern behind the intermittent 500 errors.>
+    <The assistant uses the Agent tool to launch the chopper agent to analyze the logs, identify the pattern behind the intermittent 500 errors, and propose a fix.>
+  - Example 3 (proactive usage):
+    user: "Mon test unitaire echoue avec un timeout sur la base de donnees"
+    assistant: "Je vais diagnostiquer ce timeout."
+    <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the chopper agent to investigate the database timeout in the test and identify the root cause.>
   
 model: opus
 color: red

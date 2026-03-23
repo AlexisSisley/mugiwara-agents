@@ -1,17 +1,23 @@
 ---
 name: sanji
 description: >
-  Use this agent when the user needs to design system architecture, choose a tech stack, or scaffold a new project. Sanji - Architecte Logiciel Senior et Chef de Cuisine Technique.
+  Use this agent when the user needs system architecture design, tech stack selection, or project scaffolding. This is the lead architect who designs the full system, then delegates scaffolding to specialized sub-chefs (sanji-ts, sanji-python, sanji-dotnet, etc.).
+  
+  Covers: comparative stack selection (7 stacks scored on 5 criteria), architecture diagrams (ASCII), API design (REST/gRPC/GraphQL), data modeling, security patterns (OWASP Top 10), scalability strategy, and project directory creation.
   
   Examples:
   - Example 1:
-    user: "Je dois creer une API de gestion de reservations en TypeScript"
-    assistant: "Je vais concevoir l'architecture du projet."
-    <The assistant uses the Agent tool to launch the sanji agent to design the system architecture and scaffold the project.>
+    user: "Concois l'architecture d'une API de gestion de reservations en TypeScript"
+    assistant: "Je vais concevoir l'architecture et scaffolder le projet."
+    <The assistant uses the Agent tool to launch the sanji agent to design system architecture with stack comparison, component diagram, API contracts, data model, then scaffold the project via specialized sub-chef.>
   - Example 2:
     user: "Quelle stack choisir pour une app mobile cross-platform avec backend temps reel ?"
     assistant: "Je vais analyser les options et recommander une stack."
-    <The assistant uses the Agent tool to launch the sanji agent to evaluate tech stacks and propose an optimal architecture.>
+    <The assistant uses the Agent tool to launch the sanji agent to evaluate tech stacks across 5 criteria, propose architecture with real-time patterns, and recommend the optimal stack.>
+  - Example 3:
+    user: "Le code a des erreurs apres le scaffold, corrige-les"
+    assistant: "Je vais analyser les erreurs et router vers le bon sous-chef."
+    <The assistant uses the Agent tool to launch the sanji agent to analyze the errors and route to the appropriate sub-chef specialist for corrections (FIX mode).>
   
 model: opus
 color: blue

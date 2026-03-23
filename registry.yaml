@@ -36,6 +36,7 @@ agents:
     description: "Urgentiste specialise en diagnostic et resolution de bugs"
     category: debugging
     role: agent
+    elevated: true
   # --- v1.8 agents ---
   iceburg:
     version: 1.8.0
@@ -299,17 +300,31 @@ agents:
     description: "Poneglyph — Analyste de Documents (PDF, specs, contrats, configs, logs, data)"
     category: analysis
     role: agent
+  # --- v2.1 agents ---
+  smoker:
+    version: 2.1.0
+    description: "Smoker — Chasseur de Tickets GLPI (ITSM, incidents, demandes, changements, triage intelligent)"
+    category: itsm
+    role: agent
+  glpi:
+    version: 2.1.0
+    description: "Agent GLPI Ticketing (ITSM, triage, dispatch) [alias: smoker]"
+    category: itsm
+    role: alias
+    alias_of: smoker
   # --- Remaining core agents ---
   franky:
     version: 1.5.0
     description: "Senior Code Reviewer et Expert en Cybersecurite"
     category: security
     role: agent
+    elevated: true
   jinbe:
     version: 1.5.0
     description: "Auditeur SecOps et consultant en conformite reglementaire"
     category: security
     role: agent
+    elevated: true
   law:
     version: 1.5.0
     description: "Data Engineer et Architecte Analytics"
@@ -325,6 +340,7 @@ agents:
     description: "Program Manager et Capitaine de l'equipage"
     category: management
     role: agent
+    elevated: true
   morgans:
     version: 1.5.0
     description: "Generateur d'emails de release QA et mise en production"
@@ -335,6 +351,7 @@ agents:
     description: "Lead QA Senior certifiee ISTQB Expert"
     category: qa
     role: agent
+    elevated: true
   one_piece:
     version: 1.5.0
     description: "Routeur intelligent de l'equipage"
@@ -350,11 +367,13 @@ agents:
     description: "Experte en cartographie de systemes complexes et reverse-engineering"
     category: analysis
     role: agent
+    elevated: true
   sanji:
     version: 1.5.0
     description: "Architecte Logiciel Senior et Chef de Cuisine Technique"
     category: architecture
     role: agent
+    elevated: true
   sanji-design:
     version: 1.5.0
     description: "Sous-Chef Directeur Artistique et UI/UX Designer Senior"
@@ -435,3 +454,4 @@ agents:
     description: "Business Analyst et Chef de Projet Senior"
     category: analysis
     role: agent
+    elevated: true

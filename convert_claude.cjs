@@ -5,12 +5,14 @@
  * Converts Mugiwara Skills (SKILL.md + mugiwara.yaml) into
  * Claude Code custom agents (.claude/agents/*.md).
  *
- * Architecture: one_piece is the SOLE orchestrator agent.
- * By default, only one_piece.md is generated. All other agents
- * are available as skills (via /skill_name) and invoked by one_piece.
+ * Architecture: one_piece is the orchestrator agent + 5 elevated subagents
+ * (chopper, franky, nami, jinbe, robin) for direct invocation.
+ * By default, one_piece + elevated agents are generated.
+ * All other agents are available as skills (via /skill_name).
  *
  * Usage:
- *   node convert_claude.cjs                          # one_piece only (default)
+ *   node convert_claude.cjs                          # one_piece + elevated (default)
+ *   node convert_claude.cjs --router-only            # one_piece only (legacy)
  *   node convert_claude.cjs --all-agents             # All agents (legacy mode)
  *   node convert_claude.cjs --tier 2                 # Tier 1+2 (legacy mode)
  *   node convert_claude.cjs --agents chopper,franky   # Specific agents
@@ -31,7 +33,7 @@ const DEFAULT_OUTPUT = path.join(__dirname, 'dist-claude-agents');
 const TIER_1 = [
   'chopper', 'franky', 'robin', 'sanji', 'nami', 'usopp', 'zorro', 'brook',
   'ace', 'jinbe', 'shanks', 'law', 'poneglyph', 'vivi', 'yamato', 'iceburg',
-  'sabo', 'bartholomew', 'rayleigh', 'enel',
+  'sabo', 'bartholomew', 'rayleigh', 'enel', 'smoker',
 ];
 
 // Tier 2 — additional useful agents
@@ -43,8 +45,16 @@ const TIER_2 = [
   'sanji-flutter', 'sanji-go', 'sanji-rust',
 ];
 
+// ─── Elevated agents — promoted to direct subagents alongside one_piece ──────
+const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy'];
+
 // ─── Non-Mugiwara agents to preserve during cleanup ─────────────────────────
-const NON_MUGIWARA_AGENTS = ['certified-code-reviewer', 'istqb-qa-reviewer'];
+// certified-code-reviewer → replaced by franky
+// istqb-qa-reviewer → replaced by nami
+const NON_MUGIWARA_AGENTS = [];
+
+// ─── Legacy agents to remove during install ─────────────────────────────────
+const DEPRECATED_AGENTS = ['certified-code-reviewer', 'istqb-qa-reviewer'];
 
 // ─── Universal one_piece description (catch-all orchestrator) ────────────────
 const ONE_PIECE_DESCRIPTION = `Use this agent for ANY software engineering task or question. This is the universal orchestrator for the Mugiwara agent ecosystem — it analyzes the user's request and automatically routes to the best specialist agent(s).
@@ -76,6 +86,196 @@ const ONE_PIECE_EXAMPLES = [
   },
 ];
 
+// ─── Elevated agent custom descriptions (proactive triggers + examples) ──────
+
+const ELEVATED_DESCRIPTIONS = {
+  chopper: {
+    description: `Use this agent when the user encounters a bug, error, stack trace, or unexpected behavior. This agent should be used proactively when error messages or stack traces appear in conversation.
+
+Covers: root cause analysis (RCA), stack trace diagnosis, log analysis, CPU/memory profiling, hypothesis-driven debugging, and monitoring recommendations.`,
+    examples: [
+      {
+        input: "J'ai une NullPointerException dans le service d'authentification, voici la stack trace",
+        response: "Je vais diagnostiquer cette NullPointerException.",
+        action: 'perform root cause analysis on the authentication service error and identify the fix',
+      },
+      {
+        input: "L'API retourne des 500 intermittents depuis ce matin, voici les logs",
+        response: "Je vais analyser ces erreurs intermittentes.",
+        action: 'analyze the logs, identify the pattern behind the intermittent 500 errors, and propose a fix',
+      },
+      {
+        input: "Mon test unitaire echoue avec un timeout sur la base de donnees",
+        response: "Je vais diagnostiquer ce timeout.",
+        action: 'investigate the database timeout in the test and identify the root cause',
+        proactive: true,
+      },
+    ],
+    memory: 'project',
+  },
+
+  franky: {
+    description: `Use this agent when code has been written or modified and needs a thorough review. This agent should be used proactively after any significant code change to catch quality, security, and maintainability issues before they reach production.
+
+Covers: SOLID/DRY/KISS principles, OWASP Top 10 vulnerabilities, technical debt assessment, anti-pattern detection, optimization opportunities, and cybersecurity audit.`,
+    examples: [
+      {
+        input: "J'ai implemente le module d'authentification",
+        response: "Je vais auditer le code du module d'authentification.",
+        action: 'perform a comprehensive code review of the authentication module for quality and security',
+      },
+      {
+        input: "Review le code de cette PR pour la feature de paiement",
+        response: "Je vais analyser cette PR.",
+        action: 'review the payment feature code for OWASP vulnerabilities, anti-patterns, and tech debt',
+      },
+      {
+        input: "Ecris un endpoint REST pour l'inscription utilisateur",
+        response: "Voici l'endpoint d'inscription: ...",
+        action: 'proactively review the newly written code against quality and security standards',
+        proactive: true,
+      },
+    ],
+    memory: 'user',
+  },
+
+  nami: {
+    description: `Use this agent when a major project step has been completed and needs QA verification, or when the user needs test planning, test strategy, or coverage analysis. This agent should be used proactively after feature completion to verify builds and tests pass.
+
+Covers: ISTQB methodology, test planning, build verification, PASS/FAIL verdicts, edge case detection, regression testing strategy, and feedback loops with developers.`,
+    examples: [
+      {
+        input: "J'ai fini d'implementer le systeme d'authentification du step 3",
+        response: "Je vais verifier la qualite et lancer les tests.",
+        action: 'run QA verification on the authentication system implementation, execute tests, and produce a PASS/FAIL verdict',
+      },
+      {
+        input: "Propose un plan de test pour le module de paiement",
+        response: "Je vais elaborer une strategie de test complete.",
+        action: 'design a comprehensive ISTQB-based test plan for the payment module',
+      },
+      {
+        input: "Les endpoints de l'API sont termines, ca couvre le step 2 du plan",
+        response: "Je vais verifier cette implementation.",
+        action: 'proactively verify the completed API endpoints against the plan requirements',
+        proactive: true,
+      },
+    ],
+    memory: 'user',
+  },
+
+  jinbe: {
+    description: `Use this agent for security audits, threat modeling, and compliance verification. This agent should be used proactively when code touches authentication, user data, or exposed APIs.
+
+Covers: STRIDE threat modeling, OWASP Top 10, RGPD/SOC2/ISO27001 compliance, vulnerability assessment, pentesting strategy, and regulatory impact analysis.`,
+    examples: [
+      {
+        input: "Fais un audit de securite sur le module de paiement",
+        response: "Je vais auditer la securite du module de paiement.",
+        action: 'perform a STRIDE threat model and OWASP vulnerability assessment on the payment module',
+      },
+      {
+        input: "Verifie la conformite RGPD de notre gestion des donnees utilisateur",
+        response: "Je vais verifier la conformite RGPD.",
+        action: 'audit the user data handling for RGPD compliance and produce a remediation plan',
+      },
+      {
+        input: "J'ai modifie le middleware d'authentification",
+        response: "Je vais verifier la securite du middleware.",
+        action: 'proactively audit the authentication middleware changes for security vulnerabilities',
+        proactive: true,
+      },
+    ],
+    memory: 'user',
+  },
+
+  robin: {
+    description: `Use this agent when the user needs to understand a codebase, reverse-engineer system logic, or map architecture and dependencies. This is ideal when arriving on a new project or needing to understand complex system flows.
+
+Covers: system cartography, dependency mapping, business logic extraction, ADR (Architecture Decision Records) documentation, and architecture visualization.`,
+    examples: [
+      {
+        input: "J'arrive sur ce projet, explique-moi l'architecture",
+        response: "Je vais cartographier le systeme.",
+        action: 'reverse-engineer and map the system architecture, dependencies, and business logic',
+      },
+      {
+        input: "Comment fonctionne le flux de donnees entre les microservices ?",
+        response: "Je vais analyser les flux de donnees.",
+        action: 'trace and document the data flow across microservices',
+      },
+    ],
+    memory: 'project',
+  },
+
+  zorro: {
+    description: `Use this agent when the user needs business analysis, functional specifications, user stories, or acceptance criteria. Expert in transforming vague business problems into rigorous structured specifications.
+
+Covers: root cause analysis (5 Whys, Ishikawa), user stories with MoSCoW prioritization, Gherkin BDD acceptance criteria, risk evaluation with probability/impact matrices, stakeholder mapping, and constraints analysis.`,
+    examples: [
+      {
+        input: "J'ai besoin d'un systeme de gestion de reservations pour un restaurant",
+        response: "Je vais analyser le besoin et produire les specs fonctionnelles.",
+        action: 'perform business analysis: problem reformulation, root cause analysis, user stories, Gherkin acceptance criteria, and risk evaluation',
+      },
+      {
+        input: "Redige les user stories et criteres d'acceptation pour le module de paiement",
+        response: "Je vais produire les specs du module de paiement.",
+        action: 'generate prioritized user stories with MoSCoW and Gherkin BDD scenarios for the payment module',
+      },
+      {
+        input: "Analyse ce cahier des charges et identifie les risques",
+        response: "Je vais analyser le cahier des charges.",
+        action: 'analyze the requirements document, extract user stories, and produce a risk evaluation matrix',
+      },
+    ],
+    memory: 'project',
+  },
+
+  sanji: {
+    description: `Use this agent when the user needs system architecture design, tech stack selection, or project scaffolding. This is the lead architect who designs the full system, then delegates scaffolding to specialized sub-chefs (sanji-ts, sanji-python, sanji-dotnet, etc.).
+
+Covers: comparative stack selection (7 stacks scored on 5 criteria), architecture diagrams (ASCII), API design (REST/gRPC/GraphQL), data modeling, security patterns (OWASP Top 10), scalability strategy, and project directory creation.`,
+    examples: [
+      {
+        input: "Concois l'architecture d'une API de gestion de reservations en TypeScript",
+        response: "Je vais concevoir l'architecture et scaffolder le projet.",
+        action: 'design system architecture with stack comparison, component diagram, API contracts, data model, then scaffold the project via specialized sub-chef',
+      },
+      {
+        input: "Quelle stack choisir pour une app mobile cross-platform avec backend temps reel ?",
+        response: "Je vais analyser les options et recommander une stack.",
+        action: 'evaluate tech stacks across 5 criteria, propose architecture with real-time patterns, and recommend the optimal stack',
+      },
+      {
+        input: "Le code a des erreurs apres le scaffold, corrige-les",
+        response: "Je vais analyser les erreurs et router vers le bon sous-chef.",
+        action: 'analyze the errors and route to the appropriate sub-chef specialist for corrections (FIX mode)',
+      },
+    ],
+    memory: 'project',
+  },
+
+  luffy: {
+    description: `Use this agent when multiple analyses (business, technical, QA) have been completed and need to be synthesized into a unified strategic roadmap. The Captain consolidates all perspectives into actionable decisions.
+
+Covers: executive summary, cross-functional alignment matrix, conflict arbitrage between speed/quality/security, 3-phase delivery roadmap (MVP/V1/V2), resource estimation, KPIs, consolidated risk registry, communication plan, and decision journal.`,
+    examples: [
+      {
+        input: "Synthetise les analyses de Zorro, Sanji et Nami en une feuille de route",
+        response: "Je vais consolider les analyses en roadmap strategique.",
+        action: 'synthesize business, technical, and QA analyses into unified delivery roadmap with conflict arbitrage and resource planning',
+      },
+      {
+        input: "Cree une roadmap MVP/V1/V2 pour ce projet",
+        response: "Je vais produire la feuille de route en 3 phases.",
+        action: 'create a phased delivery roadmap with feature tables, dependency graph, critical path, and success KPIs',
+      },
+    ],
+    memory: 'project',
+  },
+};
+
 // ─── Category → Color mapping ────────────────────────────────────────────────
 
 const CATEGORY_COLORS = {
@@ -103,6 +303,7 @@ const CATEGORY_COLORS = {
   dba:            'cyan',
   a11y:           'green',
   agile:          'pink',
+  itsm:            'blue',
   router:         'yellow',
   pipeline:       'pink',
   'ai-ml':        'cyan',
@@ -136,6 +337,7 @@ const CATEGORY_TRIGGERS = {
   dba:            'the user needs database administration, tuning, replication, or migration',
   a11y:           'the user needs accessibility auditing, WCAG compliance, or a11y remediation',
   agile:          'the user needs agile coaching, sprint planning, retrospectives, or ceremony facilitation',
+  itsm:            'the user needs GLPI ticket management, ITSM triage, incident dispatch, or service desk operations',
   router:         "the user has a general problem or doesn't know which specialist agent to use — they want automatic routing to the best Mugiwara agent",
   pipeline:       'the user needs an end-to-end workflow combining multiple specialist agents in sequence',
   'ai-ml':        'the user needs AI/ML architecture, model evaluation, prompt engineering, or LLM integration',
@@ -433,6 +635,18 @@ const EXAMPLE_BANK = {
       action: 'guide sprint planning and story estimation',
     },
   ],
+  itsm: [
+    {
+      input: "Montre-moi les tickets GLPI ouverts",
+      response: "Je vais recuperer les tickets GLPI en cours.",
+      action: 'list open GLPI tickets and display a prioritized dashboard',
+    },
+    {
+      input: "Trie les tickets GLPI et dispatche-les vers les bons agents",
+      response: "Je vais trier les tickets et les router vers les agents adaptes.",
+      action: 'triage GLPI tickets and dispatch each to the appropriate Mugiwara agent',
+    },
+  ],
   router: [
     {
       input: "J'ai un probleme de perf sur mon API mais je sais pas par ou commencer",
@@ -565,6 +779,26 @@ function generateDescription(name, description, argumentHint, category) {
     return desc;
   }
 
+  // Elevated agents get custom, proactive-aware descriptions
+  if (ELEVATED_DESCRIPTIONS[name]) {
+    const elevated = ELEVATED_DESCRIPTIONS[name];
+    let desc = `${elevated.description}\n\nExamples:\n`;
+
+    elevated.examples.forEach((ex, i) => {
+      desc += `- Example ${i + 1}${ex.proactive ? ' (proactive usage)' : ''}:\n`;
+      desc += `  user: "${ex.input}"\n`;
+      desc += `  assistant: "${ex.response}"\n`;
+      if (ex.proactive) {
+        desc += `  <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the ${name} agent to ${ex.action}.>\n`;
+      } else {
+        desc += `  <The assistant uses the Agent tool to launch the ${name} agent to ${ex.action}.>\n`;
+      }
+    });
+
+    return desc;
+  }
+
+  // Standard agents: category-based description
   const trigger = CATEGORY_TRIGGERS[category] || `the user needs help with ${category}`;
   const capSummary = description ? description.split('.')[0].trim() : `Expert ${category} agent`;
   const examples = EXAMPLE_BANK[category] || EXAMPLE_BANK['analysis']; // fallback
@@ -664,6 +898,10 @@ function convertAgent(skillName, outputDir, dryRun) {
     .map((line, i) => (i === 0 ? line : '  ' + line))
     .join('\n');
 
+  // Determine memory scope (elevated agents may override)
+  const memoryScope = (ELEVATED_DESCRIPTIONS[skillName] && ELEVATED_DESCRIPTIONS[skillName].memory)
+    || 'project';
+
   // Build final agent markdown
   const agentMd = `---
 name: ${skillName}
@@ -671,7 +909,7 @@ description: >
   ${descriptionYaml}
 model: ${model}
 color: ${color}
-memory: project
+memory: ${memoryScope}
 ---
 
 ${transformedBody}
@@ -703,6 +941,7 @@ function parseArgs() {
     dryRun: false,
     allAgents: false,
     install: false,
+    routerOnly: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -726,21 +965,26 @@ function parseArgs() {
       case '--install':
         opts.install = true;
         break;
+      case '--router-only':
+        opts.routerOnly = true;
+        break;
       case '--help':
         console.log(`Usage: node convert_claude.cjs [options]
 
 Options:
-  (default)                 Generate only one_piece.md (universal orchestrator)
+  (default)                 Generate one_piece + elevated agents (chopper, franky, nami, jinbe, robin)
+  --router-only             Generate only one_piece.md (legacy mode)
   --all-agents              Convert ALL skills (legacy mode, reads skills/ directory)
   --tier <1|2>              Tier 1 or Tier 1+2 (legacy mode)
   --agents <a,b,c>          Convert specific agents only
   --output <dir>            Output directory (default: dist-claude-agents/)
-  --install                 Generate one_piece.md + install to ~/.claude/agents/ + cleanup old agents
+  --install                 Generate + install to ~/.claude/agents/ + cleanup old agents
   --dry-run                 Preview without writing files
   --help                    Show this help
 
 Architecture:
-  one_piece is the sole orchestrator agent registered in ~/.claude/agents/.
+  one_piece is the orchestrator + 5 elevated subagents for direct invocation.
+  Elevated: ${ELEVATED_AGENTS.join(', ')}
   All other agents are available as skills (/skill_name) invoked by one_piece.
 `);
         process.exit(0);
@@ -750,12 +994,15 @@ Architecture:
 }
 
 /**
- * Install one_piece.md to ~/.claude/agents/ and clean up old Mugiwara agents.
+ * Install one_piece.md + elevated agents to ~/.claude/agents/ and clean up.
  */
 function installRouter(outputDir) {
   const homeDir = process.env.HOME || process.env.USERPROFILE;
   const agentsDir = path.join(homeDir, '.claude', 'agents');
   fs.mkdirSync(agentsDir, { recursive: true });
+
+  // Agents to install: one_piece + elevated
+  const toInstall = ['one_piece', ...ELEVATED_AGENTS];
 
   // Get list of all Mugiwara skill names (to know what to clean up)
   const allMugiwaraNames = fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
@@ -765,9 +1012,9 @@ function installRouter(outputDir) {
 
   let removed = 0;
 
-  // Remove old individual Mugiwara agents from ~/.claude/agents/
+  // Remove old individual Mugiwara agents from ~/.claude/agents/ (except those to install)
   for (const name of allMugiwaraNames) {
-    if (name === 'one_piece') continue; // Keep the router
+    if (toInstall.includes(name)) continue; // Keep agents we're about to install
     const agentFile = path.join(agentsDir, `${name}.md`);
     if (fs.existsSync(agentFile)) {
       fs.unlinkSync(agentFile);
@@ -776,7 +1023,7 @@ function installRouter(outputDir) {
     }
   }
 
-  // Also clean up alias names that might not have skill dirs but have agent files
+  // Clean up alias names that might not have skill dirs but have agent files
   const KNOWN_ALIASES = [
     'docker', 'iis', 'firebase', 'infra-reseau', 'monitoring', 'feature-flags',
     'mlops', 'agile', 'bi', 'dba', 'a11y', 'azure', 'gcp', 'chaos',
@@ -792,15 +1039,29 @@ function installRouter(outputDir) {
     }
   }
 
-  // Install one_piece.md
-  const src = path.join(outputDir, 'one_piece.md');
-  const dest = path.join(agentsDir, 'one_piece.md');
-  if (fs.existsSync(src)) {
-    fs.copyFileSync(src, dest);
-    console.log(`  [+] Installed: one_piece.md → ${agentsDir}/`);
-  } else {
-    console.error(`  [!] one_piece.md not found in ${outputDir}`);
-    return;
+  // Remove deprecated non-Mugiwara agents (replaced by elevated agents)
+  for (const deprecated of DEPRECATED_AGENTS) {
+    const agentFile = path.join(agentsDir, `${deprecated}.md`);
+    if (fs.existsSync(agentFile)) {
+      fs.unlinkSync(agentFile);
+      console.log(`  [-] Removed deprecated: ${deprecated}.md`);
+      removed++;
+    }
+  }
+
+  // Install one_piece + elevated agents
+  let installed = 0;
+  for (const name of toInstall) {
+    const src = path.join(outputDir, `${name}.md`);
+    const dest = path.join(agentsDir, `${name}.md`);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, dest);
+      const label = name === 'one_piece' ? 'orchestrator' : 'elevated';
+      console.log(`  [+] Installed: ${name}.md (${label})`);
+      installed++;
+    } else {
+      console.error(`  [!] ${name}.md not found in ${outputDir}`);
+    }
   }
 
   // Report preserved non-Mugiwara agents
@@ -812,7 +1073,8 @@ function installRouter(outputDir) {
   }
 
   console.log(`\n  Cleanup: ${removed} old agents removed`);
-  console.log(`  ~/.claude/agents/ now has one_piece.md as sole Mugiwara orchestrator`);
+  console.log(`  Installed: ${installed} agents (one_piece + ${ELEVATED_AGENTS.length} elevated)`);
+  console.log(`  ~/.claude/agents/ now has: one_piece + [${ELEVATED_AGENTS.join(', ')}]`);
 }
 
 function main() {
@@ -820,6 +1082,7 @@ function main() {
 
   // Determine agent list
   let agentList;
+  let mode;
   if (opts.allAgents) {
     // Legacy mode: generate all agents
     agentList = fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
@@ -827,20 +1090,25 @@ function main() {
       .map(d => d.name)
       .filter(name => fs.existsSync(path.join(SKILLS_DIR, name, 'SKILL.md')))
       .sort();
+    mode = 'all-agents';
   } else if (opts.agents) {
     agentList = opts.agents;
+    mode = 'custom';
   } else if (opts.tier >= 2) {
     agentList = [...TIER_1, ...TIER_2];
+    mode = 'tier-2';
   } else if (opts.tier === 1) {
     agentList = [...TIER_1];
-  } else {
-    // Default: one_piece only (universal orchestrator)
+    mode = 'tier-1';
+  } else if (opts.routerOnly) {
+    // Legacy: one_piece only
     agentList = ['one_piece'];
+    mode = 'router-only';
+  } else {
+    // Default: one_piece + elevated agents
+    agentList = ['one_piece', ...ELEVATED_AGENTS];
+    mode = 'elevated';
   }
-
-  const mode = agentList.length === 1 && agentList[0] === 'one_piece'
-    ? 'orchestrator'
-    : 'legacy';
 
   console.log(`\nMugiwara → Claude Code Agent Converter`);
   console.log(`${'═'.repeat(40)}`);
@@ -869,13 +1137,12 @@ function main() {
   if (!opts.dryRun && success > 0) {
     console.log(`\nFiles written to: ${opts.output}/`);
 
-    // Auto-install if --install flag or default orchestrator mode
+    // Auto-install if --install flag
     if (opts.install) {
       console.log(`\nInstalling to ~/.claude/agents/...`);
       installRouter(opts.output);
-    } else if (mode === 'orchestrator') {
+    } else if (mode === 'elevated' || mode === 'router-only') {
       console.log(`\nTo install: node convert_claude.cjs --install`);
-      console.log(`Or manually: cp ${opts.output}/one_piece.md ~/.claude/agents/`);
     }
   }
 }

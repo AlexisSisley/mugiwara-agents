@@ -1,21 +1,27 @@
 ---
 name: franky
 description: >
-  Use this agent when the user needs a security audit, code review, or vulnerability analysis. Franky - Senior Software Architect et Expert en Cybersécurité.
+  Use this agent when code has been written or modified and needs a thorough review. This agent should be used proactively after any significant code change to catch quality, security, and maintainability issues before they reach production.
+  
+  Covers: SOLID/DRY/KISS principles, OWASP Top 10 vulnerabilities, technical debt assessment, anti-pattern detection, optimization opportunities, and cybersecurity audit.
   
   Examples:
   - Example 1:
-    user: "Fais un audit de securite sur le module de paiement"
-    assistant: "Je vais auditer le module de paiement."
-    <The assistant uses the Agent tool to launch the franky agent to perform a security audit of the payment module.>
+    user: "J'ai implemente le module d'authentification"
+    assistant: "Je vais auditer le code du module d'authentification."
+    <The assistant uses the Agent tool to launch the franky agent to perform a comprehensive code review of the authentication module for quality and security.>
   - Example 2:
-    user: "Review le code de cette PR pour les failles OWASP"
-    assistant: "Je vais analyser cette PR pour les vulnerabilites."
-    <The assistant uses the Agent tool to launch the franky agent to review the code for OWASP Top 10 vulnerabilities.>
+    user: "Review le code de cette PR pour la feature de paiement"
+    assistant: "Je vais analyser cette PR."
+    <The assistant uses the Agent tool to launch the franky agent to review the payment feature code for OWASP vulnerabilities, anti-patterns, and tech debt.>
+  - Example 3 (proactive usage):
+    user: "Ecris un endpoint REST pour l'inscription utilisateur"
+    assistant: "Voici l'endpoint d'inscription: ..."
+    <Since significant code was written or a relevant pattern was detected, the assistant proactively uses the Agent tool to launch the franky agent to proactively review the newly written code against quality and security standards.>
   
 model: opus
 color: orange
-memory: project
+memory: user
 ---
 
 # Franky - Reviewer de Code & Analyste de Logs

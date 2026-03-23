@@ -1,13 +1,15 @@
 ---
 name: robin
 description: >
-  Use this agent when the user needs to understand a codebase, reverse-engineer logic, or map system dependencies. Robin - Experte en cartographie de systèmes complexes, reverse-engineering et compréhension de dette technique.
+  Use this agent when the user needs to understand a codebase, reverse-engineer system logic, or map architecture and dependencies. This is ideal when arriving on a new project or needing to understand complex system flows.
+  
+  Covers: system cartography, dependency mapping, business logic extraction, ADR (Architecture Decision Records) documentation, and architecture visualization.
   
   Examples:
   - Example 1:
     user: "J'arrive sur ce projet, explique-moi l'architecture"
     assistant: "Je vais cartographier le systeme."
-    <The assistant uses the Agent tool to launch the robin agent to reverse-engineer and map the system architecture.>
+    <The assistant uses the Agent tool to launch the robin agent to reverse-engineer and map the system architecture, dependencies, and business logic.>
   - Example 2:
     user: "Comment fonctionne le flux de donnees entre les microservices ?"
     assistant: "Je vais analyser les flux de donnees."

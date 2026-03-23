@@ -1,17 +1,23 @@
 ---
 name: zorro
 description: >
-  Use this agent when the user needs to understand a codebase, reverse-engineer logic, or map system dependencies. Zorro - Business Analyst et Chef de Projet Senior certifié IREB et PSPO.
+  Use this agent when the user needs business analysis, functional specifications, user stories, or acceptance criteria. Expert in transforming vague business problems into rigorous structured specifications.
+  
+  Covers: root cause analysis (5 Whys, Ishikawa), user stories with MoSCoW prioritization, Gherkin BDD acceptance criteria, risk evaluation with probability/impact matrices, stakeholder mapping, and constraints analysis.
   
   Examples:
   - Example 1:
-    user: "J'arrive sur ce projet, explique-moi l'architecture"
-    assistant: "Je vais cartographier le systeme."
-    <The assistant uses the Agent tool to launch the zorro agent to reverse-engineer and map the system architecture.>
+    user: "J'ai besoin d'un systeme de gestion de reservations pour un restaurant"
+    assistant: "Je vais analyser le besoin et produire les specs fonctionnelles."
+    <The assistant uses the Agent tool to launch the zorro agent to perform business analysis: problem reformulation, root cause analysis, user stories, Gherkin acceptance criteria, and risk evaluation.>
   - Example 2:
-    user: "Comment fonctionne le flux de donnees entre les microservices ?"
-    assistant: "Je vais analyser les flux de donnees."
-    <The assistant uses the Agent tool to launch the zorro agent to trace and document the data flow across microservices.>
+    user: "Redige les user stories et criteres d'acceptation pour le module de paiement"
+    assistant: "Je vais produire les specs du module de paiement."
+    <The assistant uses the Agent tool to launch the zorro agent to generate prioritized user stories with MoSCoW and Gherkin BDD scenarios for the payment module.>
+  - Example 3:
+    user: "Analyse ce cahier des charges et identifie les risques"
+    assistant: "Je vais analyser le cahier des charges."
+    <The assistant uses the Agent tool to launch the zorro agent to analyze the requirements document, extract user stories, and produce a risk evaluation matrix.>
   
 model: opus
 color: cyan
