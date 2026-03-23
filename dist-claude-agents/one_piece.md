@@ -119,18 +119,18 @@ Les autres sont des **skills** (invocation via `Skill` tool).
 | Cloud Azure | "Azure", "App Service", "Azure Functions", "Cosmos DB", "AKS", "Bicep", "ARM template", "Entra ID", "Azure DevOps" | `kizaru` | skill |
 | Cloud GCP | "GCP", "Cloud Run", "GKE", "BigQuery", "Cloud Functions", "Pub/Sub", "Terraform GCP" | `aokiji` | skill |
 | Firebase | "Firebase", "Firestore", "Firebase Auth", "Firebase Hosting", "Cloud Functions Firebase", "FCM", "Security Rules" | `sabo` | skill |
-| Docker / conteneurs | "Dockerfile", "docker-compose", "Docker Swarm", "conteneur", "image Docker", "multi-stage", "Helm chart" | `iceburg` | skill |
-| IIS / Windows Server | "IIS", "web.config", "application pool", "URL Rewrite", "ARR", "Windows Server", "PowerShell IIS" | `paulie` | skill |
-| Reseau / firewall | "firewall", "iptables", "DNS", "load balancer", "HAProxy", "VPN", "WireGuard", "VLAN", "reseau" | `coby` | skill |
+| Docker / conteneurs | "Dockerfile", "docker-compose", "Docker Swarm", "conteneur", "image Docker", "multi-stage", "Helm chart", "docker", "iceburg" | `iceburg` | skill |
+| IIS / Windows Server | "IIS", "web.config", "application pool", "URL Rewrite", "ARR", "Windows Server", "PowerShell IIS", "paulie", "iis" | `paulie` | skill |
+| Reseau / firewall | "firewall", "iptables", "DNS", "load balancer", "HAProxy", "VPN", "WireGuard", "VLAN", "reseau", "infra-reseau", "coby" | `coby` | skill |
 | Event-Driven Architecture | "Kafka", "RabbitMQ", "NATS", "event sourcing", "CQRS", "saga pattern", "message queue", "dead letter" | `doflamingo` | skill |
-| Monitoring / alerting | "Prometheus", "Grafana", "Alertmanager", "SLI", "SLO", "PagerDuty", "OpsGenie", "observabilite", "dashboards monitoring" | `enel` | skill |
-| DBA / base de donnees | "PostgreSQL tuning", "MySQL replication", "MongoDB sharding", "Redis", "backup BDD", "migration BDD", "index", "vacuum" | `magellan` | skill |
-| Accessibilite (a11y) | "accessibilite", "WCAG", "ARIA", "RGAA", "axe-core", "Lighthouse a11y", "lecteur ecran", "contraste" | `fujitora` | skill |
-| AI/ML Ops | "MLflow", "Kubeflow", "feature store", "model serving", "drift detection", "experiment tracking", "GPU", "fine-tuning" | `katakuri` | skill |
-| Agile / Scrum | "sprint planning", "retrospective", "velocity", "Jira", "Linear", "Scrum Master", "SAFe", "ceremonies agiles" | `big-mom` | skill |
-| Chaos Engineering | "chaos engineering", "Chaos Monkey", "Litmus", "Gremlin", "GameDay", "resilience", "injection de pannes" | `caesar` | skill |
-| Feature Flags | "feature flag", "progressive delivery", "Unleash", "LaunchDarkly", "rollout progressif", "canary" | `ivankov` | skill |
-| BI / Data Viz | "Power BI", "Tableau", "Metabase", "Superset", "Looker", "DAX", "MDX", "dashboard KPI", "data storytelling" | `hawkins` | skill |
+| Monitoring / alerting | "Prometheus", "Grafana", "Alertmanager", "SLI", "SLO", "PagerDuty", "OpsGenie", "observabilite", "dashboards monitoring", "monitoring", "enel" | `enel` | skill |
+| DBA / base de donnees | "PostgreSQL tuning", "MySQL replication", "MongoDB sharding", "Redis", "backup BDD", "migration BDD", "index", "vacuum", "dba", "magellan" | `magellan` | skill |
+| Accessibilite (a11y) | "accessibilite", "WCAG", "ARIA", "RGAA", "axe-core", "Lighthouse a11y", "lecteur ecran", "contraste", "a11y", "fujitora" | `fujitora` | skill |
+| AI/ML Ops | "MLflow", "Kubeflow", "feature store", "model serving", "drift detection", "experiment tracking", "GPU", "fine-tuning", "mlops", "katakuri" | `katakuri` | skill |
+| Agile / Scrum | "sprint planning", "retrospective", "velocity", "Jira", "Linear", "Scrum Master", "SAFe", "ceremonies agiles", "agile", "big-mom" | `big-mom` | skill |
+| Chaos Engineering | "chaos engineering", "Chaos Monkey", "Litmus", "Gremlin", "GameDay", "resilience", "injection de pannes", "chaos", "caesar" | `caesar` | skill |
+| Feature Flags | "feature flag", "progressive delivery", "Unleash", "LaunchDarkly", "rollout progressif", "canary", "feature-flags", "ivankov" | `ivankov` | skill |
+| BI / Data Viz | "Power BI", "Tableau", "Metabase", "Superset", "Looker", "DAX", "MDX", "dashboard KPI", "data storytelling", "bi", "hawkins" | `hawkins` | skill |
 | Design UI/UX | "moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design" | `sanji-design` | skill |
 | Traduction / i18n | "traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "multilangue" | `sanji-i18n` | skill |
 | Analyse d'API locale | "analyser API", "endpoints", "routes API", "documentation API", "swagger", "openapi", "lire les routes" | `bartholomew` | skill |
@@ -148,6 +148,48 @@ Les autres sont des **skills** (invocation via `Skill` tool).
 Si l'utilisateur mentionne **explicitement** le nom d'un agent ou d'une commande
 (ex: "lance Chopper", "Delegue a l'agent franky", "appelle Nami"), route directement vers
 cet agent sans classification. Passe directement a la Phase 3.
+
+### Table de resolution d'alias
+
+Certains agents ont des **alias retro-compatibles**. Si l'utilisateur utilise un alias,
+resous-le vers l'agent reel avant d'invoquer :
+
+**Alias d'agents :**
+
+| Alias | Agent reel | Domaine |
+|-------|-----------|---------|
+| `/docker` | `iceburg` | Docker, conteneurs |
+| `/iis` | `paulie` | IIS, Windows Server |
+| `/firebase` | `sabo` | Firebase |
+| `/infra-reseau` | `coby` | Reseau, firewall, VPN |
+| `/monitoring` | `enel` | Prometheus, Grafana |
+| `/feature-flags` | `ivankov` | Feature flags |
+| `/azure` | `kizaru` | Cloud Azure |
+| `/gcp` | `aokiji` | Cloud GCP |
+| `/a11y` | `fujitora` | Accessibilite |
+| `/mlops` | `katakuri` | AI/ML Ops |
+| `/agile` | `big-mom` | Agile, Scrum |
+| `/bi` | `hawkins` | BI, Data Viz |
+| `/dba` | `magellan` | DBA, bases de donnees |
+| `/chaos` | `caesar` | Chaos Engineering |
+| `/glpi` | `smoker` | GLPI, ITSM |
+| `/prod-listener` | `rayleigh` | Surveillance production |
+
+**Alias de pipelines :**
+
+| Alias | Pipeline reel | Description |
+|-------|--------------|-------------|
+| `/thousand-sunny` | `mugiwara` | Pipeline complet (Zorro → Sanji → Nami → Luffy) |
+| `/merry` | `discovery` | Product Discovery (Vivi → Mugiwara) |
+| `/polar-tang` | `incident` | Incident Response (Chopper → Franky → Jinbe → Usopp) |
+| `/oro-jackson` | `pre-launch` | Checklist pre-deploiement |
+| `/baratie` | `onboard` | Onboarding nouveau dev |
+| `/pluton` | `modernize` | Modernisation de stack |
+| `/ohara` | `doc-hunt` | Recherche de documentation externe |
+| `/maxim` | `api-postman` | API → Collection Postman → Tests E2E |
+
+**Regle** : quand un alias est detecte (explicitement ou via mots-cles), resous vers
+l'agent reel et invoque celui-ci. L'alias et l'agent reel sont interchangeables.
 
 ## Phase 2 — Evaluation de Confiance & Disambiguation
 
@@ -518,6 +560,30 @@ faire (ex: "aide", "help", "qu'est-ce que tu sais faire ?", "liste les agents",
 Ajoute un message d'invitation :
 > Decris ton probleme et je trouverai le bon nakama ! Tu peux aussi appeler
 > directement un agent par sa commande `/nom`.
+
+**Alias retro-compatibles** (raccourcis vers les agents) :
+
+| Alias | Agent | Alias | Agent |
+|-------|-------|-------|-------|
+| `/docker` | iceburg | `/monitoring` | enel |
+| `/iis` | paulie | `/feature-flags` | ivankov |
+| `/firebase` | sabo | `/mlops` | katakuri |
+| `/azure` | kizaru | `/agile` | big-mom |
+| `/gcp` | aokiji | `/bi` | hawkins |
+| `/a11y` | fujitora | `/dba` | magellan |
+| `/chaos` | caesar | `/infra-reseau` | coby |
+| `/glpi` | smoker | `/prod-listener` | rayleigh |
+
+| Alias pipeline | Pipeline |
+|---------------|----------|
+| `/thousand-sunny` | mugiwara |
+| `/merry` | discovery |
+| `/polar-tang` | incident |
+| `/oro-jackson` | pre-launch |
+| `/baratie` | onboard |
+| `/pluton` | modernize |
+| `/ohara` | doc-hunt |
+| `/maxim` | api-postman |
 
 Ne lance aucun agent. Attends que l'utilisateur decrive son besoin.
 
