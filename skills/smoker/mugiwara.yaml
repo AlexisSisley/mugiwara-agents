@@ -1,0 +1,23 @@
+name: smoker
+version: 2.1.0
+description: "Smoker — Chasseur de Tickets GLPI (ITSM, incidents, demandes, changements, triage intelligent)"
+category: itsm
+role: agent
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=1.5.0"
+  mcp: glpi
+tags:
+  - glpi
+  - itsm
+  - ticketing
+  - incident
+  - service-desk
+  - cmdb
+  - triage
+checksum:
+  SKILL.md: ""
