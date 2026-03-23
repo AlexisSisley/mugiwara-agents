@@ -12,6 +12,8 @@
     { path: '/', label: 'Agents', icon: '👥', crew: 'Monitoring' },
     { path: '/pipelines', label: 'Pipelines', icon: '🚀', crew: 'Workflows' },
     { path: '/sessions', label: 'Sessions', icon: '📋', crew: 'Activity' },
+    { path: '/memory', label: 'Memory', icon: '🧠', crew: 'One Piece' },
+    { path: '/setup', label: 'Setup', icon: '⚙️', crew: 'Configuration' },
   ];
 
   function navigate(path: string) {

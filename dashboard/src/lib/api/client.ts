@@ -15,6 +15,8 @@ import type {
   PipelineRun,
   PaginatedResponse,
   ApiError,
+  MemoryResponse,
+  SetupResponse,
 } from '../../../shared/types';
 
 const BASE_URL = '/api';
@@ -61,6 +63,14 @@ class ApiClient {
 
   async getPipelines(params?: Record<string, string>): Promise<PaginatedResponse<PipelineRun>> {
     return this.fetch<PaginatedResponse<PipelineRun>>('/pipelines', params);
+  }
+
+  async getMemory(params?: Record<string, string>): Promise<MemoryResponse> {
+    return this.fetch<MemoryResponse>('/memory', params);
+  }
+
+  async getSetup(): Promise<SetupResponse> {
+    return this.fetch<SetupResponse>('/setup');
   }
 }
 

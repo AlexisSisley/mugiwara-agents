@@ -203,3 +203,57 @@ export interface PipelinesQuery {
   readonly name?: string;
   readonly status?: PipelineStatus;
 }
+
+// ── Memory (One Piece contextual memory) ─────────────────────
+
+export type ConfidenceLevel = 'haute' | 'moyenne' | 'basse';
+export type ResultStatus = 'succes' | 'echec' | 'en-cours';
+
+export interface MemoryEntry {
+  readonly date: string;
+  readonly demande: string;
+  readonly route: string;
+  readonly routeAgent: string;
+  readonly confiance: ConfidenceLevel;
+  readonly sujet: string;
+  readonly projet: string;
+  readonly resultat: ResultStatus;
+  readonly resultatDetail: string;
+  readonly contexte: string;
+}
+
+export interface MemoryResponse {
+  readonly entries: readonly MemoryEntry[];
+  readonly total: number;
+  readonly fileExists: boolean;
+}
+
+// ── Setup (Claude Code installed components) ─────────────────
+
+export interface SubAgentInfo {
+  readonly name: string;
+  readonly description: string;
+  readonly model: string;
+  readonly color: string;
+  readonly fileName: string;
+}
+
+export interface McpServerInfo {
+  readonly name: string;
+  readonly command: string;
+  readonly args: readonly string[];
+  readonly env: Record<string, string>;
+}
+
+export interface PluginInfo {
+  readonly name: string;
+  readonly description: string;
+  readonly author: string;
+  readonly enabled: boolean;
+}
+
+export interface SetupResponse {
+  readonly subAgents: readonly SubAgentInfo[];
+  readonly mcpServers: readonly McpServerInfo[];
+  readonly plugins: readonly PluginInfo[];
+}

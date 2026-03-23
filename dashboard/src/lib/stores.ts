@@ -15,6 +15,8 @@ import type {
   Session,
   PipelineRun,
   PaginatedResponse,
+  MemoryResponse,
+  SetupResponse,
 } from '../../shared/types';
 
 // ── Polling interval ──────────────────────────────────────────
@@ -89,6 +91,42 @@ export async function fetchPipelines(params?: Record<string, string>): Promise<v
     pipelinesError.set(err instanceof Error ? err.message : 'Unknown error');
   } finally {
     pipelinesLoading.set(false);
+  }
+}
+
+// ── Memory Store ──────────────────────────────────────────────
+export const memory = writable<MemoryResponse | null>(null);
+export const memoryLoading = writable(true);
+export const memoryError = writable<string | null>(null);
+
+export async function fetchMemory(params?: Record<string, string>): Promise<void> {
+  try {
+    memoryLoading.set(true);
+    memoryError.set(null);
+    const data = await api.getMemory(params);
+    memory.set(data);
+  } catch (err) {
+    memoryError.set(err instanceof Error ? err.message : 'Unknown error');
+  } finally {
+    memoryLoading.set(false);
+  }
+}
+
+// ── Setup Store ───────────────────────────────────────────────
+export const setup = writable<SetupResponse | null>(null);
+export const setupLoading = writable(true);
+export const setupError = writable<string | null>(null);
+
+export async function fetchSetup(): Promise<void> {
+  try {
+    setupLoading.set(true);
+    setupError.set(null);
+    const data = await api.getSetup();
+    setup.set(data);
+  } catch (err) {
+    setupError.set(err instanceof Error ? err.message : 'Unknown error');
+  } finally {
+    setupLoading.set(false);
   }
 }
 

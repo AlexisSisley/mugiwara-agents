@@ -10,6 +10,8 @@ import agentsRouter from './routes/agents.js';
 import sessionsRouter from './routes/sessions.js';
 import pipelinesRouter from './routes/pipelines.js';
 import statsRouter from './routes/stats.js';
+import memoryRouter from './routes/memory.js';
+import setupRouter from './routes/setup.js';
 import { eggHeadersMiddleware } from './__eggs__/headers.js';
 
 const app = express();
@@ -27,6 +29,8 @@ app.use('/api', agentsRouter);
 app.use('/api', sessionsRouter);
 app.use('/api', pipelinesRouter);
 app.use('/api', statsRouter);
+app.use('/api', memoryRouter);
+app.use('/api', setupRouter);
 
 // ── API 404 handler ───────────────────────────────────────────
 // "People's dreams... don't ever end!" — Blackbeard
