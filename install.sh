@@ -105,15 +105,58 @@ if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
 fi
 
 echo ""
-echo "  ──────────────────────────────────────"
-echo -e "  ${GREEN}Installed: $installed agents${NC} | ${YELLOW}Skipped: $skipped${NC}"
+echo -e "  ${GREEN}Installed: $installed skills${NC} | ${YELLOW}Skipped: $skipped${NC}"
+
+# ──────────────────────────────────────
+# Claude Code Agent: one_piece orchestrator only
+# ──────────────────────────────────────
 echo ""
+echo -e "  ${BLUE}Setting up one_piece as sole orchestrator...${NC}"
+
+AGENTS_DIR="$HOME/.claude/agents"
+mkdir -p "$AGENTS_DIR"
+
+# Generate one_piece.md (universal router)
+if command -v node &> /dev/null; then
+    node "$SCRIPT_DIR/convert_claude.cjs" > /dev/null 2>&1
+
+    # Remove old individual Mugiwara agents from ~/.claude/agents/
+    removed_count=0
+    for member in "${CREW[@]}"; do
+        if [[ "$member" != "one_piece" ]] && [[ -f "$AGENTS_DIR/${member}.md" ]]; then
+            rm "$AGENTS_DIR/${member}.md"
+            removed_count=$((removed_count + 1))
+        fi
+    done
+
+    if [ $removed_count -gt 0 ]; then
+        echo -e "  ${YELLOW}[-]${NC} Removed $removed_count old individual agent(s) from ~/.claude/agents/"
+    fi
+
+    # Install one_piece.md
+    if [ -f "$SCRIPT_DIR/dist-claude-agents/one_piece.md" ]; then
+        cp "$SCRIPT_DIR/dist-claude-agents/one_piece.md" "$AGENTS_DIR/one_piece.md"
+        echo -e "  ${GREEN}[+]${NC} one_piece.md installed as sole orchestrator"
+    else
+        echo -e "  ${RED}[!]${NC} one_piece.md generation failed"
+    fi
+else
+    echo -e "  ${YELLOW}[!]${NC} Node.js not found — skipping one_piece agent generation"
+    echo -e "      Run manually: node convert_claude.cjs --install"
+fi
+
+echo ""
+echo "  ──────────────────────────────────────"
 echo -e "  ${GREEN}Installation complete!${NC}"
+echo ""
+echo "  Architecture: one_piece is the sole orchestrator agent."
+echo "  All other agents are available as skills (/skill_name)."
 echo ""
 echo "  Next steps:"
 echo "  1. Restart Claude Code (or start a new session)"
 echo "  2. Type / to see the crew in autocomplete"
-echo "  3. Try: /zorro Your first problem description"
+echo "  3. Try: /one_piece Your problem description"
+echo "  4. Or directly: /chopper, /sanji, /zorro, etc."
 echo ""
 
 # ──────────────────────────────────────

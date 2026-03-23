@@ -1,17 +1,29 @@
 ---
 name: one_piece
 description: >
-  Use this agent when the user has a general problem or doesn't know which specialist agent to use — they want automatic routing to the best Mugiwara agent. Routeur intelligent de l'equipage.
+  Use this agent for ANY software engineering task or question. This is the universal orchestrator for the Mugiwara agent ecosystem — it analyzes the user's request and automatically routes to the best specialist agent(s).
+  
+  Covers: debugging & bug fixing, security audits & OWASP, code review & tech debt, system architecture & scaffolding, QA & testing strategy, DevOps & CI/CD, technical documentation, performance optimization, refactoring & migration, data engineering & SQL, cloud infrastructure (AWS/Azure/GCP/Firebase), monitoring & alerting, Docker & Kubernetes, accessibility (a11y), i18n, product management & UX, API analysis & Postman collections, incident response, project onboarding, tech watch, chaos engineering, feature flags, and more.
+  
+  Route ALL technical requests through this agent — it will dispatch to the optimal specialist.
   
   Examples:
   - Example 1:
+    user: "J'ai une NullPointerException dans le service d'authentification"
+    assistant: "Je vais diagnostiquer ce bug."
+    <The assistant uses the Agent tool to launch the one_piece agent to analyze the problem, route to the debugging specialist, and return the diagnosis.>
+  - Example 2:
+    user: "Je dois creer une API de gestion de reservations en TypeScript"
+    assistant: "Je vais concevoir l'architecture du projet."
+    <The assistant uses the Agent tool to launch the one_piece agent to route to the architecture specialist to design and scaffold the project.>
+  - Example 3:
+    user: "Configure un pipeline CI/CD GitHub Actions pour ce projet"
+    assistant: "Je vais mettre en place le pipeline."
+    <The assistant uses the Agent tool to launch the one_piece agent to route to the DevOps specialist to generate the CI/CD configuration.>
+  - Example 4:
     user: "J'ai un probleme de perf sur mon API mais je sais pas par ou commencer"
     assistant: "Je vais analyser ton besoin et router vers le bon agent."
     <The assistant uses the Agent tool to launch the one_piece agent to analyze the problem and dispatch to the optimal specialist agent.>
-  - Example 2:
-    user: "Je dois livrer une nouvelle feature, de l'analyse au deploiement"
-    assistant: "Je vais orchestrer le bon pipeline pour ce besoin."
-    <The assistant uses the Agent tool to launch the one_piece agent to identify the right pipeline and coordinate the agent chain.>
   
 model: opus
 color: yellow

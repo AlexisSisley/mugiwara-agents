@@ -5,12 +5,18 @@
  * Converts Mugiwara Skills (SKILL.md + mugiwara.yaml) into
  * Claude Code custom agents (.claude/agents/*.md).
  *
+ * Architecture: one_piece is the SOLE orchestrator agent.
+ * By default, only one_piece.md is generated. All other agents
+ * are available as skills (via /skill_name) and invoked by one_piece.
+ *
  * Usage:
- *   node convert_claude.cjs                          # Tier 1 (default)
- *   node convert_claude.cjs --tier 2                 # Tier 1 + 2
+ *   node convert_claude.cjs                          # one_piece only (default)
+ *   node convert_claude.cjs --all-agents             # All agents (legacy mode)
+ *   node convert_claude.cjs --tier 2                 # Tier 1+2 (legacy mode)
  *   node convert_claude.cjs --agents chopper,franky   # Specific agents
  *   node convert_claude.cjs --output dist-claude/     # Custom output dir
  *   node convert_claude.cjs --dry-run                 # Preview without writing
+ *   node convert_claude.cjs --install                 # Generate + install to ~/.claude/agents/ + cleanup
  */
 
 const fs = require('node:fs');
@@ -35,6 +41,39 @@ const TIER_2 = [
   'docker', 'iis', 'firebase', 'feature-flags',
   'sanji-ts', 'sanji-python', 'sanji-dotnet', 'sanji-java',
   'sanji-flutter', 'sanji-go', 'sanji-rust',
+];
+
+// ─── Non-Mugiwara agents to preserve during cleanup ─────────────────────────
+const NON_MUGIWARA_AGENTS = ['certified-code-reviewer', 'istqb-qa-reviewer'];
+
+// ─── Universal one_piece description (catch-all orchestrator) ────────────────
+const ONE_PIECE_DESCRIPTION = `Use this agent for ANY software engineering task or question. This is the universal orchestrator for the Mugiwara agent ecosystem — it analyzes the user's request and automatically routes to the best specialist agent(s).
+
+Covers: debugging & bug fixing, security audits & OWASP, code review & tech debt, system architecture & scaffolding, QA & testing strategy, DevOps & CI/CD, technical documentation, performance optimization, refactoring & migration, data engineering & SQL, cloud infrastructure (AWS/Azure/GCP/Firebase), monitoring & alerting, Docker & Kubernetes, accessibility (a11y), i18n, product management & UX, API analysis & Postman collections, incident response, project onboarding, tech watch, chaos engineering, feature flags, and more.
+
+Route ALL technical requests through this agent — it will dispatch to the optimal specialist.`;
+
+const ONE_PIECE_EXAMPLES = [
+  {
+    input: "J'ai une NullPointerException dans le service d'authentification",
+    response: "Je vais diagnostiquer ce bug.",
+    action: 'analyze the problem, route to the debugging specialist, and return the diagnosis',
+  },
+  {
+    input: "Je dois creer une API de gestion de reservations en TypeScript",
+    response: "Je vais concevoir l'architecture du projet.",
+    action: 'route to the architecture specialist to design and scaffold the project',
+  },
+  {
+    input: "Configure un pipeline CI/CD GitHub Actions pour ce projet",
+    response: "Je vais mettre en place le pipeline.",
+    action: 'route to the DevOps specialist to generate the CI/CD configuration',
+  },
+  {
+    input: "J'ai un probleme de perf sur mon API mais je sais pas par ou commencer",
+    response: "Je vais analyser ton besoin et router vers le bon agent.",
+    action: 'analyze the problem and dispatch to the optimal specialist agent',
+  },
 ];
 
 // ─── Category → Color mapping ────────────────────────────────────────────────
@@ -65,6 +104,9 @@ const CATEGORY_COLORS = {
   a11y:           'green',
   agile:          'pink',
   router:         'yellow',
+  pipeline:       'pink',
+  'ai-ml':        'cyan',
+  meta:           'purple',
 };
 
 // ─── Category → Trigger condition ────────────────────────────────────────────
@@ -95,6 +137,9 @@ const CATEGORY_TRIGGERS = {
   a11y:           'the user needs accessibility auditing, WCAG compliance, or a11y remediation',
   agile:          'the user needs agile coaching, sprint planning, retrospectives, or ceremony facilitation',
   router:         "the user has a general problem or doesn't know which specialist agent to use — they want automatic routing to the best Mugiwara agent",
+  pipeline:       'the user needs an end-to-end workflow combining multiple specialist agents in sequence',
+  'ai-ml':        'the user needs AI/ML architecture, model evaluation, prompt engineering, or LLM integration',
+  meta:           'the user needs meta-capabilities like agent introspection, easter eggs, or cross-cutting concerns',
 };
 
 // ─── Example bank (2 examples per category) ──────────────────────────────────
@@ -400,6 +445,42 @@ const EXAMPLE_BANK = {
       action: 'identify the right pipeline and coordinate the agent chain',
     },
   ],
+  pipeline: [
+    {
+      input: "Analyse ce projet de A a Z",
+      response: "Je vais orchestrer le pipeline complet.",
+      action: 'run the full analysis pipeline sequentially',
+    },
+    {
+      input: "Lance un audit complet avant la mise en prod",
+      response: "Je vais coordonner les agents necessaires.",
+      action: 'execute the pre-launch verification pipeline',
+    },
+  ],
+  'ai-ml': [
+    {
+      input: "Evalue la pertinence d'un LLM pour notre chatbot support",
+      response: "Je vais analyser les options AI/ML.",
+      action: 'evaluate LLM options for the support chatbot',
+    },
+    {
+      input: "Configure un pipeline de fine-tuning pour notre modele",
+      response: "Je vais concevoir le pipeline ML.",
+      action: 'design a fine-tuning pipeline with experiment tracking',
+    },
+  ],
+  meta: [
+    {
+      input: "Quel agent utiliser pour mon probleme de migration ?",
+      response: "Je vais analyser et orienter.",
+      action: 'analyze the problem and recommend the right agent',
+    },
+    {
+      input: "Ajoute un easter egg dans le projet",
+      response: "Je vais concevoir une surprise cachee.",
+      action: 'design and integrate a hidden easter egg',
+    },
+  ],
 };
 
 // ─── Parsing helpers ─────────────────────────────────────────────────────────
@@ -472,6 +553,18 @@ function parseManifest(skillDir) {
  * Generate a rich description for the Claude agent with examples.
  */
 function generateDescription(name, description, argumentHint, category) {
+  // Special case: one_piece gets a universal catch-all description
+  if (name === 'one_piece') {
+    let desc = `${ONE_PIECE_DESCRIPTION}\n\nExamples:\n`;
+    ONE_PIECE_EXAMPLES.forEach((ex, i) => {
+      desc += `- Example ${i + 1}:\n`;
+      desc += `  user: "${ex.input}"\n`;
+      desc += `  assistant: "${ex.response}"\n`;
+      desc += `  <The assistant uses the Agent tool to launch the one_piece agent to ${ex.action}.>\n`;
+    });
+    return desc;
+  }
+
   const trigger = CATEGORY_TRIGGERS[category] || `the user needs help with ${category}`;
   const capSummary = description ? description.split('.')[0].trim() : `Expert ${category} agent`;
   const examples = EXAMPLE_BANK[category] || EXAMPLE_BANK['analysis']; // fallback
@@ -604,10 +697,12 @@ ${transformedBody}
 function parseArgs() {
   const args = process.argv.slice(2);
   const opts = {
-    tier: 1,
+    tier: 0,
     agents: null,
     output: DEFAULT_OUTPUT,
     dryRun: false,
+    allAgents: false,
+    install: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -624,15 +719,29 @@ function parseArgs() {
       case '--dry-run':
         opts.dryRun = true;
         break;
+      case '--all':
+      case '--all-agents':
+        opts.allAgents = true;
+        break;
+      case '--install':
+        opts.install = true;
+        break;
       case '--help':
         console.log(`Usage: node convert_claude.cjs [options]
 
 Options:
-  --tier <1|2>              Tier 1 (default) or Tier 1+2
+  (default)                 Generate only one_piece.md (universal orchestrator)
+  --all-agents              Convert ALL skills (legacy mode, reads skills/ directory)
+  --tier <1|2>              Tier 1 or Tier 1+2 (legacy mode)
   --agents <a,b,c>          Convert specific agents only
   --output <dir>            Output directory (default: dist-claude-agents/)
+  --install                 Generate one_piece.md + install to ~/.claude/agents/ + cleanup old agents
   --dry-run                 Preview without writing files
   --help                    Show this help
+
+Architecture:
+  one_piece is the sole orchestrator agent registered in ~/.claude/agents/.
+  All other agents are available as skills (/skill_name) invoked by one_piece.
 `);
         process.exit(0);
     }
@@ -640,22 +749,102 @@ Options:
   return opts;
 }
 
+/**
+ * Install one_piece.md to ~/.claude/agents/ and clean up old Mugiwara agents.
+ */
+function installRouter(outputDir) {
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  const agentsDir = path.join(homeDir, '.claude', 'agents');
+  fs.mkdirSync(agentsDir, { recursive: true });
+
+  // Get list of all Mugiwara skill names (to know what to clean up)
+  const allMugiwaraNames = fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
+    .filter(d => d.isDirectory())
+    .map(d => d.name)
+    .filter(name => fs.existsSync(path.join(SKILLS_DIR, name, 'SKILL.md')));
+
+  let removed = 0;
+
+  // Remove old individual Mugiwara agents from ~/.claude/agents/
+  for (const name of allMugiwaraNames) {
+    if (name === 'one_piece') continue; // Keep the router
+    const agentFile = path.join(agentsDir, `${name}.md`);
+    if (fs.existsSync(agentFile)) {
+      fs.unlinkSync(agentFile);
+      console.log(`  [-] Removed: ${name}.md`);
+      removed++;
+    }
+  }
+
+  // Also clean up alias names that might not have skill dirs but have agent files
+  const KNOWN_ALIASES = [
+    'docker', 'iis', 'firebase', 'infra-reseau', 'monitoring', 'feature-flags',
+    'mlops', 'agile', 'bi', 'dba', 'a11y', 'azure', 'gcp', 'chaos',
+    'prod-listener', 'incident', 'pre-launch', 'onboard', 'modernize',
+    'discovery', 'doc-hunt', 'api-postman',
+  ];
+  for (const alias of KNOWN_ALIASES) {
+    const agentFile = path.join(agentsDir, `${alias}.md`);
+    if (fs.existsSync(agentFile)) {
+      fs.unlinkSync(agentFile);
+      console.log(`  [-] Removed alias: ${alias}.md`);
+      removed++;
+    }
+  }
+
+  // Install one_piece.md
+  const src = path.join(outputDir, 'one_piece.md');
+  const dest = path.join(agentsDir, 'one_piece.md');
+  if (fs.existsSync(src)) {
+    fs.copyFileSync(src, dest);
+    console.log(`  [+] Installed: one_piece.md → ${agentsDir}/`);
+  } else {
+    console.error(`  [!] one_piece.md not found in ${outputDir}`);
+    return;
+  }
+
+  // Report preserved non-Mugiwara agents
+  for (const ext of NON_MUGIWARA_AGENTS) {
+    const extFile = path.join(agentsDir, `${ext}.md`);
+    if (fs.existsSync(extFile)) {
+      console.log(`  [=] Preserved: ${ext}.md (non-Mugiwara)`);
+    }
+  }
+
+  console.log(`\n  Cleanup: ${removed} old agents removed`);
+  console.log(`  ~/.claude/agents/ now has one_piece.md as sole Mugiwara orchestrator`);
+}
+
 function main() {
   const opts = parseArgs();
 
   // Determine agent list
   let agentList;
-  if (opts.agents) {
+  if (opts.allAgents) {
+    // Legacy mode: generate all agents
+    agentList = fs.readdirSync(SKILLS_DIR, { withFileTypes: true })
+      .filter(d => d.isDirectory())
+      .map(d => d.name)
+      .filter(name => fs.existsSync(path.join(SKILLS_DIR, name, 'SKILL.md')))
+      .sort();
+  } else if (opts.agents) {
     agentList = opts.agents;
   } else if (opts.tier >= 2) {
     agentList = [...TIER_1, ...TIER_2];
-  } else {
+  } else if (opts.tier === 1) {
     agentList = [...TIER_1];
+  } else {
+    // Default: one_piece only (universal orchestrator)
+    agentList = ['one_piece'];
   }
+
+  const mode = agentList.length === 1 && agentList[0] === 'one_piece'
+    ? 'orchestrator'
+    : 'legacy';
 
   console.log(`\nMugiwara → Claude Code Agent Converter`);
   console.log(`${'═'.repeat(40)}`);
-  console.log(`Agents: ${agentList.length} | Output: ${opts.dryRun ? '(dry-run)' : opts.output}`);
+  console.log(`Mode: ${mode} | Agents: ${agentList.length} | Output: ${opts.dryRun ? '(dry-run)' : opts.output}`);
   console.log();
 
   // Ensure output directory exists
@@ -679,7 +868,15 @@ function main() {
 
   if (!opts.dryRun && success > 0) {
     console.log(`\nFiles written to: ${opts.output}/`);
-    console.log(`To install, copy to: ~/.claude/agents/`);
+
+    // Auto-install if --install flag or default orchestrator mode
+    if (opts.install) {
+      console.log(`\nInstalling to ~/.claude/agents/...`);
+      installRouter(opts.output);
+    } else if (mode === 'orchestrator') {
+      console.log(`\nTo install: node convert_claude.cjs --install`);
+      console.log(`Or manually: cp ${opts.output}/one_piece.md ~/.claude/agents/`);
+    }
   }
 }
 
