@@ -5,8 +5,8 @@
 L'ecosysteme Mugiwara utilise un modele **hub-and-spoke avec agents eleves** :
 
 - **1 orchestrateur** : `one_piece` — routeur intelligent, point d'entree universel
-- **8 subagents eleves** : agents promus pour invocation directe via `Agent` tool
-- **70+ skills** : agents specialises invoquables via `Skill` tool par one_piece ou directement
+- **11 subagents eleves** : agents promus pour invocation directe via `Agent` tool
+- **65+ skills** : agents specialises invoquables via `Skill` tool par one_piece ou directement
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -15,28 +15,32 @@ L'ecosysteme Mugiwara utilise un modele **hub-and-spoke avec agents eleves** :
 │  ┌────────────────────────────────────────────────────┐  │
 │  │            System Prompt (descriptions)             │  │
 │  │  one_piece | chopper | franky | nami | jinbe        │  │
-│  │  robin | zorro | sanji | luffy                      │  │
+│  │  robin | zorro | sanji | luffy | brook              │  │
+│  │  usopp | vivi                                       │  │
 │  └────────────────────────────────────────────────────┘  │
 │           │                      │                        │
 │     Agent tool              Skill tool                    │
-│     (8 subagents)           (skills & pipelines)          │
+│     (11 subagents)          (skills & pipelines)          │
 │           │                      │                        │
 │  ┌────────┴──────┐    ┌─────────┴──────────────┐        │
-│  │ chopper (debug)│    │ usopp, brook, yamato   │        │
-│  │ franky (review)│    │ law, shanks, vivi, ace │        │
-│  │ nami (QA)      │    │ crocodile, kizaru      │        │
-│  │ jinbe (secu)   │    │ sanji-ts, sanji-python │        │
-│  │ robin (carto)  │    │ + 55 autres skills     │        │
+│  │ chopper (debug)│    │ yamato, shanks, ace    │        │
+│  │ franky (review)│    │ law, crocodile, kizaru │        │
+│  │ nami (QA)      │    │ sanji-ts, sanji-python │        │
+│  │ jinbe (secu)   │    │ bartholomew, perona    │        │
+│  │ robin (carto)  │    │ + 50 autres skills     │        │
 │  │ zorro (specs)  │    │ + 8 pipelines          │        │
 │  │ sanji (archi)  │    └────────────────────────┘        │
 │  │ luffy (synthese│                                       │
+│  │ brook (docs)   │                                       │
+│  │ usopp (devops) │                                       │
+│  │ vivi (product) │                                       │
 │  └────────────────┘                                       │
 └──────────────────────────────────────────────────────────┘
 ```
 
 ## Subagents Eleves
 
-### Pourquoi ces 8 agents ?
+### Pourquoi ces 11 agents ?
 
 Criteres d'elevation (3+ requis) :
 
@@ -49,7 +53,7 @@ Criteres d'elevation (3+ requis) :
 | **Usage direct frequent** | Invoque souvent sans passer par one_piece |
 | **Isolation securitaire** | Travaille sur des sujets sensibles (securite, compliance) |
 
-### Les 8 eleves
+### Les 11 eleves
 
 | Subagent | Role | Declenchement proactif | Remplace |
 |----------|------|------------------------|----------|
@@ -61,6 +65,9 @@ Criteres d'elevation (3+ requis) :
 | **zorro** | Business Analyst (specs, user stories, Gherkin, risques) | Non — invocation explicite | — |
 | **sanji** | Architecte Senior (stack selection, design, scaffolding) | Non — invocation explicite | — |
 | **luffy** | Capitaine / Syntheseur (roadmap, arbitrage, KPIs) | Non — invocation explicite | — |
+| **brook** | Technical Writer (Diataxis, changelogs, guides, release notes) | Non — invocation explicite | — |
+| **usopp** | DevOps & IaC (CI/CD, K8s, Terraform, 9 phases) | Oui — apres scaffold de projet | — |
+| **vivi** | Product Manager & UX (personas, RICE, wireframes, A/B) | Non — invocation explicite | — |
 
 ### Difference Subagent vs Skill
 
@@ -103,9 +110,12 @@ mugiwara-agents/
 ├── nami.md                          # QA (green)
 ├── jinbe.md                         # Securite (orange)
 ├── robin.md                         # Cartographie (cyan)
-├── zorro.md                         # Business Analyst (cyan)
-├── sanji.md                         # Architecte (blue)
-└── luffy.md                         # Capitaine (pink)
+├── zorro.md                         # Business Analyst (green)
+├── sanji.md                         # Architecte (yellow)
+├── luffy.md                         # Capitaine (red)
+├── brook.md                         # Technical Writer (gray)
+├── usopp.md                         # DevOps (orange)
+└── vivi.md                          # Product Manager (cyan)
 ```
 
 ## Conversion & Installation
@@ -163,7 +173,7 @@ memory: project
 
 ```javascript
 // Agents promus en subagents
-const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy'];
+const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy', 'brook', 'usopp', 'vivi'];
 
 // Descriptions custom avec triggers proactifs et exemples
 const ELEVATED_DESCRIPTIONS = {
@@ -291,3 +301,20 @@ Exemple :
 - `registry.yaml` : `elevated: true` sur zorro, sanji, luffy
 - `skills/one_piece/SKILL.md` : matrice mise a jour [S] pour les 3, tableau invocation +3
 - `SUBAGENTS.md` : documentation mise a jour (schema, tableaux, historique)
+
+### 2026-03-23 — Elevation Support Team (v2.4)
+
+**Nouveaux agents eleves** : brook, usopp, vivi (total : 11 subagents + 1 orchestrateur)
+
+**Justifications** :
+- **Usopp** (6/6 criteres) : DevOps le plus complet (9 phases), output massif (YAML/HCL/Dockerfile), secrets management, trigger proactif
+- **Vivi** (5/6 criteres) : product discovery autonome avec WebSearch, output strategique lourd
+- **Brook** (4/6 criteres) : technical writer autonome, output volumineux (Diataxis), usage direct frequent
+
+**Couleurs** : brook=gray, usopp=orange, vivi=cyan
+
+**Modifications** :
+- `convert_claude.cjs` : ELEVATED_AGENTS etendu a 11, ajout 3 ELEVATED_DESCRIPTIONS avec couleurs custom
+- `registry.yaml` : `elevated: true` sur brook, usopp, vivi
+- `skills/one_piece/SKILL.md` : matrice mise a jour [S] pour les 3, tableau invocation +3
+- `SUBAGENTS.md` : documentation mise a jour (schema 11 subagents, tableaux, historique)

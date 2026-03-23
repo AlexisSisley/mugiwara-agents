@@ -107,11 +107,11 @@ Les autres sont des **skills** (invocation via `Skill` tool).
 | Analyse business / specs | "user stories", "specs fonctionnelles", "analyse business", "cahier des charges", "Gherkin", "BDD" | `zorro` | [S] |
 | Architecture technique | "architecture", "stack", "choix technique", "design systeme", "microservices vs monolithe" | `sanji` | [S] |
 | Synthese / roadmap | "roadmap", "synthese", "feuille de route", "KPI", "planning strategique" | `luffy` | [S] |
-| Documentation interne | "changelog", "README", "documentation", "guide", "ecrire la doc", "onboarding guide" | `brook` | skill |
-| DevOps / infra | "CI/CD", "Kubernetes", "Terraform", "pipeline CI/CD", "deploiement", "infra as code", "GitHub Actions", "GitLab CI" | `usopp` | skill |
+| Documentation interne | "changelog", "README", "documentation", "guide", "ecrire la doc", "onboarding guide" | `brook` | [S] |
+| DevOps / infra | "CI/CD", "Kubernetes", "Terraform", "pipeline CI/CD", "deploiement", "infra as code", "GitHub Actions", "GitLab CI" | `usopp` | [S] |
 | Veille technologique | "tendances", "veille tech", "quoi de neuf", "dashboard tech", "tech radar", "comparatif outils" | `yamato` | skill |
 | Refactoring / migration | "refactorer", "migrer", "strangler fig", "legacy vers", "migration progressive" | `shanks` | skill |
-| Product / UX | "personas", "user flow", "wireframes", "product discovery", "RICE", "UX research", "A/B test" | `vivi` | skill |
+| Product / UX | "personas", "user flow", "wireframes", "product discovery", "RICE", "UX research", "A/B test" | `vivi` | [S] |
 | Performance | "performance", "load test", "latence", "optimiser", "p99", "throughput", "capacity planning", "k6", "Gatling" | `ace` | skill |
 | Data engineering | "ETL", "data warehouse", "dbt", "pipeline de donnees", "data quality", "Spark", "analytics", "Airflow", "Dagster" | `law` | skill |
 | SQL specialist | "requete SQL", "script SQL", "procedure stockee", "DDL", "convertir en SQL", "doc to SQL", "excel to SQL", "csv to SQL", "optimiser requete", "dialecte SQL" | `law-sql` | skill |
@@ -217,6 +217,9 @@ Tu disposes de **deux outils d'invocation** dans tes `allowed-tools` :
 | zorro | `Agent(subagent_type: "zorro", prompt: "<probleme business a analyser>")` |
 | sanji | `Agent(subagent_type: "sanji", prompt: "<systeme a architecturer>")` |
 | luffy | `Agent(subagent_type: "luffy", prompt: "<analyses a synthetiser>")` |
+| brook | `Agent(subagent_type: "brook", prompt: "<documentation a produire>")` |
+| usopp | `Agent(subagent_type: "usopp", prompt: "<infra/CI-CD a configurer>")` |
+| vivi | `Agent(subagent_type: "vivi", prompt: "<produit a analyser>")` |
 
 Avantages des subagents :
 - Tournent dans leur **propre contexte** (ne polluent pas la conversation)
@@ -469,11 +472,11 @@ faire (ex: "aide", "help", "qu'est-ce que tu sais faire ?", "liste les agents",
 | | Franky | `/franky` | Code Reviewer & Audit qualite/securite | **[S]** |
 | | Robin | `/robin` | Cartographe systeme & reverse-engineering | **[S]** |
 | | Jinbe | `/jinbe` | SecOps & Compliance (STRIDE, RGPD, SOC2) | **[S]** |
-| | Brook | `/brook` | Technical Writer | skill |
-| | Usopp | `/usopp` | DevOps & IaC (CI/CD, K8s, Terraform) | skill |
+| | Brook | `/brook` | Technical Writer (Diataxis, changelogs, guides) | **[S]** |
+| | Usopp | `/usopp` | DevOps & IaC (CI/CD, K8s, Terraform) | **[S]** |
 | | Yamato | `/yamato` | Tech Intelligence & Veille | skill |
 | | Shanks | `/shanks` | Refactoring & Migration | skill |
-| | Vivi | `/vivi` | Product Manager & UX | skill |
+| | Vivi | `/vivi` | Product Manager & UX (personas, RICE, A/B) | **[S]** |
 | | Ace | `/ace` | Performance Engineer (load test, profiling) | skill |
 | | Law | `/law` | Data Engineer & Analytics (ETL, dbt, Spark) | skill |
 | | Law-SQL | `/law-sql` | SQL Specialist & Doc-to-SQL | skill |

@@ -46,7 +46,7 @@ const TIER_2 = [
 ];
 
 // ─── Elevated agents — promoted to direct subagents alongside one_piece ──────
-const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy'];
+const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy', 'brook', 'usopp', 'vivi'];
 
 // ─── Non-Mugiwara agents to preserve during cleanup ─────────────────────────
 // certified-code-reviewer → replaced by franky
@@ -278,6 +278,82 @@ Covers: executive summary, cross-functional alignment matrix, conflict arbitrage
         input: "Cree une roadmap MVP/V1/V2 pour ce projet",
         response: "Je vais produire la feuille de route en 3 phases.",
         action: 'create a phased delivery roadmap with feature tables, dependency graph, critical path, and success KPIs',
+      },
+    ],
+    memory: 'project',
+  },
+
+  brook: {
+    color: 'gray',
+    description: `Use this agent when the user needs technical documentation, changelogs, release notes, README, or onboarding guides. Expert technical writer using the Diataxis framework. Adapts tone to audience (developers, stakeholders, end-users).
+
+Covers: changelogs from git history, README generation, onboarding guides, API documentation, release notes, migration guides, and architecture decision records.`,
+    examples: [
+      {
+        input: "Genere un changelog a partir des derniers commits",
+        response: "Je vais rediger le changelog.",
+        action: 'analyze git history and generate a structured changelog with categorized changes',
+      },
+      {
+        input: "Ecris un guide d'onboarding pour les nouveaux developpeurs",
+        response: "Je vais rediger le guide d'onboarding.",
+        action: 'read the codebase structure and produce a comprehensive developer onboarding guide',
+      },
+      {
+        input: "Redige les release notes pour la v2.3",
+        response: "Je vais produire les release notes.",
+        action: 'generate release notes from commits and tags, with impact summary for stakeholders',
+      },
+    ],
+    memory: 'user',
+  },
+
+  usopp: {
+    color: 'orange',
+    description: `Use this agent when the user needs CI/CD pipelines, Kubernetes manifests, Terraform modules, Docker configuration, or deployment strategy. This agent should be used proactively when a new project needs infrastructure or when deployment decisions are required. 9-phase methodology from analysis to monitoring.
+
+Covers: GitHub Actions/GitLab CI pipelines, Dockerfiles, Kubernetes manifests, Terraform/IaC, Helm charts, secrets management, rollback strategies, and infrastructure monitoring.`,
+    examples: [
+      {
+        input: "Configure un pipeline CI/CD GitHub Actions pour ce projet Node.js",
+        response: "Je vais creer le pipeline CI/CD.",
+        action: 'design and generate an optimized CI/CD pipeline with build, test, security scan, and deploy stages',
+      },
+      {
+        input: "Deploie ce service sur Kubernetes avec Terraform",
+        response: "Je vais preparer l'infrastructure as code.",
+        action: 'create Terraform modules and Kubernetes deployment manifests with secrets management and rollback strategy',
+      },
+      {
+        input: "On vient de scaffolder un nouveau projet",
+        response: "Je vais preparer l'infrastructure.",
+        action: 'proactively generate Dockerfile, CI/CD pipeline, and deployment configuration for the new project',
+        proactive: true,
+      },
+    ],
+    memory: 'project',
+  },
+
+  vivi: {
+    color: 'cyan',
+    description: `Use this agent when the user needs product discovery, user research, personas, user flows, wireframes, feature prioritization, or A/B test design. Expert Product Manager and UX Strategist with market analysis capabilities.
+
+Covers: market analysis, competitive intelligence, persona development, Jobs-To-Be-Done, user flow diagrams, wireframes, RICE/Impact-Effort prioritization, OKR alignment, and experiment design.`,
+    examples: [
+      {
+        input: "Analyse le marche pour une app de covoiturage B2B",
+        response: "Je vais mener l'analyse produit.",
+        action: 'conduct market analysis, define user personas, and map competitive landscape',
+      },
+      {
+        input: "Priorise les features du backlog avec la methode RICE",
+        response: "Je vais evaluer et prioriser le backlog.",
+        action: 'score features using RICE framework and produce a prioritized roadmap recommendation',
+      },
+      {
+        input: "Cree les personas et user flows pour le module d'inscription",
+        response: "Je vais definir les personas et parcours utilisateur.",
+        action: 'develop user personas with JTBD and design user flow diagrams for the registration module',
       },
     ],
     memory: 'project',

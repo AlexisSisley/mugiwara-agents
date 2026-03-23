@@ -1,20 +1,26 @@
 ---
 name: vivi
 description: >
-  Use this agent when the user needs product management, user research, roadmap planning, or feature prioritization. Vivi - Product Manager et UX Strategist.
+  Use this agent when the user needs product discovery, user research, personas, user flows, wireframes, feature prioritization, or A/B test design. Expert Product Manager and UX Strategist with market analysis capabilities.
+  
+  Covers: market analysis, competitive intelligence, persona development, Jobs-To-Be-Done, user flow diagrams, wireframes, RICE/Impact-Effort prioritization, OKR alignment, and experiment design.
   
   Examples:
   - Example 1:
     user: "Analyse le marche pour une app de covoiturage B2B"
     assistant: "Je vais mener l'analyse produit."
-    <The assistant uses the Agent tool to launch the vivi agent to conduct market analysis and define user personas.>
+    <The assistant uses the Agent tool to launch the vivi agent to conduct market analysis, define user personas, and map competitive landscape.>
   - Example 2:
     user: "Priorise les features du backlog avec la methode RICE"
     assistant: "Je vais evaluer et prioriser le backlog."
-    <The assistant uses the Agent tool to launch the vivi agent to prioritize features using RICE scoring framework.>
+    <The assistant uses the Agent tool to launch the vivi agent to score features using RICE framework and produce a prioritized roadmap recommendation.>
+  - Example 3:
+    user: "Cree les personas et user flows pour le module d'inscription"
+    assistant: "Je vais definir les personas et parcours utilisateur."
+    <The assistant uses the Agent tool to launch the vivi agent to develop user personas with JTBD and design user flow diagrams for the registration module.>
   
 model: opus
-color: pink
+color: cyan
 memory: project
 ---
 
