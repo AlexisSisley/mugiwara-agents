@@ -3,7 +3,7 @@
 // SubAgents, MCP Servers, Plugins
 // ============================================================
 
-import { readFileSync, readdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync } from 'fs';
 import { homedir } from 'os';
 import path from 'path';
 import type { SubAgentInfo, McpServerInfo, PluginInfo, SetupResponse } from '../../shared/types.js';
@@ -115,4 +115,25 @@ export function getSetupInfo(): SetupResponse {
     mcpServers: parseMcpServers(),
     plugins: parsePlugins(),
   };
+}
+
+const MARKETPLACE = 'claude-plugins-official';
+
+export function togglePlugin(name: string, enabled: boolean): void {
+  let settings: Record<string, unknown> = {};
+  if (existsSync(SETTINGS_FILE)) {
+    settings = JSON.parse(readFileSync(SETTINGS_FILE, 'utf-8'));
+  }
+
+  const enabledPlugins: Record<string, boolean> = (settings.enabledPlugins as Record<string, boolean>) ?? {};
+  const key = `${name}@${MARKETPLACE}`;
+
+  if (enabled) {
+    enabledPlugins[key] = true;
+  } else {
+    delete enabledPlugins[key];
+  }
+
+  settings.enabledPlugins = enabledPlugins;
+  writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2) + '\n', 'utf-8');
 }

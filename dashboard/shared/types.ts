@@ -257,3 +257,8 @@ export interface SetupResponse {
   readonly mcpServers: readonly McpServerInfo[];
   readonly plugins: readonly PluginInfo[];
 }
+
+export interface PluginToggleRequest {
+  readonly name: string;
+  readonly enabled: boolean;
+}

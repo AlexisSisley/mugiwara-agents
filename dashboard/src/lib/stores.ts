@@ -130,6 +130,16 @@ export async function fetchSetup(): Promise<void> {
   }
 }
 
+export async function togglePlugin(name: string, enabled: boolean): Promise<void> {
+  try {
+    setupError.set(null);
+    const data = await api.togglePlugin(name, enabled);
+    setup.set(data);
+  } catch (err) {
+    setupError.set(err instanceof Error ? err.message : 'Unknown error');
+  }
+}
+
 // ── Polling Manager ───────────────────────────────────────────
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 

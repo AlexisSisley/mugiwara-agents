@@ -17,6 +17,7 @@ import type {
   ApiError,
   MemoryResponse,
   SetupResponse,
+  PluginToggleRequest,
 } from '../../../shared/types';
 
 const BASE_URL = '/api';
@@ -33,6 +34,25 @@ class ApiClient {
     }
 
     const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      const error: ApiError = await response.json().catch(() => ({
+        error: 'unknown',
+        message: `HTTP ${response.status}`,
+      }));
+      throw new Error(error.message);
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  private async post<T>(endpoint: string, body: unknown): Promise<T> {
+    const url = `${BASE_URL}${endpoint}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
 
     if (!response.ok) {
       const error: ApiError = await response.json().catch(() => ({
@@ -71,6 +91,10 @@ class ApiClient {
 
   async getSetup(): Promise<SetupResponse> {
     return this.fetch<SetupResponse>('/setup');
+  }
+
+  async togglePlugin(name: string, enabled: boolean): Promise<SetupResponse> {
+    return this.post<SetupResponse>('/setup/plugins/toggle', { name, enabled } satisfies PluginToggleRequest);
   }
 }
 

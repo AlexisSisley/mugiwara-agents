@@ -5,6 +5,7 @@
     setupLoading,
     setupError,
     fetchSetup,
+    togglePlugin,
   } from '$lib/stores';
   import Header from '$lib/components/Header.svelte';
   import StatCard from '$lib/components/StatCard.svelte';
@@ -17,6 +18,17 @@
 
   $: enabledCount = $setup?.plugins.filter((p) => p.enabled).length ?? 0;
   $: totalPlugins = $setup?.plugins.length ?? 0;
+
+  let togglingPlugins = new Set<string>();
+
+  async function handleToggle(name: string, currentEnabled: boolean) {
+    if (togglingPlugins.has(name)) return;
+    togglingPlugins.add(name);
+    togglingPlugins = togglingPlugins; // trigger reactivity
+    await togglePlugin(name, !currentEnabled);
+    togglingPlugins.delete(name);
+    togglingPlugins = togglingPlugins;
+  }
 </script>
 
 <Header title="SETUP" />
@@ -139,9 +151,16 @@
               {#each $setup.plugins as plugin}
                 <tr class="data-row" class:plugin-disabled={!plugin.enabled}>
                   <td class="col-status">
-                    <Badge variant={plugin.enabled ? 'pass' : 'idle'} small>
-                      {plugin.enabled ? 'Enabled' : 'Available'}
-                    </Badge>
+                    <button
+                      class="toggle-switch"
+                      class:toggle-on={plugin.enabled}
+                      class:toggle-loading={togglingPlugins.has(plugin.name)}
+                      disabled={togglingPlugins.has(plugin.name)}
+                      on:click={() => handleToggle(plugin.name, plugin.enabled)}
+                      title={plugin.enabled ? 'Désactiver' : 'Activer'}
+                    >
+                      <span class="toggle-knob"></span>
+                    </button>
                   </td>
                   <td>
                     <span class="name-tag">{plugin.name}</span>
@@ -318,6 +337,49 @@
   .col-status {
     width: 100px;
     text-align: center;
+  }
+
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    background: var(--color-text-tertiary);
+    border: none;
+    border-radius: 11px;
+    cursor: pointer;
+    transition: background 200ms ease;
+    padding: 0;
+    vertical-align: middle;
+  }
+
+  .toggle-switch:hover {
+    opacity: 0.85;
+  }
+
+  .toggle-switch.toggle-on {
+    background: var(--color-success, #4ADE80);
+  }
+
+  .toggle-switch.toggle-loading {
+    opacity: 0.5;
+    cursor: wait;
+  }
+
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 200ms ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .toggle-on .toggle-knob {
+    transform: translateX(18px);
   }
 
   .loading, .error, .empty {
