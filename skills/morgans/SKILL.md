@@ -7,12 +7,12 @@ description: >
   en production. Genere a la fois du texte brut ET des templates HTML compatibles
   Gmail et Outlook, prets a copier-coller. Integre les changelogs, les risques,
   les instructions de test et les contacts d'escalade.
-argument-hint: "[type: qa|prod] [version, changelog, contexte de la release]"
+argument-hint: "[type: qa|prod] [version, changelog, contexte de la release] [to:email@..., cc:email@...]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
 model: opus
-allowed-tools: Read, Glob, Grep, Bash(git log *), Bash(git diff *), Bash(git tag *), Bash(git show *), Bash(ls *)
+allowed-tools: Read, Glob, Grep, Bash(git log *), Bash(git diff *), Bash(git tag *), Bash(git show *), Bash(ls *), mcp__claude_ai_Gmail__gmail_get_profile, mcp__claude_ai_Gmail__gmail_create_draft
 ---
 
 # Morgans - Big News & Release Communication Officer
@@ -811,13 +811,83 @@ RESUME DE LA GENERATION
 | Changements | X nouvelles fonctionnalites, Y corrections, Z ameliorations |
 | Placeholders restants | X (a completer manuellement) |
 | Pret a envoyer | Oui / Non (placeholders a completer) |
+| Envoi Gmail | En attente Phase 8 |
 ```
 
 **Actions recommandees :**
 - [ ] Verifier les placeholders restants et les completer
 - [ ] Valider le perimetre de test (email QA)
 - [ ] Confirmer les contacts et liens
-- [ ] Envoyer l'email via [outil de communication]
+
+Passe ensuite a la **Phase 8** pour creer le brouillon Gmail automatiquement.
+
+### Phase 8 : Brouillon Gmail Automatique
+
+Cette phase utilise le MCP Gmail pour creer un brouillon pret a envoyer directement
+dans le compte Gmail de l'utilisateur.
+
+#### Etape 1 — Extraction des destinataires
+
+Cherche les destinataires dans les arguments de la commande :
+- `to:email@domaine.com` ou `destinataire:email@domaine.com` → champ To
+- `cc:email@domaine.com` → champ CC
+- `bcc:email@domaine.com` → champ BCC
+- Plusieurs emails separes par des virgules : `to:a@x.com,b@x.com`
+
+Si aucun destinataire n'est trouve dans les arguments, **demande a l'utilisateur** :
+> A qui envoyer cet email ? (to, cc, bcc)
+
+#### Etape 2 — Verification des placeholders
+
+Avant d'envoyer, verifie qu'il n'y a plus de `[PLACEHOLDER]` dans le template HTML genere en Phase 5.
+
+- Si des placeholders restent : **avertis l'utilisateur** avec la liste des placeholders
+  et demande s'il veut quand meme creer le brouillon (les placeholders seront visibles dans Gmail).
+- Si aucun placeholder : continue directement.
+
+#### Etape 3 — Recuperation du profil Gmail
+
+Appelle `mcp__claude_ai_Gmail__gmail_get_profile` pour :
+- Confirmer que le compte Gmail est connecte
+- Recuperer l'adresse email de l'expediteur
+
+#### Etape 4 — Creation du brouillon
+
+Appelle `mcp__claude_ai_Gmail__gmail_create_draft` avec :
+
+- **to** : destinataire(s) extraits a l'etape 1
+- **subject** : le sujet de l'email genere en Phase 3 (QA) ou Phase 4 (Prod)
+- **body** : le template **HTML complet** genere en Phase 5 (de `<!DOCTYPE html>` a `</html>`),
+  **sans aucune modification** du format existant
+- **contentType** : `text/html`
+- **cc** : si fourni
+- **bcc** : si fourni
+
+**IMPORTANT** : le body est le HTML exact de la Phase 5, tel quel. Ne modifie PAS
+le template HTML. Ne simplifie pas. Ne retire pas de CSS inline. Envoie le bloc complet.
+
+Si deux types d'emails ont ete generes (QA + Prod), cree **deux brouillons** separement.
+
+#### Etape 5 — Confirmation
+
+Affiche :
+```
+------------------------------------------------------------
+BROUILLON GMAIL CREE
+------------------------------------------------------------
+
+| Element | Valeur |
+|---------|--------|
+| Type | QA / Production |
+| De | [email expediteur] |
+| A | [destinataires] |
+| CC | [cc si present] |
+| Sujet | [sujet de l'email] |
+| Format | HTML (template Gmail/Outlook) |
+| Statut | Brouillon cree — ouvrez Gmail pour relire et envoyer |
+```
+
+Mets a jour le tableau resume de la Phase 7 : colonne "Envoi Gmail" → "Brouillon cree".
 
 ## Regles de Format
 
