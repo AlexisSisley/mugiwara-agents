@@ -18,6 +18,11 @@ import type {
   MemoryResponse,
   SetupResponse,
   PluginToggleRequest,
+  ProjectsResponse,
+  ProjectInfo,
+  ProjectsConfig,
+  ProjectSessionsResponse,
+  ClaudeSessionsResponse,
 } from '../../../shared/types';
 
 const BASE_URL = '/api';
@@ -34,6 +39,25 @@ class ApiClient {
     }
 
     const response = await fetch(url.toString());
+
+    if (!response.ok) {
+      const error: ApiError = await response.json().catch(() => ({
+        error: 'unknown',
+        message: `HTTP ${response.status}`,
+      }));
+      throw new Error(error.message);
+    }
+
+    return response.json() as Promise<T>;
+  }
+
+  private async put<T>(endpoint: string, body: unknown): Promise<T> {
+    const url = `${BASE_URL}${endpoint}`;
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
 
     if (!response.ok) {
       const error: ApiError = await response.json().catch(() => ({
@@ -95,6 +119,48 @@ class ApiClient {
 
   async togglePlugin(name: string, enabled: boolean): Promise<SetupResponse> {
     return this.post<SetupResponse>('/setup/plugins/toggle', { name, enabled } satisfies PluginToggleRequest);
+  }
+
+  // ── Projects ──────────────────────────────────────────────────
+
+  async getProjects(params?: Record<string, string>): Promise<ProjectsResponse> {
+    return this.fetch<ProjectsResponse>('/projects', params);
+  }
+
+  async getProjectSessions(name: string): Promise<ProjectSessionsResponse> {
+    return this.fetch<ProjectSessionsResponse>(`/projects/${encodeURIComponent(name)}/sessions`);
+  }
+
+  async getClaudeSessions(name: string): Promise<ClaudeSessionsResponse> {
+    return this.fetch<ClaudeSessionsResponse>(`/projects/${encodeURIComponent(name)}/claude-sessions`);
+  }
+
+  async getProject(name: string): Promise<ProjectInfo> {
+    return this.fetch<ProjectInfo>(`/projects/${encodeURIComponent(name)}`);
+  }
+
+  async scanProjects(): Promise<ProjectsResponse> {
+    return this.post<ProjectsResponse>('/projects/scan', {});
+  }
+
+  async openClaude(projectName: string, dangerouslySkipPermissions = false): Promise<{ success: boolean }> {
+    return this.post<{ success: boolean }>(`/projects/${encodeURIComponent(projectName)}/open`, { dangerouslySkipPermissions });
+  }
+
+  async openExplorer(projectName: string): Promise<{ success: boolean }> {
+    return this.post<{ success: boolean }>(`/projects/${encodeURIComponent(projectName)}/explore`, {});
+  }
+
+  async runAgent(projectName: string, agent: string, message: string): Promise<{ success: boolean }> {
+    return this.post<{ success: boolean }>(`/projects/${encodeURIComponent(projectName)}/run-agent`, { agent, message });
+  }
+
+  async updateProjectsConfig(config: Partial<ProjectsConfig>): Promise<ProjectsResponse> {
+    return this.put<ProjectsResponse>('/projects/config', config);
+  }
+
+  async addProject(projectPath: string, category?: string): Promise<{ success: boolean; project: ProjectInfo | null }> {
+    return this.post<{ success: boolean; project: ProjectInfo | null }>('/projects/add', { path: projectPath, category });
   }
 }
 

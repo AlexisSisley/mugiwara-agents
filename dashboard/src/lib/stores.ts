@@ -17,6 +17,7 @@ import type {
   PaginatedResponse,
   MemoryResponse,
   SetupResponse,
+  ProjectsResponse,
 } from '../../shared/types';
 
 // ── Polling interval ──────────────────────────────────────────
@@ -137,6 +138,64 @@ export async function togglePlugin(name: string, enabled: boolean): Promise<void
     setup.set(data);
   } catch (err) {
     setupError.set(err instanceof Error ? err.message : 'Unknown error');
+  }
+}
+
+// ── Projects Store ──────────────────────────────────────────
+export const projects = writable<ProjectsResponse | null>(null);
+export const projectsLoading = writable(true);
+export const projectsError = writable<string | null>(null);
+
+export async function fetchProjects(params?: Record<string, string>): Promise<void> {
+  try {
+    projectsLoading.set(true);
+    projectsError.set(null);
+    const data = await api.getProjects(params);
+    projects.set(data);
+  } catch (err) {
+    projectsError.set(err instanceof Error ? err.message : 'Unknown error');
+  } finally {
+    projectsLoading.set(false);
+  }
+}
+
+export async function scanProjects(): Promise<void> {
+  try {
+    projectsLoading.set(true);
+    projectsError.set(null);
+    const data = await api.scanProjects();
+    projects.set(data);
+  } catch (err) {
+    projectsError.set(err instanceof Error ? err.message : 'Unknown error');
+  } finally {
+    projectsLoading.set(false);
+  }
+}
+
+export async function openClaude(projectName: string, dangerouslySkipPermissions = false): Promise<boolean> {
+  try {
+    await api.openClaude(projectName, dangerouslySkipPermissions);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function openExplorer(projectName: string): Promise<boolean> {
+  try {
+    await api.openExplorer(projectName);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function runAgent(projectName: string, agent: string, message: string): Promise<boolean> {
+  try {
+    await api.runAgent(projectName, agent, message);
+    return true;
+  } catch {
+    return false;
   }
 }
 
