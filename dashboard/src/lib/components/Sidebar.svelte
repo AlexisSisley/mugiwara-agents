@@ -13,6 +13,7 @@
     { path: '/pipelines', label: 'Pipelines', icon: '🚀', crew: 'Workflows' },
     { path: '/sessions', label: 'Sessions', icon: '📋', crew: 'Activity' },
     { path: '/memory', label: 'Memory', icon: '🧠', crew: 'One Piece' },
+    { path: '/projects', label: 'Projects', icon: '📁', crew: 'Portfolio' },
     { path: '/setup', label: 'Setup', icon: '⚙️', crew: 'Configuration' },
   ];
 

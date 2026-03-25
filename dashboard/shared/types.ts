@@ -204,6 +204,59 @@ export interface PipelinesQuery {
   readonly status?: PipelineStatus;
 }
 
+// ── Categories ───────────────────────────────────────────────
+
+export type Category = 'pro' | 'poc' | 'perso';
+
+export const CATEGORY_LABELS: Record<Category, string> = {
+  pro: 'Pro (Sisley)',
+  poc: 'POC',
+  perso: 'Perso',
+} as const;
+
+export const CATEGORY_SECTION_COLORS: Record<Category, string> = {
+  pro: '#3B82F6',
+  poc: '#F59E0B',
+  perso: '#10B981',
+} as const;
+
+// ── Weekly Report ────────────────────────────────────────────
+
+export interface WeeklyReport {
+  readonly weekStart: string;
+  readonly weekEnd: string;
+  readonly generatedAt: string;
+  readonly htmlPath: string | null;
+  readonly draftId: string | null;
+  readonly status: 'generated' | 'draft_created' | 'sent';
+}
+
+export interface CategorySection {
+  readonly invocationCount: number;
+  readonly sessionCount: number;
+  readonly topAgents: { name: string; count: number }[];
+  readonly subjects: string[];
+  readonly projects: string[];
+}
+
+export interface WeeklyReportData {
+  readonly weekStart: string;
+  readonly weekEnd: string;
+  readonly generatedAt: string;
+  readonly summary: {
+    readonly totalSessions: number;
+    readonly totalInvocations: number;
+    readonly uniqueAgents: number;
+    readonly successRate: number;
+  };
+  readonly sections: Record<Category, CategorySection>;
+}
+
+export interface ReportsResponse {
+  readonly data: readonly WeeklyReport[];
+  readonly total: number;
+}
+
 // ── Memory (One Piece contextual memory) ─────────────────────
 
 export type ConfidenceLevel = 'haute' | 'moyenne' | 'basse';
@@ -261,4 +314,86 @@ export interface SetupResponse {
 export interface PluginToggleRequest {
   readonly name: string;
   readonly enabled: boolean;
+}
+
+// ── Projects ─────────────────────────────────────────────────
+
+export interface GitInfo {
+  readonly branch: string;
+  readonly lastCommit: string;
+  readonly lastCommitDate: string;
+  readonly isDirty: boolean;
+}
+
+export interface ProjectMugiwaraStats {
+  readonly sessionCount: number;
+  readonly invocationCount: number;
+  readonly topAgents: { name: string; count: number }[];
+  readonly lastActivity: string | null;
+}
+
+export interface ProjectInfo {
+  readonly name: string;
+  readonly path: string;
+  readonly category: Category;
+  readonly stack: string[];
+  readonly git: GitInfo | null;
+  readonly keyFiles: string[];
+  readonly mugiwaraStats: ProjectMugiwaraStats | null;
+  readonly claudeSessionCount: number;
+  readonly lastModified: string | null;
+  readonly isManual: boolean;
+}
+
+export interface ClaudeSessionInfo {
+  readonly sessionId: string;
+  readonly startTime: string;
+  readonly endTime: string | null;
+  readonly durationMs: number;
+  readonly userMessages: number;
+  readonly assistantMessages: number;
+  readonly toolsUsed: string[];
+  readonly gitBranch: string | null;
+}
+
+export interface ClaudeSessionsResponse {
+  readonly sessions: readonly ClaudeSessionInfo[];
+  readonly total: number;
+}
+
+export interface ProjectSession {
+  readonly sessionId: string;
+  readonly startTime: string;
+  readonly agents: string[];
+  readonly invocationCount: number;
+  readonly pipelineDetected: string | null;
+}
+
+export interface ProjectSessionsResponse {
+  readonly sessions: readonly ProjectSession[];
+  readonly total: number;
+}
+
+export interface ProjectsConfig {
+  readonly scanDirs: string[];
+  readonly maxDepth: number;
+  readonly ignoreDirs: string[];
+  readonly refreshIntervalMs: number;
+}
+
+export interface ProjectsResponse {
+  readonly data: readonly ProjectInfo[];
+  readonly total: number;
+  readonly scanDirs: string[];
+  readonly lastScan: string | null;
+}
+
+export interface ProjectsQuery {
+  readonly page?: number;
+  readonly limit?: number;
+  readonly search?: string;
+  readonly category?: Category;
+  readonly stack?: string;
+  readonly sort?: 'name' | 'lastModified' | 'category';
+  readonly order?: 'asc' | 'desc';
 }

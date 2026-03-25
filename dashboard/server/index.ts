@@ -12,7 +12,10 @@ import pipelinesRouter from './routes/pipelines.js';
 import statsRouter from './routes/stats.js';
 import memoryRouter from './routes/memory.js';
 import setupRouter from './routes/setup.js';
+import reportsRouter from './routes/reports.js';
+import projectsRouter from './routes/projects.js';
 import { eggHeadersMiddleware } from './__eggs__/headers.js';
+import { openDb, closeDb } from './db/index.js';
 
 const app = express();
 const PORT = parseInt(process.env['PORT'] ?? '3000', 10);
@@ -31,6 +34,8 @@ app.use('/api', pipelinesRouter);
 app.use('/api', statsRouter);
 app.use('/api', memoryRouter);
 app.use('/api', setupRouter);
+app.use('/api', reportsRouter);
+app.use('/api', projectsRouter);
 
 // ── API 404 handler ───────────────────────────────────────────
 // "People's dreams... don't ever end!" — Blackbeard
@@ -54,6 +59,15 @@ app.get('*', (_req, res) => {
 });
 
 // ── Start Server ──────────────────────────────────────────────
+// ── Initialize SQLite Database ────────────────────────────────
+openDb()
+  .then(() => console.log('[mugiwara-dashboard] SQLite database initialized'))
+  .catch((err) => console.warn('[mugiwara-dashboard] SQLite init failed (non-blocking):', (err as Error).message));
+
+// Graceful shutdown
+process.on('SIGINT', () => { closeDb(); process.exit(0); });
+process.on('SIGTERM', () => { closeDb(); process.exit(0); });
+
 if (process.env['NODE_ENV'] !== 'test') {
   app.listen(PORT, () => {
     console.log(`[mugiwara-dashboard] Server running on http://localhost:${PORT}`);

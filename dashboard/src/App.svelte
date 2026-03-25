@@ -6,6 +6,7 @@
   import SessionsPage from './routes/SessionsPage.svelte';
   import MemoryPage from './routes/MemoryPage.svelte';
   import SetupPage from './routes/SetupPage.svelte';
+  import ProjectsPage from './routes/ProjectsPage.svelte';
   import { activeRoute } from '$lib/stores';
 
   function parseHash(): string {
@@ -37,6 +38,8 @@
       <MemoryPage />
     {:else if $activeRoute === '/setup'}
       <SetupPage />
+    {:else if $activeRoute === '/projects'}
+      <ProjectsPage />
     {:else}
       <AgentsPage />
     {/if}

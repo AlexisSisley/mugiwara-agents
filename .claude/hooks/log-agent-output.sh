@@ -48,3 +48,9 @@ jq -n -c \
   --argjson pipeline "$IS_PIPELINE" \
   '{timestamp: $ts, event: $event, agent: $agent, tool: $tool, args_preview: $args, output_summary: $output, session_id: $session, is_pipeline: $pipeline}' \
   >> "$LOG_FILE"
+
+# Dual-write to SQLite (non-blocking, silent failures)
+HOOK_WRITER="$PROJECT_DIR/dashboard/dist/server/db/hook-writer.js"
+if [ -f "$HOOK_WRITER" ]; then
+  echo "$INPUT" | node "$HOOK_WRITER" invocation 2>/dev/null &
+fi
