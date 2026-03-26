@@ -6,16 +6,16 @@
 import express from 'express';
 import path from 'path';
 import healthRouter from './routes/health.js';
-import agentsRouter from './routes/agents.js';
-import sessionsRouter from './routes/sessions.js';
 import pipelinesRouter from './routes/pipelines.js';
-import statsRouter from './routes/stats.js';
-import memoryRouter from './routes/memory.js';
-import setupRouter from './routes/setup.js';
 import reportsRouter from './routes/reports.js';
 import projectsRouter from './routes/projects.js';
+import overviewRouter from './routes/overview.js';
+import crewRouter from './routes/crew.js';
+import orchestratorRouter from './routes/orchestrator.js';
 import { eggHeadersMiddleware } from './__eggs__/headers.js';
 import { openDb, closeDb } from './db/index.js';
+import { aggregateAllDailyStats } from './db/queries.js';
+import { autoImportMemory } from './startup.js';
 
 const app = express();
 const PORT = parseInt(process.env['PORT'] ?? '3000', 10);
@@ -28,14 +28,12 @@ app.use(eggHeadersMiddleware);
 
 // ── API Routes ────────────────────────────────────────────────
 app.use('/api', healthRouter);
-app.use('/api', agentsRouter);
-app.use('/api', sessionsRouter);
 app.use('/api', pipelinesRouter);
-app.use('/api', statsRouter);
-app.use('/api', memoryRouter);
-app.use('/api', setupRouter);
 app.use('/api', reportsRouter);
 app.use('/api', projectsRouter);
+app.use('/api', overviewRouter);
+app.use('/api', crewRouter);
+app.use('/api', orchestratorRouter);
 
 // ── API 404 handler ───────────────────────────────────────────
 // "People's dreams... don't ever end!" — Blackbeard
@@ -61,7 +59,14 @@ app.get('*', (_req, res) => {
 // ── Start Server ──────────────────────────────────────────────
 // ── Initialize SQLite Database ────────────────────────────────
 openDb()
-  .then(() => console.log('[mugiwara-dashboard] SQLite database initialized'))
+  .then(async () => {
+    console.log('[mugiwara-dashboard] SQLite database initialized');
+    // Auto-import memory from one_piece_memory.md if table is empty
+    await autoImportMemory();
+    // Backfill daily_stats for any missing days
+    aggregateAllDailyStats();
+    console.log('[mugiwara-dashboard] Startup hooks completed');
+  })
   .catch((err) => console.warn('[mugiwara-dashboard] SQLite init failed (non-blocking):', (err as Error).message));
 
 // Graceful shutdown

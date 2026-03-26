@@ -2,8 +2,9 @@
 # ============================================================
 # Hook: log-session.sh
 # Event: SessionStart / SessionEnd — sync
-# Logs session start/end to logs/sessions.jsonl
+# Logs session start/end to logs/sessions.jsonl + SQLite
 # On SessionStart, injects context message via stdout
+# Uses Node.js for JSON parsing (no jq dependency)
 # ============================================================
 
 set -euo pipefail
@@ -16,23 +17,40 @@ mkdir -p "$PROJECT_DIR/logs"
 # Read hook payload from stdin
 INPUT=$(cat)
 
-HOOK_EVENT=$(echo "$INPUT" | jq -r '.hook_event // "unknown"' 2>/dev/null)
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // "unknown"' 2>/dev/null)
+# SQLite writer paths (compiled JS or dev tsx)
+HOOK_WRITER_JS="$PROJECT_DIR/dashboard/dist/server/db/hook-writer.js"
+HOOK_WRITER_TS="$PROJECT_DIR/dashboard/server/db/hook-writer.ts"
+
+# Use Node.js to parse JSON and determine hook event
+HOOK_EVENT=$(node -e "const d=JSON.parse(process.argv[1]); process.stdout.write(d.hook_event||'unknown')" -- "$INPUT" 2>/dev/null || echo "unknown")
+SESSION_ID=$(node -e "const d=JSON.parse(process.argv[1]); process.stdout.write(d.session_id||'unknown')" -- "$INPUT" 2>/dev/null || echo "unknown")
+
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
+# Extract project from cwd
+PROJECT=$(node -e "
+const d=JSON.parse(process.argv[1]);
+const path=require('path');
+const cwd=d.cwd||process.cwd();
+process.stdout.write(path.basename(cwd));
+" -- "$INPUT" 2>/dev/null || echo "unknown")
+
 if [ "$HOOK_EVENT" = "SessionStart" ] || [ "$HOOK_EVENT" = "unknown" ]; then
-  # Log session start
-  jq -n -c \
-    --arg ts "$TIMESTAMP" \
-    --arg event "session_start" \
-    --arg session "$SESSION_ID" \
-    '{timestamp: $ts, event: $event, session_id: $session}' \
-    >> "$LOG_FILE"
+  # Write JSONL session_start
+  node -e "
+const fs=require('fs');
+const entry=JSON.stringify({
+  timestamp:'$TIMESTAMP', event:'session_start',
+  session_id:'$SESSION_ID', project:'$PROJECT'
+});
+fs.appendFileSync('$LOG_FILE', entry+'\n');
+" 2>/dev/null || true
 
   # Dual-write to SQLite (non-blocking, silent failures)
-  HOOK_WRITER="$PROJECT_DIR/dashboard/dist/server/db/hook-writer.js"
-  if [ -f "$HOOK_WRITER" ]; then
-    echo "$INPUT" | node "$HOOK_WRITER" session 2>/dev/null &
+  if [ -f "$HOOK_WRITER_JS" ]; then
+    echo "$INPUT" | node "$HOOK_WRITER_JS" session 2>/dev/null &
+  elif command -v tsx >/dev/null 2>&1 && [ -f "$HOOK_WRITER_TS" ]; then
+    echo "$INPUT" | tsx "$HOOK_WRITER_TS" session 2>/dev/null &
   fi
 
   # Auto weekly report on Monday
@@ -53,22 +71,24 @@ if [ "$HOOK_EVENT" = "SessionStart" ] || [ "$HOOK_EVENT" = "unknown" ]; then
   fi
 
   # Inject context for Claude (sync hook → stdout goes to additionalContext)
-  echo "Mugiwara Hooks v1.4 active — agent logging, validation, notifications & SQLite enabled."
+  echo "Mugiwara Hooks v1.5 active — agent+subagent logging, validation, notifications & SQLite enabled."
 else
   # SessionEnd — log with reason
-  REASON=$(echo "$INPUT" | jq -r '.reason // "normal"' 2>/dev/null)
+  REASON=$(node -e "const d=JSON.parse(process.argv[1]); process.stdout.write(d.reason||'normal')" -- "$INPUT" 2>/dev/null || echo "normal")
 
-  jq -n -c \
-    --arg ts "$TIMESTAMP" \
-    --arg event "session_end" \
-    --arg session "$SESSION_ID" \
-    --arg reason "$REASON" \
-    '{timestamp: $ts, event: $event, session_id: $session, reason: $reason}' \
-    >> "$LOG_FILE"
+  node -e "
+const fs=require('fs');
+const entry=JSON.stringify({
+  timestamp:'$TIMESTAMP', event:'session_end',
+  session_id:'$SESSION_ID', reason:'$REASON', project:'$PROJECT'
+});
+fs.appendFileSync('$LOG_FILE', entry+'\n');
+" 2>/dev/null || true
 
   # Dual-write to SQLite (non-blocking, silent failures)
-  HOOK_WRITER="$PROJECT_DIR/dashboard/dist/server/db/hook-writer.js"
-  if [ -f "$HOOK_WRITER" ]; then
-    echo "$INPUT" | node "$HOOK_WRITER" session 2>/dev/null &
+  if [ -f "$HOOK_WRITER_JS" ]; then
+    echo "$INPUT" | node "$HOOK_WRITER_JS" session 2>/dev/null &
+  elif command -v tsx >/dev/null 2>&1 && [ -f "$HOOK_WRITER_TS" ]; then
+    echo "$INPUT" | tsx "$HOOK_WRITER_TS" session 2>/dev/null &
   fi
 fi

@@ -9,12 +9,12 @@
   }
 
   const navItems: NavItem[] = [
-    { path: '/', label: 'Agents', icon: '👥', crew: 'Monitoring' },
-    { path: '/pipelines', label: 'Pipelines', icon: '🚀', crew: 'Workflows' },
-    { path: '/sessions', label: 'Sessions', icon: '📋', crew: 'Activity' },
-    { path: '/memory', label: 'Memory', icon: '🧠', crew: 'One Piece' },
-    { path: '/projects', label: 'Projects', icon: '📁', crew: 'Portfolio' },
-    { path: '/setup', label: 'Setup', icon: '⚙️', crew: 'Configuration' },
+    { path: '/', label: 'Overview', icon: '🧭', crew: 'Tableau de Bord' },
+    { path: '/crew', label: 'Crew', icon: '👥', crew: "L'Equipage" },
+    { path: '/orchestrator', label: 'Orchestrator', icon: '🧠', crew: 'One Piece' },
+    { path: '/pipelines', label: 'Pipelines', icon: '🚀', crew: 'Expeditions' },
+    { path: '/projects', label: 'Projects', icon: '📁', crew: 'Iles Visitees' },
+    { path: '/reports', label: 'Reports', icon: '📜', crew: 'Journal de Bord' },
   ];
 
   function navigate(path: string) {
@@ -25,19 +25,11 @@
 
 <nav class="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-circle">
-      <span class="brand-icon anim-float">📊</span>
-    </div>
-    <div class="brand-text-group">
-      <span class="brand-text manga">MUGIWARA</span>
-      <span class="brand-sub">Dashboard</span>
-    </div>
+    <h1 class="brand-text">MUGIWARA</h1>
+    <div class="brand-line"></div>
   </div>
 
-  <div class="manga-accent-line"></div>
-
   <div class="nav-section">
-    <span class="nav-section-label manga">NAVIGATION</span>
     {#each navItems as item}
       <button
         class="nav-item"
@@ -45,21 +37,13 @@
         on:click={() => navigate(item.path)}
       >
         <span class="nav-icon">{item.icon}</span>
-        <div class="nav-text-group">
-          <span class="nav-label">{item.label}</span>
-          <span class="nav-crew">{item.crew}</span>
-        </div>
-        {#if $activeRoute === item.path}
-          <span class="nav-active-marker"></span>
-        {/if}
+        <span class="nav-label">{item.label}</span>
       </button>
     {/each}
   </div>
 
   <div class="sidebar-footer">
-    <div class="footer-divider"></div>
-    <span class="footer-quote">Mugiwara Agents Dashboard</span>
-    <span class="version mono">v2.0.0</span>
+    <span class="version">v3.1.0</span>
   </div>
 </nav>
 
@@ -70,168 +54,91 @@
     left: 0;
     width: var(--sidebar-width);
     height: 100vh;
-    background: var(--color-bg-alt);
-    border-right: 3px solid var(--color-border-strong);
+    background: rgba(9,9,11,0.95);
+    border-right: 1px solid rgba(255,255,255,0.06);
     display: flex;
     flex-direction: column;
     z-index: 50;
+    color: var(--color-text-secondary);
   }
 
   .sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-5);
-    height: var(--header-height);
-  }
-
-  .brand-circle {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-primary);
-    border-radius: 50%;
-    border: 2px solid var(--color-primary-light);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .brand-icon {
-    font-size: 18px;
-    filter: brightness(1.2);
-  }
-
-  .brand-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    padding: 28px 28px 20px;
   }
 
   .brand-text {
+    font-family: var(--font-manga);
     font-size: 20px;
-    color: var(--color-primary);
-    line-height: 1;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
+    color: var(--color-gold);
+    letter-spacing: 0.08em;
   }
 
-  .brand-sub {
-    font-size: 10px;
-    color: var(--color-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-
-  .manga-accent-line {
-    height: 3px;
-    margin: 0 var(--space-4);
-    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), transparent);
-    border-radius: 2px;
+  .brand-line {
+    height: 1px;
+    margin-top: 14px;
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
   }
 
   .nav-section {
     flex: 1;
-    padding: var(--space-4) var(--space-3);
-  }
-
-  .nav-section-label {
-    display: block;
-    font-size: 13px;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0 var(--space-3) var(--space-2);
-    margin-bottom: var(--space-2);
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: 12px;
     width: 100%;
-    padding: var(--space-3) var(--space-3);
-    border: 2px solid transparent;
-    border-radius: var(--radius-lg);
+    padding: 11px 28px;
+    border: none;
+    border-left: 3px solid transparent;
     background: transparent;
     color: var(--color-text-secondary);
     font-family: var(--font-ui);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
     text-align: left;
-    position: relative;
-    margin-bottom: var(--space-1);
   }
 
   .nav-item:hover {
-    background: var(--color-surface-hover);
+    background: rgba(255,255,255,0.03);
     color: var(--color-text-primary);
-    border-color: var(--color-border-light);
   }
 
   .nav-item.active {
-    background: var(--color-surface-active);
-    color: var(--color-primary);
-    font-weight: 600;
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-sm);
+    color: var(--color-gold);
+    background: var(--color-gold-dim);
+    border-left-color: var(--color-gold);
   }
 
   .nav-icon {
-    font-size: 18px;
-    width: 24px;
+    width: 18px;
     text-align: center;
-    flex-shrink: 0;
-  }
-
-  .nav-text-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .nav-label {
-    line-height: 1.2;
-  }
-
-  .nav-crew {
-    font-size: 10px;
-    color: var(--color-text-tertiary);
-    line-height: 1;
-  }
-
-  .nav-active-marker {
-    position: absolute;
-    right: 8px;
-    width: 6px;
-    height: 6px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--color-primary);
-  }
-
-  .sidebar-footer {
-    padding: var(--space-3) var(--space-5) var(--space-4);
-  }
-
-  .footer-divider {
-    height: 2px;
-    background: var(--color-border);
-    margin-bottom: var(--space-3);
-  }
-
-  .footer-quote {
-    display: block;
-    font-size: 10px;
-    font-style: italic;
-    color: var(--color-text-tertiary);
-    margin-bottom: var(--space-1);
+    font-size: 14px;
     opacity: 0.7;
   }
 
+  .nav-item.active .nav-icon {
+    opacity: 1;
+  }
+
+  .nav-label {
+    font-size: 14px;
+  }
+
+  .sidebar-footer {
+    padding: 20px 28px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
   .version {
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--color-text-tertiary);
   }

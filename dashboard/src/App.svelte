@@ -1,12 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import Sidebar from '$lib/components/Sidebar.svelte';
-  import AgentsPage from './routes/AgentsPage.svelte';
+  import ToastContainer from '$lib/components/ToastContainer.svelte';
+  import CommandPalette from '$lib/components/CommandPalette.svelte';
+  import OverviewPage from './routes/OverviewPage.svelte';
+  import CrewPage from './routes/CrewPage.svelte';
+  import OrchestratorPage from './routes/OrchestratorPage.svelte';
   import PipelinesPage from './routes/PipelinesPage.svelte';
-  import SessionsPage from './routes/SessionsPage.svelte';
-  import MemoryPage from './routes/MemoryPage.svelte';
-  import SetupPage from './routes/SetupPage.svelte';
   import ProjectsPage from './routes/ProjectsPage.svelte';
+  import ReportsPage from './routes/ReportsPage.svelte';
   import { activeRoute } from '$lib/stores';
 
   function parseHash(): string {
@@ -29,30 +31,32 @@
   <Sidebar />
   <main class="main-content">
     {#if $activeRoute === '/'}
-      <AgentsPage />
+      <OverviewPage />
+    {:else if $activeRoute === '/crew'}
+      <CrewPage />
+    {:else if $activeRoute === '/orchestrator'}
+      <OrchestratorPage />
     {:else if $activeRoute === '/pipelines'}
       <PipelinesPage />
-    {:else if $activeRoute === '/sessions'}
-      <SessionsPage />
-    {:else if $activeRoute === '/memory'}
-      <MemoryPage />
-    {:else if $activeRoute === '/setup'}
-      <SetupPage />
     {:else if $activeRoute === '/projects'}
       <ProjectsPage />
+    {:else if $activeRoute === '/reports'}
+      <ReportsPage />
     {:else}
-      <AgentsPage />
+      <OverviewPage />
     {/if}
   </main>
 </div>
+
+<ToastContainer />
+<CommandPalette />
 
 <style>
   .app-layout {
     display: flex;
     min-height: 100vh;
-    background-image:
-      radial-gradient(circle at 15% 80%, rgba(230, 57, 70, 0.02) 0%, transparent 40%),
-      radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.02) 0%, transparent 40%);
+    background: var(--color-bg);
+    position: relative;
   }
 
   .main-content {
@@ -62,5 +66,6 @@
     max-width: var(--content-max-width);
     width: calc(100% - var(--sidebar-width));
     position: relative;
+    z-index: 1;
   }
 </style>

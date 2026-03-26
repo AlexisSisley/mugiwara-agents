@@ -18,6 +18,9 @@
   import SearchInput from '$lib/components/SearchInput.svelte';
   import type { ProjectInfo, Category } from '../../shared/types';
   import { formatRelativeTime } from '$lib/format';
+  import Skeleton from '$lib/components/Skeleton.svelte';
+  import EmptyState from '$lib/components/EmptyState.svelte';
+  import { addToast } from '$lib/toast-store';
 
   // ── State ─────────────────────────────────────────────────────
 
@@ -34,9 +37,7 @@
   let agentModalOpen = false;
   let agentModalProject: ProjectInfo | null = null;
 
-  // Feedback
-  let feedback = '';
-  let feedbackTimeout: ReturnType<typeof setTimeout> | null = null;
+  // Feedback (uses global toast store)
 
   // ── Lifecycle ──────────────────────────────────────────────────
 
@@ -137,24 +138,28 @@
   }
 
   function showFeedback(msg: string) {
-    feedback = msg;
-    if (feedbackTimeout) clearTimeout(feedbackTimeout);
-    feedbackTimeout = setTimeout(() => { feedback = ''; }, 3000);
+    const isError = msg.toLowerCase().includes('erreur');
+    addToast(msg, isError ? 'error' : 'success');
   }
 </script>
 
 <Header title="PROJECTS" />
 
 <div class="page">
-  <!-- Feedback toast -->
-  {#if feedback}
-    <div class="feedback-toast anim-slide-in">{feedback}</div>
-  {/if}
-
   {#if $projectsLoading && !$projects}
-    <div class="loading">
-      <span class="loading-icon anim-spin">{'\u{1F300}'}</span>
-      Detection des projets...
+    <div class="kpi-row">
+      <Skeleton variant="stat-card" />
+      <Skeleton variant="stat-card" />
+      <Skeleton variant="stat-card" />
+      <Skeleton variant="stat-card" />
+    </div>
+    <div class="projects-grid" style="margin-top: var(--space-4);">
+      <Skeleton variant="card" height="180px" />
+      <Skeleton variant="card" height="180px" />
+      <Skeleton variant="card" height="180px" />
+      <Skeleton variant="card" height="180px" />
+      <Skeleton variant="card" height="180px" />
+      <Skeleton variant="card" height="180px" />
     </div>
   {:else if $projectsError}
     <div class="error">{$projectsError}</div>
@@ -221,9 +226,13 @@
 
     <!-- Projects grouped by category -->
     {#if allProjects.length === 0}
-      <div class="empty">
-        Aucun projet detecte. Verifiez la configuration des dossiers ou ajoutez un projet manuellement.
-      </div>
+      <EmptyState
+        icon={'\u{1F4C1}'}
+        title="Aucun projet detecte"
+        subtitle="Verifiez la configuration des dossiers de scan ou ajoutez un projet manuellement."
+        actionLabel="Re-scan"
+        on:action={handleRescan}
+      />
     {:else}
       {#each visibleGroups as group (group.key)}
         {#if group.projects.length > 0}
@@ -267,20 +276,6 @@
     position: relative;
   }
 
-  .feedback-toast {
-    position: fixed;
-    top: calc(var(--header-height) + var(--space-4));
-    right: var(--space-6);
-    background: var(--color-primary);
-    color: var(--color-bg);
-    padding: var(--space-2) var(--space-5);
-    border-radius: var(--radius-md);
-    font-size: 13px;
-    font-weight: 600;
-    z-index: 300;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  }
-
   .kpi-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -297,8 +292,8 @@
   }
 
   .filter-select {
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
     color: var(--color-text-primary);
     font-family: var(--font-ui);
@@ -310,25 +305,27 @@
 
   .filter-select:focus {
     outline: none;
-    border-color: var(--color-primary);
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
   }
 
   .btn-rescan {
-    background: var(--color-primary);
-    color: var(--color-bg);
-    border: 2px solid var(--color-primary);
+    background: var(--color-gold);
+    color: #09090B;
+    border: none;
     border-radius: var(--radius-md);
     font-family: var(--font-ui);
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     padding: var(--space-2) var(--space-4);
     cursor: pointer;
     transition: all var(--transition-fast);
   }
 
   .btn-rescan:hover:not(:disabled) {
-    background: var(--color-primary-light);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary) 50%, transparent);
+    background: var(--color-gold-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
   }
 
   .btn-rescan:disabled {
@@ -383,7 +380,6 @@
     font-weight: 400;
     color: var(--color-text-primary);
     letter-spacing: 0.04em;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
   }
 
   .category-count {
@@ -416,33 +412,12 @@
     }
   }
 
-  .loading {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-8);
-    justify-content: center;
-    color: var(--color-text-secondary);
-    font-size: 14px;
-  }
-
-  .loading-icon {
-    font-size: 24px;
-  }
-
   .error {
-    background: color-mix(in srgb, #ef4444 15%, transparent);
-    border: 2px solid #ef4444;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    color: #F87171;
     border-radius: var(--radius-md);
     padding: var(--space-4);
-    color: #ef4444;
     text-align: center;
-  }
-
-  .empty {
-    text-align: center;
-    padding: var(--space-8);
-    color: var(--color-text-tertiary);
-    font-size: 14px;
   }
 </style>

@@ -1,55 +1,79 @@
 /* ============================================================
    Mugiwara Dashboard - Global Styles & Design Tokens
-   Galley-La Design System v2.1
+   Obsidian Design System v1.0
    ============================================================
-   Built by Galley-La Company, Water 7.
-   "Shipwrights don't cry. We just build stronger ships."
-   — Iceburg, probably talking about CSS Grid
+   Glassmorphism Premium — Dark, luxurious, gold-accented.
+   "The One Piece is Real."
    ============================================================ */
 
 /* ── CSS Custom Properties (Design Tokens) ───────────────────── */
 :root {
-  /* Background — Clean dark slate */
-  --color-bg: #0F1117;
-  --color-bg-alt: #161821;
-  --color-surface: #1C1E2B;
-  --color-surface-hover: #252836;
-  --color-surface-active: #2D3041;
+  /* Background — Deep obsidian black */
+  --color-bg: #09090B;
+  --color-bg-alt: #111113;
+  --color-surface: rgba(255,255,255,0.04);
+  --color-surface-hover: rgba(255,255,255,0.07);
+  --color-surface-active: rgba(255,255,255,0.10);
 
-  /* Primary — Luffy's Straw Hat (vibrant manga red) */
-  --color-primary: #E63946;
-  --color-primary-light: #FF5C6A;
-  --color-primary-dark: #B81C2A;
+  /* Primary — Gold */
+  --color-primary: #C9A84C;
+  --color-primary-light: #E8CC6A;
+  --color-primary-dark: #A68A3A;
+  --color-primary-hover: #E8CC6A;
 
-  /* Secondary — Ocean Teal (Grand Line sea) */
-  --color-secondary: #38BDF8;
-  --color-secondary-light: #7DD3FC;
+  /* Secondary — Purple */
+  --color-secondary: #8B5CF6;
+  --color-secondary-light: #A78BFA;
 
-  /* Accent — Nami's Log Pose Orange */
-  --color-accent: #FB923C;
-  --color-accent-light: #FDBA74;
+  /* Accent — Emerald */
+  --color-accent: #34D399;
+  --color-accent-light: #6EE7B7;
 
-  /* Text */
-  --color-text-primary: #E8ECF4;
-  --color-text-secondary: #9CA3B8;
-  --color-text-tertiary: #5C6378;
+  /* Text — Light on dark */
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A1A1AA;
+  --color-text-tertiary: #52525B;
 
   /* Semantic */
   --color-success: #34D399;
-  --color-success-bg: #0D2E23;
+  --color-success-bg: rgba(52, 211, 153, 0.12);
   --color-error: #F87171;
-  --color-error-bg: #2D1215;
+  --color-error-bg: rgba(248, 113, 113, 0.12);
   --color-warning: #FBBF24;
-  --color-warning-bg: #2D2506;
+  --color-warning-bg: rgba(251, 191, 36, 0.12);
   --color-info: #60A5FA;
-  --color-info-bg: #0C1A33;
+  --color-info-bg: rgba(96, 165, 250, 0.12);
 
-  /* Border — Subtle and clean */
-  --color-border: #2A2D3A;
-  --color-border-light: #363A4A;
-  --color-border-strong: #4A4F64;
+  /* Borders — Glass style */
+  --color-border: rgba(255,255,255,0.08);
+  --color-border-light: rgba(255,255,255,0.06);
+  --color-border-strong: rgba(255,255,255,0.12);
 
-  /* Category Colors */
+  /* Theme-specific: Obsidian */
+  --color-gold: #C9A84C;
+  --color-gold-light: #E8CC6A;
+  --color-gold-dim: rgba(201,168,76,0.15);
+  --color-purple: #8B5CF6;
+  --color-purple-dim: rgba(139,92,246,0.12);
+  --color-wood-dark: #09090B;
+  --color-wood-brown: #52525B;
+  --color-rope: #52525B;
+  --color-blue-ocean: #09090B;
+  --color-blue-deep: #09090B;
+  --color-parchment: #09090B;
+  --color-parchment-light: rgba(255,255,255,0.04);
+  --color-parchment-dark: rgba(255,255,255,0.06);
+  --color-red-marine: #F87171;
+  --color-red-wanted: #F87171;
+  --color-sea-green: #34D399;
+
+  /* Glass system */
+  --glass-bg: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-hover: rgba(255,255,255,0.07);
+  --glass-blur: blur(20px) saturate(1.2);
+
+  /* Category Colors — Vibrant on dark (unchanged) */
   --cat-pipeline: #818CF8;
   --cat-analysis: #2DD4BF;
   --cat-architecture: #FB923C;
@@ -71,8 +95,8 @@
   --cat-quality: #10B981;
   --cat-ai-ml: #E879F9;
 
-  /* Typography — Manga: Bangers for headings, Inter for body */
-  --font-manga: 'Bangers', 'Impact', cursive;
+  /* Typography — Premium serif + clean sans */
+  --font-manga: 'Playfair Display', 'Georgia', serif;
   --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
@@ -87,20 +111,23 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* Radius — Manga: slightly rounded, not pill-shaped */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 14px;
+  /* Radius — Rounded glass cards */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows — Manga-style: hard/offset shadows like speech bubbles */
-  --shadow-sm: 2px 2px 0px rgba(0, 0, 0, 0.5);
-  --shadow-md: 3px 3px 0px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 5px 5px 0px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 6px 6px 0px rgba(0, 0, 0, 0.6);
-  --shadow-glow-red: 0 0 20px rgba(230, 57, 70, 0.3);
-  --shadow-glow-blue: 0 0 20px rgba(56, 189, 248, 0.3);
+  /* Shadows — Soft glow (no hard offset) */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-xl: 0 12px 40px rgba(0,0,0,0.5);
+  --shadow-glow-red: 0 0 20px rgba(248,113,113,0.2);
+  --shadow-glow-gold: 0 0 20px rgba(201,168,76,0.2);
+  --shadow-glow-purple: 0 0 20px rgba(139,92,246,0.2);
+  --shadow-manga-gold: 0 0 20px rgba(201,168,76,0.15);
+  --shadow-manga-red: 0 0 20px rgba(248,113,113,0.15);
 
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -108,8 +135,8 @@
   --transition-slow: 300ms ease;
 
   /* Layout */
-  --sidebar-width: 230px;
-  --header-height: 60px;
+  --sidebar-width: 260px;
+  --header-height: 72px;
   --content-max-width: 1400px;
 }
 
@@ -135,10 +162,22 @@ body {
   color: var(--color-text-primary);
   background-color: var(--color-bg);
   min-width: 1024px;
-  /* Subtle ambient gradient */
+  /* Subtle purple/blue mesh gradient */
   background-image:
-    radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(230, 57, 70, 0.03) 0%, transparent 50%);
+    radial-gradient(ellipse at 30% 0%, rgba(120,80,220,0.08), transparent 60%),
+    radial-gradient(ellipse at 70% 100%, rgba(60,100,220,0.06), transparent 50%);
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.02;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
 }
 
 a {
@@ -151,14 +190,14 @@ a:hover {
 }
 
 ::selection {
-  background-color: rgba(230, 57, 70, 0.35);
+  background-color: rgba(201, 168, 76, 0.25);
   color: var(--color-text-primary);
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -166,13 +205,13 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-light);
-  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--radius-full);
   border: 2px solid var(--color-bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-secondary);
+  background: rgba(255,255,255,0.2);
 }
 
 /* ── Animations ──────────────────────────────────────────────── */
@@ -202,20 +241,8 @@ a:hover {
 }
 
 @keyframes flash-update {
-  0% { background-color: rgba(56, 189, 248, 0.2); }
+  0% { background-color: rgba(201, 168, 76, 0.15); }
   100% { background-color: transparent; }
-}
-
-/* Pop-in entrance animation */
-@keyframes manga-pop {
-  0% { transform: scale(0.8); opacity: 0; }
-  60% { transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes gentle-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-3px); }
 }
 
 .anim-spin { animation: spin 800ms linear infinite; }
@@ -224,44 +251,41 @@ a:hover {
 .anim-slide-in { animation: slide-in-right 200ms ease forwards; }
 .anim-slide-out { animation: slide-out-right 150ms ease forwards; }
 .anim-flash { animation: flash-update 600ms ease forwards; }
-.anim-pop { animation: manga-pop 300ms ease forwards; }
-.anim-float { animation: gentle-float 3s ease-in-out infinite; }
+.anim-float { animation: none; }
 
 /* ── Utility Classes ─────────────────────────────────────────── */
 .mono { font-family: var(--font-mono); }
-.manga { font-family: var(--font-manga); letter-spacing: 0.04em; }
+.manga { font-family: var(--font-manga); letter-spacing: 0.02em; }
 .truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Manga-style decorative line (used as divider) */
-.manga-divider {
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-primary));
-  border: none;
-  border-radius: 2px;
+/* Glass card utility */
+.glass {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
 }
 
-/* Speed lines background effect (subtle) */
-.speed-lines {
-  position: relative;
-}
-.speed-lines::before {
+/* Glass card shine reflection */
+.glass::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    -45deg,
-    transparent,
-    transparent 10px,
-    rgba(56, 189, 248, 0.015) 10px,
-    rgba(56, 189, 248, 0.015) 11px
-  );
+  inset: 0;
   pointer-events: none;
-  z-index: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Gold divider between sections */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  margin: 24px 0;
 }

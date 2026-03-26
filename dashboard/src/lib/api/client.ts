@@ -9,20 +9,21 @@
 
 import type {
   HealthResponse,
-  StatsResponse,
-  AgentStats,
-  Session,
   PipelineRun,
   PaginatedResponse,
   ApiError,
-  MemoryResponse,
-  SetupResponse,
-  PluginToggleRequest,
   ProjectsResponse,
   ProjectInfo,
   ProjectsConfig,
   ProjectSessionsResponse,
   ClaudeSessionsResponse,
+  OverviewResponse,
+  CrewResponse,
+  OrchestratorResponse,
+  OrchestratorStats,
+  ProjectTimelineResponse,
+  ReportsResponse,
+  ReportDetailResponse,
 } from '../../../shared/types';
 
 const BASE_URL = '/api';
@@ -93,32 +94,8 @@ class ApiClient {
     return this.fetch<HealthResponse>('/health');
   }
 
-  async getStats(): Promise<StatsResponse> {
-    return this.fetch<StatsResponse>('/stats');
-  }
-
-  async getAgents(params?: Record<string, string>): Promise<PaginatedResponse<AgentStats>> {
-    return this.fetch<PaginatedResponse<AgentStats>>('/agents', params);
-  }
-
-  async getSessions(params?: Record<string, string>): Promise<PaginatedResponse<Session>> {
-    return this.fetch<PaginatedResponse<Session>>('/sessions', params);
-  }
-
   async getPipelines(params?: Record<string, string>): Promise<PaginatedResponse<PipelineRun>> {
     return this.fetch<PaginatedResponse<PipelineRun>>('/pipelines', params);
-  }
-
-  async getMemory(params?: Record<string, string>): Promise<MemoryResponse> {
-    return this.fetch<MemoryResponse>('/memory', params);
-  }
-
-  async getSetup(): Promise<SetupResponse> {
-    return this.fetch<SetupResponse>('/setup');
-  }
-
-  async togglePlugin(name: string, enabled: boolean): Promise<SetupResponse> {
-    return this.post<SetupResponse>('/setup/plugins/toggle', { name, enabled } satisfies PluginToggleRequest);
   }
 
   // ── Projects ──────────────────────────────────────────────────
@@ -161,6 +138,42 @@ class ApiClient {
 
   async addProject(projectPath: string, category?: string): Promise<{ success: boolean; project: ProjectInfo | null }> {
     return this.post<{ success: boolean; project: ProjectInfo | null }>('/projects/add', { path: projectPath, category });
+  }
+
+  // ── Dashboard v3 ─────────────────────────────────────────────
+
+  async getOverview(): Promise<OverviewResponse> {
+    return this.fetch<OverviewResponse>('/overview');
+  }
+
+  async getCrew(params?: Record<string, string>): Promise<CrewResponse> {
+    return this.fetch<CrewResponse>('/crew', params);
+  }
+
+  async getOrchestratorStats(): Promise<{ stats: OrchestratorStats }> {
+    return this.fetch<{ stats: OrchestratorStats }>('/orchestrator/stats');
+  }
+
+  async getOrchestratorHistory(params?: Record<string, string>): Promise<OrchestratorResponse> {
+    return this.fetch<OrchestratorResponse>('/orchestrator/history', params);
+  }
+
+  async getProjectTimeline(name: string): Promise<ProjectTimelineResponse> {
+    return this.fetch<ProjectTimelineResponse>(`/projects/${encodeURIComponent(name)}/timeline`);
+  }
+
+  // ── Reports ─────────────────────────────────────────────────
+
+  async getReports(): Promise<ReportsResponse> {
+    return this.fetch<ReportsResponse>('/reports');
+  }
+
+  async getReport(weekStart: string): Promise<ReportDetailResponse> {
+    return this.fetch<ReportDetailResponse>(`/reports/${encodeURIComponent(weekStart)}`);
+  }
+
+  async generateReport(weekStart?: string): Promise<ReportDetailResponse> {
+    return this.post<ReportDetailResponse>('/reports/generate', { weekStart });
   }
 }
 

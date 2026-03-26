@@ -277,16 +277,17 @@
     display: flex;
     align-items: center;
     gap: var(--space-5);
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
     padding: var(--space-4) var(--space-6);
     border-top: 3px solid var(--accent);
   }
 
   .btn-back {
     background: transparent;
-    border: 2px solid var(--color-border);
+    border: 1px solid var(--glass-border);
     color: var(--color-text-secondary);
     font-family: var(--font-ui);
     font-size: 13px;
@@ -299,9 +300,8 @@
   }
 
   .btn-back:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
   }
 
   .header-info {
@@ -323,7 +323,6 @@
     font-weight: 400;
     color: var(--color-text-primary);
     letter-spacing: 0.04em;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
   }
 
   .category-badge {
@@ -356,7 +355,7 @@
 
   .btn-action {
     padding: var(--space-2) var(--space-4);
-    border: 2px solid var(--color-border);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
     font-family: var(--font-ui);
     font-size: 12px;
@@ -367,45 +366,50 @@
   }
 
   .btn-claude {
-    background: var(--color-primary);
-    color: var(--color-bg);
-    border-color: var(--color-primary);
+    background: var(--color-gold);
+    color: #09090B;
+    border-color: var(--color-gold);
   }
 
   .btn-claude:hover {
-    background: var(--color-primary-light);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary) 50%, transparent);
+    filter: brightness(1.1);
+    transform: translateY(-1px);
   }
 
   .btn-yolo {
     background: transparent;
-    color: #ef4444;
-    border-color: #ef4444;
+    color: #F87171;
+    border-color: rgba(248,113,113,0.3);
   }
 
   .btn-yolo:hover {
-    background: color-mix(in srgb, #ef4444 12%, transparent);
-    box-shadow: 0 0 8px color-mix(in srgb, #ef4444 30%, transparent);
+    background: rgba(248,113,113,0.1);
+    border-color: #F87171;
+    transform: translateY(-1px);
   }
 
   .btn-agent {
     background: transparent;
-    color: var(--color-secondary);
-    border-color: var(--color-secondary);
+    color: var(--color-text-secondary);
+    border-color: var(--glass-border);
   }
 
   .btn-agent:hover {
-    background: color-mix(in srgb, var(--color-secondary) 12%, transparent);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+    transform: translateY(-1px);
   }
 
   .btn-explore {
     background: transparent;
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--color-text-secondary);
+    border-color: var(--glass-border);
   }
 
   .btn-explore:hover {
-    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+    transform: translateY(-1px);
   }
 
   /* ── Content Layout ────────────────────────────────── */
@@ -434,9 +438,10 @@
   /* ── Sections ──────────────────────────────────────── */
 
   .detail-section {
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
     padding: var(--space-5);
     display: flex;
     flex-direction: column;
@@ -445,11 +450,10 @@
 
   .section-title {
     font-size: 14px;
-    color: var(--color-primary);
+    color: var(--color-gold);
     letter-spacing: 0.08em;
     padding-bottom: var(--space-1);
-    border-bottom: 2px solid var(--color-border);
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--glass-border);
   }
 
   .field {
@@ -476,8 +480,8 @@
     font-weight: 600;
   }
 
-  .field-value.git-clean { color: #4ade80; }
-  .field-value.git-dirty { color: #f59e0b; }
+  .field-value.git-clean { color: #34D399; }
+  .field-value.git-dirty { color: #FBBF24; }
 
   .field-tags {
     display: flex;
@@ -519,7 +523,7 @@
 
   .agent-bar-fill {
     height: 6px;
-    background: var(--color-primary);
+    background: var(--color-gold);
     border-radius: 3px;
     min-width: 4px;
     flex: 1;
@@ -557,7 +561,7 @@
     align-items: center;
     gap: var(--space-2);
     font-size: 12px;
-    color: var(--color-primary);
+    color: var(--color-gold);
     font-weight: 600;
   }
 
@@ -571,16 +575,16 @@
 
   .session-entry {
     padding: var(--space-3);
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
   }
 
   .claude-entry {
-    border-left: 3px solid var(--color-primary);
+    border-left: 3px solid var(--color-gold);
   }
 
   .session-header {
@@ -650,9 +654,9 @@
     border-radius: var(--radius-sm);
     font-size: 11px;
     font-weight: 600;
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+    color: var(--color-gold);
+    background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-gold) 25%, transparent);
   }
 
   .session-pipeline {

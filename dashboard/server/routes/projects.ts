@@ -22,9 +22,9 @@ import {
   getLastScanTime,
   ensureProjectsConfig,
 } from '../parsers/projects-scanner.js';
-import { getProjectSessions } from '../db/queries.js';
+import { getProjectSessions, getProjectTimeline, getProjectAgentDistribution } from '../db/queries.js';
 import { getClaudeSessions } from '../parsers/claude-sessions-parser.js';
-import type { ProjectsQuery, Category, ProjectSession } from '../../shared/types.js';
+import type { ProjectsQuery, Category, ProjectSession, ProjectTimelineResponse, ProjectGitCommit } from '../../shared/types.js';
 
 const router = Router();
 
@@ -255,6 +255,55 @@ router.post('/projects/:name/explore', (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: 'internal', message: 'Failed to open explorer' });
+  }
+});
+
+// Project timeline (invocations + sessions)
+router.get('/projects/:name/timeline', (req, res) => {
+  try {
+    const project = getProjectByName(req.params['name']!);
+    if (!project) {
+      res.status(404).json({ error: 'not_found', message: `Project "${req.params['name']}" not found` });
+      return;
+    }
+
+    const timeline = getProjectTimeline(project.name, 50);
+    const agentDistribution = getProjectAgentDistribution(project.name);
+
+    // Git activity — run git log in project directory
+    const gitCommits: ProjectGitCommit[] = [];
+    try {
+      const { execSync } = require('child_process');
+      const gitLog = execSync(
+        'git log --oneline --format="%H|||%s|||%aI|||%an" -20',
+        { cwd: project.path, encoding: 'utf-8', timeout: 5000 }
+      );
+      for (const line of gitLog.trim().split('\n')) {
+        if (!line) continue;
+        const [hash, message, date, author] = line.split('|||');
+        if (hash && message && date && author) {
+          gitCommits.push({ hash: hash.substring(0, 8), message, date, author });
+        }
+      }
+    } catch {
+      // Git not available or not a git repo — ignore
+    }
+
+    const response: ProjectTimelineResponse = {
+      entries: timeline.map((t) => ({
+        timestamp: t.timestamp,
+        type: t.type as 'invocation' | 'session',
+        agent: t.agent ?? undefined,
+        sessionId: t.session_id ?? undefined,
+        pipeline: t.pipeline ?? undefined,
+      })),
+      gitCommits,
+      agentDistribution,
+    };
+
+    res.json(response);
+  } catch (err) {
+    res.status(500).json({ error: 'internal', message: 'Failed to get project timeline' });
   }
 });
 

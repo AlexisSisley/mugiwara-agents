@@ -52,9 +52,12 @@ export async function openDb(): Promise<SqlJsDatabase> {
   if (existsSync(SCHEMA_PATH)) {
     const schema = readFileSync(SCHEMA_PATH, 'utf-8');
     instance.run(schema);
-    saveDb();
   }
 
+  // Incremental migrations for existing databases
+  runMigrations(instance);
+
+  saveDb();
   return instance;
 }
 
@@ -67,6 +70,29 @@ export function getDb(): SqlJsDatabase {
     throw new Error('Database not initialized. Call openDb() first.');
   }
   return instance;
+}
+
+/**
+ * Run incremental migrations for columns/tables added after initial schema.
+ * Each migration is idempotent — safe to re-run.
+ */
+function runMigrations(db: SqlJsDatabase): void {
+  const migrations = [
+    // v3: Add project column to invocations
+    `ALTER TABLE invocations ADD COLUMN project TEXT DEFAULT NULL`,
+    // v3: Add project column to sessions
+    `ALTER TABLE sessions ADD COLUMN project TEXT DEFAULT NULL`,
+    // v3: Index on project column
+    `CREATE INDEX IF NOT EXISTS idx_inv_project ON invocations(project)`,
+  ];
+
+  for (const sql of migrations) {
+    try {
+      db.run(sql);
+    } catch {
+      // Column/table already exists — ignore
+    }
+  }
 }
 
 /**

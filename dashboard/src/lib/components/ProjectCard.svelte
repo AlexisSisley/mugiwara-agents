@@ -96,18 +96,19 @@
 <style>
   .project-card {
     position: relative;
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
     overflow: hidden;
     cursor: pointer;
     transition: all var(--transition-fast);
   }
 
   .project-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    transform: translateY(-1px);
+    border-color: var(--color-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
 
   .card-accent {
@@ -177,9 +178,9 @@
     border-radius: var(--radius-sm);
     font-size: 11px;
     font-weight: 600;
-    color: var(--color-secondary);
-    background: color-mix(in srgb, var(--color-secondary) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-secondary) 25%, transparent);
+    color: var(--color-text-secondary);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
   }
 
   .git-row {
@@ -201,11 +202,11 @@
   }
 
   .git-status.clean {
-    color: #4ade80;
+    color: #34D399;
   }
 
   .git-status.dirty {
-    color: #f59e0b;
+    color: #FBBF24;
   }
 
   .stats-row {
@@ -217,7 +218,7 @@
   }
 
   .claude-stat {
-    color: var(--color-primary);
+    color: var(--color-gold);
     font-weight: 600;
   }
 
@@ -234,7 +235,7 @@
   .btn {
     flex: 1;
     padding: var(--space-2) var(--space-3);
-    border: 2px solid var(--color-border);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
     font-family: var(--font-ui);
     font-size: 12px;
@@ -245,47 +246,49 @@
   }
 
   .btn-primary {
-    background: var(--color-primary);
-    color: var(--color-bg);
-    border-color: var(--color-primary);
+    background: var(--color-gold);
+    color: #09090B;
+    border-color: var(--color-gold);
   }
 
   .btn-primary:hover {
-    background: var(--color-primary-light);
-    border-color: var(--color-primary-light);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--color-primary) 50%, transparent);
+    filter: brightness(1.1);
+    transform: translateY(-1px);
   }
 
   .btn-yolo {
     background: transparent;
-    color: #ef4444;
-    border-color: #ef4444;
+    color: #F87171;
+    border-color: rgba(248,113,113,0.3);
   }
 
   .btn-yolo:hover {
-    background: color-mix(in srgb, #ef4444 12%, transparent);
-    box-shadow: 0 0 8px color-mix(in srgb, #ef4444 30%, transparent);
+    background: rgba(248,113,113,0.1);
+    border-color: #F87171;
+    transform: translateY(-1px);
   }
 
   .btn-agent {
     background: transparent;
-    color: var(--color-secondary);
-    border-color: var(--color-secondary);
+    color: var(--color-text-secondary);
+    border-color: var(--glass-border);
   }
 
   .btn-agent:hover {
-    background: color-mix(in srgb, var(--color-secondary) 12%, transparent);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--color-secondary) 30%, transparent);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+    transform: translateY(-1px);
   }
 
   .btn-explore {
     background: transparent;
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--color-text-secondary);
+    border-color: var(--glass-border);
   }
 
   .btn-explore:hover {
-    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--color-accent) 30%, transparent);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+    transform: translateY(-1px);
   }
 </style>

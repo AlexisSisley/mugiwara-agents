@@ -47,7 +47,8 @@
   .drawer-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
     z-index: 100;
     display: flex;
     justify-content: flex-end;
@@ -55,20 +56,20 @@
 
   .drawer {
     height: 100%;
-    background: var(--color-surface);
-    border-left: 3px solid var(--color-primary);
+    background: var(--color-bg);
+    border-left: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl) 0 0 var(--radius-xl);
     display: flex;
     flex-direction: column;
-    box-shadow: -6px 0 24px rgba(0, 0, 0, 0.5);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
   }
 
   .drawer-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-4) var(--space-6);
-    border-bottom: 2px solid var(--color-border);
-    min-height: var(--header-height);
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--glass-border);
   }
 
   .drawer-title-group {
@@ -78,25 +79,23 @@
   }
 
   .drawer-title {
-    font-size: 22px;
-    font-weight: 400;
+    font-size: 20px;
+    font-weight: 600;
     color: var(--color-text-primary);
-    letter-spacing: 0.04em;
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.02em;
   }
 
   .drawer-accent-line {
-    height: 2px;
+    height: 1px;
     width: 40px;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-    border-radius: 1px;
+    background: linear-gradient(90deg, var(--color-gold), transparent);
   }
 
   .drawer-close {
-    background: none;
-    border: 2px solid var(--color-border);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--glass-border);
     color: var(--color-text-secondary);
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     padding: var(--space-1) var(--space-2);
     line-height: 1;
@@ -105,14 +104,16 @@
   }
 
   .drawer-close:hover {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    background: var(--color-surface-hover);
+    color: var(--color-gold);
+    border-color: rgba(201,168,76,0.3);
+    background: var(--color-gold-dim);
   }
 
   .drawer-body {
     flex: 1;
     overflow-y: auto;
     padding: var(--space-6);
+    background: var(--color-bg);
+    color: var(--color-text-primary);
   }
 </style>

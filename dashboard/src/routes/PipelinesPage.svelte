@@ -5,8 +5,6 @@
     pipelinesLoading,
     pipelinesError,
     fetchPipelines,
-    fetchStats,
-    stats,
     startPolling,
     stopPolling,
   } from '$lib/stores';
@@ -16,6 +14,8 @@
   import Pagination from '$lib/components/Pagination.svelte';
   import { formatDuration, formatDateTime, formatNumber } from '$lib/format';
   import type { PipelineRun, PipelineStatus } from '../../shared/types';
+  import Skeleton from '$lib/components/Skeleton.svelte';
+  import EmptyState from '$lib/components/EmptyState.svelte';
 
   let statusFilter = '';
   let currentPage = 1;
@@ -30,8 +30,15 @@
   }
 
   async function reload() {
-    await Promise.all([fetchPipelines(buildParams()), fetchStats()]);
+    await fetchPipelines(buildParams());
   }
+
+  // Derive stats from pipelines data
+  $: pipelineData = $pipelines?.data ?? [];
+  $: totalPipelines = $pipelines?.total ?? 0;
+  $: successCount = pipelineData.filter((p) => p.status === 'success').length;
+  $: failureCount = pipelineData.filter((p) => p.status === 'failure').length;
+  $: uniqueNames = new Set(pipelineData.map((p) => p.name)).size;
 
   function handleStatusChange(e: Event) {
     statusFilter = (e.target as HTMLSelectElement).value;
@@ -78,12 +85,12 @@
 
 <div class="page">
   <!-- KPI Cards -->
-  {#if $stats}
+  {#if $pipelines}
     <div class="kpi-row">
-      <StatCard label="Pipelines" value={formatNumber($stats.totalPipelines)} icon={'\u{1F680}'} accent="var(--cat-pipeline)" />
-      <StatCard label="Sessions" value={formatNumber($stats.totalSessions)} accent="var(--color-accent)" icon={'\u{1F4CB}'} />
-      <StatCard label="Nakama" value={formatNumber($stats.totalAgents)} icon={'\u{1F465}'} />
-      <StatCard label="Invocations" value={formatNumber($stats.totalInvocations)} accent="var(--color-secondary)" icon={'\u{26A1}'} />
+      <StatCard label="Total Executions" value={formatNumber(totalPipelines)} icon={'\u{1F680}'} accent="var(--cat-pipeline)" />
+      <StatCard label="Success" value={formatNumber(successCount)} accent="var(--color-accent)" icon={'\u{2705}'} />
+      <StatCard label="Echecs" value={formatNumber(failureCount)} accent="var(--color-error)" icon={'\u{274C}'} />
+      <StatCard label="Pipelines Uniques" value={formatNumber(uniqueNames)} accent="var(--color-secondary)" icon={'\u{1F4CB}'} />
     </div>
   {/if}
 
@@ -99,9 +106,13 @@
 
   <!-- Pipeline Cards Grid -->
   {#if $pipelinesLoading && !$pipelines}
-    <div class="loading">
-      <span class="loading-icon anim-spin">{'\u{1F300}'}</span>
-      Chargement des pipelines...
+    <div class="kpi-row">
+      <Skeleton variant="stat-card" />
+      <Skeleton variant="stat-card" />
+      <Skeleton variant="stat-card" />
+    </div>
+    <div style="margin-top: var(--space-4);">
+      <Skeleton variant="table-row" count={5} />
     </div>
   {:else if $pipelinesError}
     <div class="error">{$pipelinesError}</div>
@@ -150,7 +161,11 @@
     </div>
 
     {#if $pipelines.data.length === 0}
-      <div class="empty">Aucun pipeline trouve.</div>
+      <EmptyState
+        icon={'\u{1F680}'}
+        title="Aucune expedition"
+        subtitle="Les pipelines apparaitront ici une fois que tu auras lance des expeditions Mugiwara."
+      />
     {/if}
 
     <Pagination pagination={$pipelines.pagination} on:page={handlePage} />
@@ -180,19 +195,19 @@
   .filter-select {
     height: 38px;
     padding: 0 var(--space-3);
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);
     color: var(--color-text-primary);
     font-family: var(--font-ui);
     font-size: 13px;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
   }
 
   .filter-select:focus {
-    border-color: var(--color-secondary);
+    border-color: var(--color-gold);
     outline: none;
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
   }
 
   .pipeline-grid {
@@ -202,22 +217,23 @@
   }
 
   .pipeline-card {
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
     overflow: hidden;
     transition: all var(--transition-fast);
-    box-shadow: var(--shadow-md);
   }
 
   .pipeline-card:hover {
-    border-color: var(--color-border-strong);
+    border-color: rgba(201, 168, 76, 0.2);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
 
   .card-accent-bar {
     height: 4px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   }
 
   .card-content {
@@ -260,7 +276,7 @@
   }
 
   .meta-duration {
-    color: var(--color-secondary);
+    color: var(--color-gold);
     font-weight: 600;
   }
 
@@ -281,7 +297,7 @@
     flex-shrink: 0;
     padding: var(--space-2);
     border-radius: var(--radius-md);
-    border: 1px solid color-mix(in srgb, var(--step-color) 30%, transparent);
+    border: 1px solid color-mix(in srgb, var(--step-color) 30%, var(--glass-border));
     background: color-mix(in srgb, var(--step-color) 8%, transparent);
   }
 
@@ -311,14 +327,14 @@
 
   .connector-arrow {
     font-size: 8px;
-    color: var(--color-secondary);
-    opacity: 0.6;
+    color: var(--color-gold);
+    opacity: 0.5;
   }
 
   .pipeline-footer {
     margin-top: var(--space-3);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--glass-border);
   }
 
   .session-id {
@@ -326,21 +342,17 @@
     color: var(--color-text-tertiary);
   }
 
-  .loading, .error, .empty {
+  .error {
     padding: var(--space-10);
     text-align: center;
-    color: var(--color-text-secondary);
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    color: #F87171;
+    border-radius: var(--radius-md);
     font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-3);
   }
-
-  .loading-icon {
-    font-size: 20px;
-    display: inline-block;
-  }
-
-  .error { color: var(--color-error); }
 </style>

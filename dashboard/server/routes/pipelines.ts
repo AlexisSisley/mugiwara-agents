@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getPipelineRuns } from '../data-loader.js';
+import { getPipelineRunsFromDb } from '../db/queries.js';
 import { paginate, parseIntParam } from '../utils.js';
 import type { PipelineRun, PipelineStatus, PaginatedResponse } from '../../shared/types.js';
 
@@ -11,18 +11,7 @@ router.get('/pipelines', (req, res) => {
   const name = req.query['name'] as string | undefined;
   const status = req.query['status'] as PipelineStatus | undefined;
 
-  let pipelines = getPipelineRuns();
-
-  // Filter by name
-  if (name) {
-    pipelines = pipelines.filter((p) => p.name === name);
-  }
-
-  // Filter by status
-  if (status) {
-    pipelines = pipelines.filter((p) => p.status === status);
-  }
-
+  const pipelines = getPipelineRunsFromDb({ name, status });
   const result: PaginatedResponse<PipelineRun> = paginate(pipelines, page, limit);
   res.json(result);
 });

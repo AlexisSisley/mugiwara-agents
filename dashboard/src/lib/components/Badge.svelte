@@ -3,12 +3,12 @@
   export let small = false;
 
   const variantMap: Record<string, { bg: string; color: string; label: string; border: string }> = {
-    pass: { bg: 'var(--color-success-bg)', color: 'var(--color-success)', label: 'PASS', border: 'rgba(46, 204, 113, 0.4)' },
-    fail: { bg: 'var(--color-error-bg)', color: 'var(--color-error)', label: 'FAIL', border: 'rgba(231, 76, 60, 0.4)' },
-    running: { bg: 'var(--color-info-bg)', color: 'var(--color-info)', label: 'Running', border: 'rgba(52, 152, 219, 0.4)' },
-    warning: { bg: 'var(--color-warning-bg)', color: 'var(--color-warning)', label: 'Warning', border: 'rgba(241, 196, 15, 0.4)' },
-    idle: { bg: 'var(--color-surface-active)', color: 'var(--color-text-tertiary)', label: 'Idle', border: 'transparent' },
-    info: { bg: 'var(--color-info-bg)', color: 'var(--color-info)', label: 'Info', border: 'rgba(52, 152, 219, 0.4)' },
+    pass: { bg: 'rgba(52, 211, 153, 0.12)', color: '#34D399', label: 'PASS', border: 'rgba(52, 211, 153, 0.3)' },
+    fail: { bg: 'rgba(248, 113, 113, 0.12)', color: '#F87171', label: 'FAIL', border: 'rgba(248, 113, 113, 0.3)' },
+    running: { bg: 'rgba(139, 92, 246, 0.12)', color: '#8B5CF6', label: 'Running', border: 'rgba(139, 92, 246, 0.3)' },
+    warning: { bg: 'rgba(251, 191, 36, 0.12)', color: '#FBBF24', label: 'Warning', border: 'rgba(251, 191, 36, 0.3)' },
+    idle: { bg: 'rgba(255, 255, 255, 0.06)', color: '#A1A1AA', label: 'Idle', border: 'rgba(255, 255, 255, 0.1)' },
+    info: { bg: 'rgba(96, 165, 250, 0.12)', color: '#60A5FA', label: 'Info', border: 'rgba(96, 165, 250, 0.3)' },
   };
 
   $: style = variantMap[variant] ?? variantMap['idle'];
@@ -34,23 +34,22 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 3px 10px;
-    border-radius: var(--radius-md);
+    padding: 3px 12px;
+    border-radius: var(--radius-full);
     border: 1px solid;
     font-family: var(--font-ui);
-    font-weight: 700;
+    font-weight: 600;
     font-size: 11px;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     line-height: 1;
     white-space: nowrap;
     text-transform: uppercase;
-    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(8px);
   }
 
   .badge.small {
-    padding: 2px 7px;
+    padding: 2px 8px;
     font-size: 10px;
-    box-shadow: none;
   }
 
   .dot {

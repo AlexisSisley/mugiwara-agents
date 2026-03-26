@@ -7,7 +7,7 @@
 // ============================================================
 
 import { openDb, closeDb } from './index.js';
-import { insertInvocation, insertSession } from './queries.js';
+import { insertInvocation, insertSession, aggregateDailyStats } from './queries.js';
 import { ensureRulesFile } from './category-detector.js';
 
 async function readStdin(): Promise<string> {
@@ -53,9 +53,12 @@ async function main(): Promise<void> {
     insertInvocation({
       timestamp,
       event: (payload['event'] as string) ?? 'agent_invocation',
-      agent: toolInput?.['skill'] ?? (payload['agent'] as string) ?? undefined,
+      agent: toolInput?.['skill']
+        ?? toolInput?.['subagent_type']
+        ?? (payload['agent'] as string) ?? undefined,
       tool: (payload['tool_name'] as string) ?? (payload['tool'] as string) ?? undefined,
       args_preview: toolInput?.['args']?.slice(0, 200)
+        ?? toolInput?.['prompt']?.slice(0, 200)
         ?? (payload['args_preview'] as string) ?? undefined,
       output_summary: (payload['tool_response'] as string)?.slice(0, 500)
         ?? (payload['output_summary'] as string) ?? undefined,
@@ -83,6 +86,10 @@ async function main(): Promise<void> {
       cwd: (payload['cwd'] as string) ?? process.cwd(),
     });
   }
+
+  // Aggregate daily stats for today
+  const today = new Date().toISOString().slice(0, 10);
+  try { aggregateDailyStats(today); } catch { /* non-blocking */ }
 
   closeDb();
 }

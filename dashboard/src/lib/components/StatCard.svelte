@@ -5,70 +5,75 @@
   export let icon: string = '';
 </script>
 
-<div class="stat-card" style="--card-accent: {accent};">
-  <div class="stat-accent-bar"></div>
+<div class="stat-card">
   <div class="stat-content">
-    <div class="stat-header">
-      {#if icon}
-        <span class="stat-icon">{icon}</span>
-      {/if}
-      <span class="stat-label manga">{label}</span>
-    </div>
-    <div class="stat-value mono">{value}</div>
+    {#if icon}
+      <div class="stat-icon-circle">{icon}</div>
+    {/if}
+    <div class="stat-label">{label}</div>
+    <div class="stat-value">{value}</div>
   </div>
 </div>
 
 <style>
   .stat-card {
-    background: var(--color-surface);
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
     position: relative;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-fast);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Glass shine */
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+    border-radius: inherit;
+    z-index: 1;
   }
 
   .stat-card:hover {
-    border-color: var(--card-accent);
+    border-color: rgba(201,168,76,0.2);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .stat-accent-bar {
-    height: 4px;
-    background: var(--card-accent);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
   }
 
   .stat-content {
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-6);
+    position: relative;
+    z-index: 2;
   }
 
-  .stat-header {
+  .stat-icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-gold-dim);
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
-  }
-
-  .stat-icon {
+    justify-content: center;
     font-size: 18px;
+    margin-bottom: var(--space-3);
   }
 
   .stat-label {
-    font-size: 14px;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 500;
     color: var(--color-text-secondary);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    margin-bottom: var(--space-2);
   }
 
   .stat-value {
-    font-family: var(--font-mono);
-    font-size: 34px;
+    font-family: var(--font-manga);
+    font-size: 36px;
     font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+    line-height: 1;
+    color: var(--color-gold);
   }
 </style>

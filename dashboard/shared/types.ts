@@ -41,7 +41,12 @@ export interface AgentDefinition {
   readonly version: string;
   readonly description: string;
   readonly category: AgentCategory;
+  readonly role: AgentRole;
+  readonly elevated: boolean;
+  readonly aliasOf: string | null;
 }
+
+export type AgentRole = 'agent' | 'pipeline' | 'alias';
 
 // ── Agent Categories ──────────────────────────────────────────
 
@@ -396,4 +401,167 @@ export interface ProjectsQuery {
   readonly stack?: string;
   readonly sort?: 'name' | 'lastModified' | 'category';
   readonly order?: 'asc' | 'desc';
+}
+
+// ── Overview (Dashboard v3) ─────────────────────────────────
+
+export interface OverviewKpis {
+  readonly totalInvocations: number;
+  readonly totalSessions: number;
+  readonly uniqueAgents: number;
+  readonly activeProjects: number;
+}
+
+export interface OverviewResponse {
+  readonly kpis: OverviewKpis;
+  readonly sparklines: {
+    readonly invocations7d: number[];
+    readonly sessions7d: number[];
+  };
+  readonly heatmap: HeatmapCell[];
+  readonly activityFeed: ActivityFeedItem[];
+}
+
+export interface HeatmapCell {
+  readonly day: number;   // 0=Sunday, 1=Monday, ...
+  readonly hour: number;  // 0-23
+  readonly count: number;
+}
+
+export interface ActivityFeedItem {
+  readonly type: 'invocation' | 'session_start' | 'session_end';
+  readonly timestamp: string;
+  readonly agent?: string;
+  readonly project?: string;
+  readonly confidence?: string;
+  readonly sessionId?: string;
+  readonly duration?: number;
+}
+
+// ── Crew (Dashboard v3) ─────────────────────────────────────
+
+export type CrewType = 'subagent' | 'skill' | 'pipeline';
+
+export interface CrewMember {
+  readonly name: string;
+  readonly type: CrewType;
+  readonly role: AgentRole;
+  readonly elevated: boolean;
+  readonly aliasOf: string | null;
+  readonly description: string;
+  readonly category: AgentCategory;
+  readonly version: string;
+  readonly model?: string;
+  readonly color?: string;
+  readonly stats: CrewMemberStats;
+}
+
+export interface CrewMemberStats {
+  readonly totalInvocations: number;
+  readonly last7d: number;
+  readonly lastUsed: string | null;
+  readonly topProjects: string[];
+}
+
+export interface CrewResponse {
+  readonly members: readonly CrewMember[];
+  readonly total: number;
+  readonly byType: {
+    readonly subagents: number;
+    readonly skills: number;
+    readonly pipelines: number;
+  };
+}
+
+export interface CrewQuery {
+  readonly search?: string;
+  readonly type?: CrewType;
+  readonly category?: AgentCategory;
+  readonly sort?: 'name' | 'invocations' | 'lastUsed';
+}
+
+// ── Orchestrator (Dashboard v3) ─────────────────────────────
+
+export interface OrchestratorDecision {
+  readonly timestamp: string;
+  readonly demande: string;
+  readonly routeAgent: string;
+  readonly confidence: ConfidenceLevel;
+  readonly project: string;
+  readonly result: ResultStatus;
+  readonly resultDetail: string;
+  readonly sujet: string;
+  readonly contexte: string;
+}
+
+export interface OrchestratorStats {
+  readonly totalDecisions: number;
+  readonly confidenceDistribution: {
+    readonly haute: number;
+    readonly moyenne: number;
+    readonly basse: number;
+  };
+  readonly topAgents: { readonly name: string; readonly count: number }[];
+  readonly topProjects: { readonly name: string; readonly count: number }[];
+  readonly dailyDecisions7d: number[];
+}
+
+export interface OrchestratorResponse {
+  readonly stats: OrchestratorStats;
+  readonly decisions: readonly OrchestratorDecision[];
+  readonly total: number;
+}
+
+export interface OrchestratorQuery {
+  readonly search?: string;
+  readonly agent?: string;
+  readonly project?: string;
+  readonly confidence?: ConfidenceLevel;
+  readonly limit?: number;
+  readonly offset?: number;
+}
+
+// ── Project Timeline (Dashboard v3) ─────────────────────────
+
+export interface ProjectTimelineEntry {
+  readonly timestamp: string;
+  readonly type: 'invocation' | 'session';
+  readonly agent?: string;
+  readonly sessionId?: string;
+  readonly pipeline?: string;
+}
+
+export interface ProjectGitCommit {
+  readonly hash: string;
+  readonly message: string;
+  readonly date: string;
+  readonly author: string;
+}
+
+export interface ProjectTimelineResponse {
+  readonly entries: readonly ProjectTimelineEntry[];
+  readonly gitCommits: readonly ProjectGitCommit[];
+  readonly agentDistribution: { readonly name: string; readonly count: number }[];
+}
+
+// ── Reports ──────────────────────────────────────────────────
+
+export interface WeeklyReport {
+  readonly id: number;
+  readonly week_start: string;
+  readonly week_end: string;
+  readonly generated_at: string;
+  readonly html_path: string;
+  readonly status: 'generated' | 'draft_created' | 'sent';
+}
+
+export interface ReportsResponse {
+  readonly data: readonly WeeklyReport[];
+  readonly total: number;
+}
+
+export interface ReportDetailResponse extends WeeklyReport {
+  readonly html: string;
+  readonly alreadyExisted?: boolean;
+  readonly summary?: Record<string, unknown>;
 }
