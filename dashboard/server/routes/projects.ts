@@ -12,6 +12,8 @@
 
 import { Router } from 'express';
 import { exec } from 'child_process';
+import { readFileSync, statSync } from 'fs';
+import nodePath from 'path';
 import {
   getProjects,
   forceRescan,
@@ -154,6 +156,78 @@ router.get('/projects/:name/claude-sessions', (req, res) => {
     res.json({ sessions, total: sessions.length });
   } catch (err) {
     res.status(500).json({ error: 'internal', message: 'Failed to load Claude sessions' });
+  }
+});
+
+// Get file content from a project
+router.get('/projects/:name/file', (req, res) => {
+  try {
+    const project = getProjectByName(req.params['name']!);
+    if (!project) {
+      res.status(404).json({ error: 'not_found', message: `Project "${req.params['name']}" not found` });
+      return;
+    }
+
+    const relativePath = req.query['path'] as string | undefined;
+    if (!relativePath) {
+      res.status(400).json({ error: 'bad_request', message: 'path query parameter is required' });
+      return;
+    }
+
+    // Security: prevent path traversal
+    if (relativePath.includes('..') || relativePath.startsWith('/') || relativePath.startsWith('\\')) {
+      res.status(400).json({ error: 'bad_request', message: 'Invalid file path' });
+      return;
+    }
+
+    const fullPath = nodePath.resolve(project.path, relativePath);
+    // Ensure resolved path is within project directory
+    if (!fullPath.startsWith(nodePath.resolve(project.path))) {
+      res.status(400).json({ error: 'bad_request', message: 'File path outside project directory' });
+      return;
+    }
+
+    // Check file size (max 500KB)
+    let stat;
+    try {
+      stat = statSync(fullPath);
+    } catch {
+      res.status(404).json({ error: 'not_found', message: `File "${relativePath}" not found` });
+      return;
+    }
+
+    if (stat.size > 500 * 1024) {
+      res.status(413).json({ error: 'too_large', message: `File too large (${(stat.size / 1024).toFixed(0)}KB, max 500KB)` });
+      return;
+    }
+
+    const content = readFileSync(fullPath, 'utf-8');
+    const ext = nodePath.extname(relativePath).toLowerCase().replace('.', '');
+
+    // Map extensions to language names
+    const langMap: Record<string, string> = {
+      md: 'markdown', mdx: 'markdown', sql: 'sql', yml: 'yaml', yaml: 'yaml',
+      json: 'json', toml: 'toml', prisma: 'prisma', graphql: 'graphql',
+      gql: 'graphql', proto: 'protobuf', ts: 'typescript', js: 'javascript',
+      py: 'python', rs: 'rust', go: 'go', rb: 'ruby', sh: 'shell',
+      bash: 'shell', txt: 'text', xml: 'xml', html: 'html', css: 'css',
+      dockerfile: 'dockerfile', makefile: 'makefile', '': 'text',
+    };
+
+    const fileName = nodePath.basename(relativePath).toLowerCase();
+    let language = langMap[ext] ?? 'text';
+    if (fileName === 'dockerfile') language = 'dockerfile';
+    if (fileName === 'makefile') language = 'makefile';
+
+    res.json({
+      content,
+      name: nodePath.basename(relativePath),
+      path: relativePath,
+      size: stat.size,
+      language,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'internal', message: 'Failed to read file' });
   }
 });
 

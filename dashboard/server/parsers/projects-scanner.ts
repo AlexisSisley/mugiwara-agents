@@ -10,7 +10,7 @@ import path from 'path';
 import { detectCategory } from '../db/category-detector.js';
 import { MemoryCache } from '../cache.js';
 import { countClaudeSessions } from './claude-sessions-parser.js';
-import type { ProjectInfo, GitInfo, ProjectMugiwaraStats, ProjectsConfig, Category } from '../../shared/types.js';
+import type { ProjectInfo, ProjectFile, DocFileCategory, GitInfo, ProjectMugiwaraStats, ProjectsConfig, Category } from '../../shared/types.js';
 
 // ── Config Paths ─────────────────────────────────────────────
 
@@ -333,6 +333,122 @@ function getMugiwaraStats(projectName: string): ProjectMugiwaraStats | null {
   }
 }
 
+// ── Doc Files Scanner ────────────────────────────────────────
+
+const DOC_IGNORE_DIRS = new Set([
+  'node_modules', '.git', 'dist', 'build', 'vendor', '__pycache__',
+  '.venv', '.next', '.nuxt', '.svelte-kit', 'coverage', '.turbo',
+  'bin', 'obj', 'target', '.angular',
+]);
+
+const DOC_IGNORE_FILES = new Set([
+  'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lockb',
+  'composer.lock', 'Gemfile.lock', 'Cargo.lock', 'go.sum',
+  'tsconfig.tsbuildinfo',
+]);
+
+const MAX_DOC_FILES = 50;
+
+function classifyFile(name: string, relativePath: string): DocFileCategory | null {
+  const lower = name.toLowerCase();
+  const ext = path.extname(lower);
+
+  // CI files
+  if (relativePath.includes('.github/workflows/') && ext === '.yml') return 'ci';
+  if (lower === '.gitlab-ci.yml' || lower === 'jenkinsfile' || lower === '.travis.yml') return 'ci';
+
+  // Schema files
+  if (lower.startsWith('schema.') || ext === '.prisma' || ext === '.graphql' || ext === '.gql' || ext === '.proto') return 'schema';
+
+  // SQL files
+  if (ext === '.sql') return 'sql';
+
+  // Doc files
+  if (ext === '.md' || ext === '.mdx' || ext === '.txt') return 'doc';
+  if (lower === 'license' || lower === 'licence' || lower === 'contributing' || lower === 'authors' || lower === 'changelog') return 'doc';
+
+  // Config files (selective - only meaningful ones)
+  if (ext === '.yml' || ext === '.yaml' || ext === '.toml') return 'config';
+  if (ext === '.json' && !DOC_IGNORE_FILES.has(lower)) {
+    // Only include top-level or meaningful JSON configs
+    if (lower === 'tsconfig.json' || lower === 'turbo.json' || lower === '.eslintrc.json'
+      || lower === 'vercel.json' || lower === 'nest-cli.json' || lower === 'angular.json'
+      || lower === 'composer.json' || lower === 'deno.json' || lower === 'biome.json'
+      || lower.endsWith('.config.json') || lower === 'mugiwara.yaml') return 'config';
+  }
+  if (lower === 'dockerfile' || lower === 'makefile' || lower === '.env.example'
+    || lower === '.editorconfig' || lower === '.prettierrc' || lower === '.eslintrc') return 'config';
+
+  return null;
+}
+
+function getDocFiles(dirPath: string): ProjectFile[] {
+  const files: ProjectFile[] = [];
+
+  function scan(currentDir: string, depth: number): void {
+    if (depth > 2 || files.length >= MAX_DOC_FILES) return;
+
+    try {
+      const entries = readdirSync(currentDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (files.length >= MAX_DOC_FILES) break;
+
+        if (entry.isDirectory()) {
+          if (!DOC_IGNORE_DIRS.has(entry.name) && !entry.name.startsWith('.')) {
+            scan(path.join(currentDir, entry.name), depth + 1);
+          }
+          // Special case: .github/workflows
+          if (entry.name === '.github') {
+            const wfDir = path.join(currentDir, '.github', 'workflows');
+            if (existsSync(wfDir)) {
+              scan(wfDir, depth + 2); // force depth to skip further recursion
+            }
+          }
+          continue;
+        }
+
+        if (!entry.isFile()) continue;
+        if (DOC_IGNORE_FILES.has(entry.name.toLowerCase())) continue;
+
+        const fullPath = path.join(currentDir, entry.name);
+        const relativePath = path.relative(dirPath, fullPath).replace(/\\/g, '/');
+        const category = classifyFile(entry.name, relativePath);
+
+        if (!category) continue;
+
+        try {
+          const stat = statSync(fullPath);
+          // Skip very large files (>2MB) and empty files
+          if (stat.size > 2 * 1024 * 1024 || stat.size === 0) continue;
+
+          files.push({
+            name: entry.name,
+            relativePath,
+            category,
+            sizeBytes: stat.size,
+            lastModified: stat.mtime.toISOString(),
+          });
+        } catch { /* skip unreadable */ }
+      }
+    } catch { /* permission denied */ }
+  }
+
+  scan(dirPath, 0);
+
+  // Sort by category then name
+  const categoryOrder: Record<DocFileCategory, number> = {
+    doc: 0, sql: 1, schema: 2, config: 3, ci: 4, other: 5,
+  };
+  files.sort((a, b) => {
+    const catDiff = categoryOrder[a.category] - categoryOrder[b.category];
+    if (catDiff !== 0) return catDiff;
+    return a.name.localeCompare(b.name);
+  });
+
+  return files;
+}
+
 // ── Main Scanner ─────────────────────────────────────────────
 
 function scanDirectory(dirPath: string, depth: number, maxDepth: number, ignoreDirs: string[]): string[] {
@@ -370,6 +486,7 @@ function buildProjectInfo(dirPath: string, isManual: boolean, manualCategory?: C
   const stack = detectStack(dirPath);
   const git = getGitInfo(dirPath);
   const keyFiles = getKeyFiles(dirPath);
+  const docFiles = getDocFiles(dirPath);
   const mugiwaraStats = getMugiwaraStats(name);
   const claudeSessionCount = countClaudeSessions(dirPath);
   const lastModified = getLastModified(dirPath);
@@ -381,6 +498,7 @@ function buildProjectInfo(dirPath: string, isManual: boolean, manualCategory?: C
     stack,
     git,
     keyFiles,
+    docFiles,
     mugiwaraStats,
     claudeSessionCount,
     lastModified,

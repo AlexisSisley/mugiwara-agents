@@ -12,6 +12,9 @@ Entries for v1.0.0 through v1.6.0 were written retroactively from roadmaps and g
 ## [Unreleased]
 
 ### Added
+- **Scripts de conversion Claude Code custom agents** -- `convert_claude.cjs` convertit les SKILL.md en agents autonomes (.md) pour le dossier `.claude/agents/`. Support des tiers (Tier 1 = 20 agents prioritaires, Tier 2 = 23 agents supplementaires), colorisation automatique par categorie, exemples generes, et mode dry-run.
+- **Script de conversion Gemini CLI** -- `convert_all.cjs` convertit les SKILL.md en skills Gemini CLI, avec packaging et installation automatique.
+- **`dist-claude-agents/`** -- 22 agents pre-convertis au format Claude Code custom agents, prets a copier dans `.claude/agents/`.
 - **Morgans : Templates HTML Gmail & Outlook** -- L'agent `/morgans` genere desormais des templates HTML complets (QA + Production), compatibles Gmail et Outlook (CSS inline, mise en page `<table>`, polices systeme), en plus du format texte brut. Instructions de copier-coller incluses.
 - **One Piece : Limite chaine ad-hoc augmentee a 6 agents** -- Le routeur intelligent `/one_piece` peut desormais composer des chaines ad-hoc de 2 a 6 agents (contre 2-3 precedemment), offrant plus de flexibilite dans l'orchestration dynamique.
 - **Agent Big Mom** (`/big-mom` ou `/agile`) -- Agile Coach / Scrum Master : ceremonies, sprint planning, retrospectives, velocity tracking, SAFe, Jira/Linear workflows, team health

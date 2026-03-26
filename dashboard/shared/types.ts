@@ -46,8 +46,6 @@ export interface AgentDefinition {
   readonly aliasOf: string | null;
 }
 
-export type AgentRole = 'agent' | 'pipeline' | 'alias';
-
 // ── Agent Categories ──────────────────────────────────────────
 
 export type AgentCategory =
@@ -70,7 +68,10 @@ export type AgentCategory =
   | 'cloud'
   | 'monitoring'
   | 'quality'
-  | 'ai-ml';
+  | 'ai-ml'
+  | 'itsm';
+
+export type AgentRole = 'agent' | 'pipeline' | 'router' | 'alias' | 'meta';
 
 export const CATEGORY_COLORS: Record<AgentCategory, string> = {
   pipeline: '#818CF8',
@@ -93,6 +94,7 @@ export const CATEGORY_COLORS: Record<AgentCategory, string> = {
   monitoring: '#F59E0B',
   quality: '#10B981',
   'ai-ml': '#E879F9',
+  itsm: '#FF6B6B',
 } as const;
 
 // ── Derived Entities ──────────────────────────────────────────
@@ -104,6 +106,9 @@ export interface AgentStats {
   readonly description: string;
   readonly category: AgentCategory;
   readonly version: string;
+  readonly role: AgentRole;
+  readonly elevated: boolean;
+  readonly aliasOf: string | null;
   readonly invocationCount: number;
   readonly lastInvocation: string | null; // ISO-8601 or null
   readonly smokeTestStatus: SmokeTestStatus;
@@ -188,6 +193,7 @@ export interface AgentsQuery {
   readonly page?: number;
   readonly limit?: number;
   readonly category?: AgentCategory;
+  readonly role?: AgentRole;
   readonly search?: string;
   readonly sort?: 'name' | 'invocations' | 'lastInvocation' | 'category';
   readonly order?: 'asc' | 'desc';
@@ -296,11 +302,14 @@ export interface SubAgentInfo {
   readonly fileName: string;
 }
 
+export type McpSource = 'user' | 'project' | 'plugin';
+
 export interface McpServerInfo {
   readonly name: string;
   readonly command: string;
   readonly args: readonly string[];
   readonly env: Record<string, string>;
+  readonly source: McpSource;
 }
 
 export interface PluginInfo {
@@ -308,6 +317,8 @@ export interface PluginInfo {
   readonly description: string;
   readonly author: string;
   readonly enabled: boolean;
+  readonly version: string;
+  readonly scope: string;
 }
 
 export interface SetupResponse {
@@ -337,6 +348,24 @@ export interface ProjectMugiwaraStats {
   readonly lastActivity: string | null;
 }
 
+export type DocFileCategory = 'doc' | 'sql' | 'config' | 'schema' | 'ci' | 'other';
+
+export interface ProjectFile {
+  readonly name: string;
+  readonly relativePath: string;
+  readonly category: DocFileCategory;
+  readonly sizeBytes: number;
+  readonly lastModified: string;
+}
+
+export interface ProjectFileContent {
+  readonly content: string;
+  readonly name: string;
+  readonly path: string;
+  readonly size: number;
+  readonly language: string;
+}
+
 export interface ProjectInfo {
   readonly name: string;
   readonly path: string;
@@ -344,6 +373,7 @@ export interface ProjectInfo {
   readonly stack: string[];
   readonly git: GitInfo | null;
   readonly keyFiles: string[];
+  readonly docFiles: ProjectFile[];
   readonly mugiwaraStats: ProjectMugiwaraStats | null;
   readonly claudeSessionCount: number;
   readonly lastModified: string | null;

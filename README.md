@@ -126,6 +126,35 @@ Copy the skill directories to your Claude Code user skills folder:
 cp -r skills/* ~/.claude/skills/
 ```
 
+#### Claude Code Custom Agents (agentic mode)
+
+Pre-built Claude Code custom agents are available in `dist-claude-agents/`. Copy them to your project or user agents folder:
+
+```bash
+# Copy all pre-built agents to your project
+cp dist-claude-agents/*.md .claude/agents/
+
+# Or regenerate from source (Tier 1 = 20 core agents)
+node convert_claude.cjs
+
+# Tier 1 + Tier 2 (43 agents)
+node convert_claude.cjs --tier 2
+
+# Specific agents only
+node convert_claude.cjs --agents chopper,franky,robin
+
+# Preview without writing
+node convert_claude.cjs --dry-run
+```
+
+#### Gemini CLI Conversion
+
+Convert and install agents as Gemini CLI skills:
+
+```bash
+node convert_all.cjs
+```
+
 #### Plugin CLI (v1.5+)
 
 You can also manage agents individually with the `mugiwara` CLI:
@@ -775,6 +804,7 @@ mugiwara-agents/
 │   ├── server/                   #   Express API (REST endpoints, JSONL parsers)
 │   ├── tests/                    #   Unit + integration tests (Vitest)
 │   └── package.json
+├── dist-claude-agents/           # Pre-built Claude Code custom agents (22 agents)
 ├── lib/                          # CLI libraries (v1.5)
 │   ├── core.sh                   #   Utilities (colors, logging, errors)
 │   ├── registry.sh               #   Registry management
@@ -798,6 +828,8 @@ mugiwara-agents/
 │   ├── agent-event.schema.json  #   JSONL log event schema
 │   └── validate-jsonl.sh        #   Schema validator
 ├── skills/                       # 56 agents + aliases — each with SKILL.md + mugiwara.yaml
+├── convert_claude.cjs            # Converter: SKILL.md → Claude Code custom agents
+├── convert_all.cjs               # Converter: SKILL.md → Gemini CLI skills
 ├── registry.yaml                 # Central agent index (v1.5)
 ├── install.sh                    # Full installation script
 ├── uninstall.sh                  # Uninstallation script
@@ -821,6 +853,9 @@ mugiwara-agents/
 | [docs/mcp-servers.md](./docs/mcp-servers.md) | MCP Servers installation guide (9 servers) |
 | [docs/roadmap/](./docs/roadmap/) | Per-version release notes (v1.0 -> v1.9) |
 | [docs/plan-v1.4-v2.0.md](./docs/plan-v1.4-v2.0.md) | Strategic plan through v2.0 |
+| [convert_claude.cjs](./convert_claude.cjs) | SKILL.md → Claude Code custom agents converter (tiered, colorized) |
+| [convert_all.cjs](./convert_all.cjs) | SKILL.md → Gemini CLI skills converter |
+| [dist-claude-agents/](./dist-claude-agents/) | 22 pre-built Claude Code custom agents (.md) |
 
 ## License
 

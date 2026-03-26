@@ -344,6 +344,9 @@ mugiwara-agents/
 │   │   └── test_monitoring.sh       #     Validation SKILL.md + manifest
 │   └── feature-flags/              #   Tests agent feature-flags (v1.7)
 │       └── test_feature_flags.sh    #     Validation SKILL.md + manifest
+├── dist-claude-agents/              # Agents pre-convertis au format Claude Code custom agents
+│   ├── ace.md                       #   22 agents prets a copier dans .claude/agents/
+│   └── ...
 ├── skills/                          # 56 agents + aliases (chacun avec SKILL.md + mugiwara.yaml)
 │   ├── ace/                         #   Performance Engineer
 │   │   ├── SKILL.md
@@ -352,6 +355,8 @@ mugiwara-agents/
 │   └── zorro/
 │       ├── SKILL.md
 │       └── mugiwara.yaml
+├── convert_claude.cjs               # Convertisseur SKILL.md → Claude Code custom agents
+├── convert_all.cjs                  # Convertisseur SKILL.md → Gemini CLI skills
 ├── registry.yaml                    # Index central des agents (v1.5)
 ├── install.sh                       # Script d'installation (tous les agents)
 ├── uninstall.sh                     # Script de desinstallation
@@ -527,6 +532,38 @@ Le pipeline est semi-automatique : il prepare tout mais attend une validation hu
 #### Routage Intelligent Inter-Agents
 
 Chaque agent possede une table de routage vers ses agents complementaires. Quand une demande sort du perimetre d'un agent, celui-ci suggere ou invoque l'agent le plus adapte via `Skill`. Cela forme une toile complete ou aucun domaine IT n'est orphelin. `/one_piece` reste le routeur central universel et peut composer des **chaines ad-hoc de 2 a 6 agents** quand aucun pipeline pre-configure ne correspond au besoin.
+
+### 2.15 Scripts de Conversion Multi-Plateforme
+
+Le projet fournit deux scripts de conversion pour utiliser les agents en dehors du systeme de skills Claude Code :
+
+#### `convert_claude.cjs` — Claude Code Custom Agents
+
+Convertit les `SKILL.md` en fichiers `.md` autonomes pour le dossier `.claude/agents/`, utilisables en mode agentic (sans slash commands). Le script :
+
+- **Tiering** : Tier 1 (20 agents prioritaires) et Tier 2 (23 agents supplementaires)
+- **Colorisation automatique** par categorie (debugging → red, security → orange, etc.)
+- **Generation d'exemples** contextuels par categorie (2 exemples par agent)
+- **Frontmatter Claude Code** complet (`description`, `when_to_use`, `model`, `color`, `examples`)
+- **Mode dry-run** pour previsualiser sans ecrire
+
+```bash
+node convert_claude.cjs                          # Tier 1 (defaut)
+node convert_claude.cjs --tier 2                 # Tier 1 + 2
+node convert_claude.cjs --agents chopper,franky   # Agents specifiques
+node convert_claude.cjs --output dist-claude/     # Dossier de sortie personnalise
+node convert_claude.cjs --dry-run                 # Apercu sans ecriture
+```
+
+Output : `dist-claude-agents/` (22 fichiers .md pre-generes dans le repo).
+
+#### `convert_all.cjs` — Gemini CLI Skills
+
+Convertit les `SKILL.md` en skills Gemini CLI avec packaging et installation automatique via `gemini skills install`. Necessite le CLI Gemini installe.
+
+```bash
+node convert_all.cjs
+```
 
 ---
 

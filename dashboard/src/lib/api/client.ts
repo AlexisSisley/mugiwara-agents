@@ -112,6 +112,10 @@ class ApiClient {
     return this.fetch<ClaudeSessionsResponse>(`/projects/${encodeURIComponent(name)}/claude-sessions`);
   }
 
+  async getProjectFile(name: string, relativePath: string): Promise<import('../../../shared/types').ProjectFileContent> {
+    return this.fetch(`/projects/${encodeURIComponent(name)}/file?path=${encodeURIComponent(relativePath)}`);
+  }
+
   async getProject(name: string): Promise<ProjectInfo> {
     return this.fetch<ProjectInfo>(`/projects/${encodeURIComponent(name)}`);
   }
