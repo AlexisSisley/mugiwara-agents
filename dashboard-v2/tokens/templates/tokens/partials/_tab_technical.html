@@ -1,0 +1,47 @@
+{% load token_filters %}
+
+<!-- KPI Cards -->
+<div class="stat-grid stat-grid--4">
+    {% include "components/_stat_card.html" with title="Total Tokens" value=total_tokens|format_tokens icon="zap" %}
+    {% include "components/_stat_card.html" with title="Cache Hit Rate" value=cache_hit_rate|format_pct icon="cpu" %}
+    {% include "components/_stat_card.html" with title="Cache Reads" value=total_cache_read|format_tokens icon="shield" %}
+    {% include "components/_stat_card.html" with title="Est. Savings" value=estimated_savings|format_cost icon="star" %}
+</div>
+
+<!-- Charts row -->
+<div class="grid-2col" style="margin-top:16px">
+    <!-- Token composition donut -->
+    {% if composition_chart %}
+    <div class="glass-card">
+        <h3 class="card-title">Token Composition</h3>
+        <div id="chart-composition" style="height:220px"
+             data-chart="donut"
+             data-chart-data='{{ composition_chart|safe }}'>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Cache hit rate sparkline -->
+    {% if cache_sparkline %}
+    <div class="glass-card">
+        <h3 class="card-title">Cache Hit Rate Trend</h3>
+        <div id="chart-cache-trend" style="height:120px"
+             data-chart="sparkline"
+             data-chart-data='{{ cache_sparkline|safe }}'
+             data-chart-color="#F59E0B">
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Tokens by model -->
+{% if model_chart %}
+<div class="glass-card" style="margin-top:16px">
+    <h3 class="card-title">Tokens by Model</h3>
+    <div id="chart-tokens-model" style="height:200px"
+         data-chart="barh"
+         data-chart-data='{{ model_chart|safe }}'
+         data-chart-color="#EC4899">
+    </div>
+</div>
+{% endif %}

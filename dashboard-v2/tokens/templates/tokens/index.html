@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+{% load token_filters %}
+
+{% block title %}Token Usage &amp; Costs{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header__left">
+        <h1 class="page-title">{{ page_title }}</h1>
+    </div>
+    <div class="page-header__right" style="display:flex;gap:8px;align-items:center">
+        <!-- Period filter -->
+        <select class="glass-select" id="period-select"
+                onchange="updateTokenPeriod(this.value)">
+            <option value="7d" {% if current_period == '7d' %}selected{% endif %}>7 days</option>
+            <option value="30d" {% if current_period == '30d' %}selected{% endif %}>30 days</option>
+            <option value="90d" {% if current_period == '90d' %}selected{% endif %}>90 days</option>
+            <option value="all" {% if current_period == 'all' %}selected{% endif %}>All time</option>
+        </select>
+
+        <!-- Project filter -->
+        {% if projects %}
+        <select class="glass-select" id="project-select"
+                onchange="updateTokenProject(this.value)">
+            <option value="">All projects</option>
+            {% for p in projects %}
+            <option value="{{ p }}" {% if current_project == p %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        <!-- Refresh button -->
+        <button class="glass-btn glass-btn--sm"
+                hx-post="{% url 'token_refresh' %}"
+                hx-swap="none"
+                hx-indicator="#refresh-spinner">
+            <span id="refresh-spinner" class="htmx-indicator" style="display:none">
+                &#8987;
+            </span>
+            &#x21BB; Refresh
+        </button>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="glass-tabs" id="token-tabs">
+    <button class="glass-tab active" data-tab="costs"
+            hx-get="{% url 'token_tab_costs' %}?period={{ current_period }}&project={{ current_project }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML"
+            hx-trigger="click, tokens-refreshed from:body"
+            hx-on::after-swap="initTokenCharts()">
+        &#128176; Costs
+    </button>
+    <button class="glass-tab" data-tab="technical"
+            hx-get="{% url 'token_tab_technical' %}?period={{ current_period }}&project={{ current_project }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML"
+            hx-on::after-swap="initTokenCharts()">
+        &#9889; Technical
+    </button>
+    <button class="glass-tab" data-tab="sessions"
+            hx-get="{% url 'token_tab_sessions' %}?period={{ current_period }}&project={{ current_project }}"
+            hx-target="#tab-content"
+            hx-swap="innerHTML">
+        &#128203; Sessions
+    </button>
+</div>
+
+<!-- Tab content container -->
+<div id="tab-content"
+     hx-get="{% url 'token_tab_costs' %}?period={{ current_period }}&project={{ current_project }}"
+     hx-trigger="load"
+     hx-swap="innerHTML"
+     hx-on::after-swap="initTokenCharts()">
+    <div class="loading-skeleton">Loading...</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+// Tab switching
+document.querySelectorAll('.glass-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.glass-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+    });
+});
+
+// Init D3 charts after HTMX swap
+function initTokenCharts() {
+    var container = document.getElementById('tab-content');
+    if (container && window.MugiCharts) {
+        MugiCharts.initChartsInContainer(container);
+    }
+}
+
+// Period filter
+function updateTokenPeriod(period) {
+    var project = document.getElementById('project-select');
+    var projVal = project ? project.value : '';
+    var activeTab = document.querySelector('.glass-tab.active');
+    var tabName = activeTab ? activeTab.getAttribute('data-tab') : 'costs';
+    var urls = {
+        costs: '{% url "token_tab_costs" %}',
+        technical: '{% url "token_tab_technical" %}',
+        sessions: '{% url "token_tab_sessions" %}'
+    };
+    var url = urls[tabName] + '?period=' + period + '&project=' + encodeURIComponent(projVal);
+    htmx.ajax('GET', url, {target: '#tab-content', swap: 'innerHTML'}).then(initTokenCharts);
+}
+
+// Project filter
+function updateTokenProject(project) {
+    var period = document.getElementById('period-select').value;
+    var activeTab = document.querySelector('.glass-tab.active');
+    var tabName = activeTab ? activeTab.getAttribute('data-tab') : 'costs';
+    var urls = {
+        costs: '{% url "token_tab_costs" %}',
+        technical: '{% url "token_tab_technical" %}',
+        sessions: '{% url "token_tab_sessions" %}'
+    };
+    var url = urls[tabName] + '?period=' + period + '&project=' + encodeURIComponent(project);
+    htmx.ajax('GET', url, {target: '#tab-content', swap: 'innerHTML'}).then(initTokenCharts);
+}
+</script>
+{% endblock %}
