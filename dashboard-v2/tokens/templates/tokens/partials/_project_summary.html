@@ -1,0 +1,14 @@
+{% load token_filters %}
+
+<div class="glass-card" style="margin-top:16px">
+    <h3 class="card-title">&#128176; Token Usage</h3>
+    <div class="stat-grid stat-grid--3">
+        {% include "components/_stat_card.html" with title="Total Cost" value=total_cost|format_cost icon="coin" %}
+        {% include "components/_stat_card.html" with title="Total Tokens" value=total_tokens|format_tokens icon="zap" %}
+        {% include "components/_stat_card.html" with title="Cache Hit Rate" value=cache_hit_rate|format_pct icon="cpu" %}
+    </div>
+    <a href="{% url 'token_index' %}?project={{ project_name }}"
+       class="glass-btn glass-btn--sm" style="margin-top:8px">
+        View full token details &rarr;
+    </a>
+</div>

@@ -87,4 +87,11 @@
         </table>
     </div>
     {% endif %}
+
+    <!-- Token Usage Summary -->
+    <div hx-get="{% url 'token_project_summary' project.name %}"
+         hx-trigger="load"
+         hx-swap="innerHTML"
+         style="margin-top: var(--spacing-lg);">
+    </div>
 </div>
