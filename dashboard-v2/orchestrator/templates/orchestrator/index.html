@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static dashboard_tags %}
+
+{% block title %}Orchestrator{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    MugiCharts.renderDonut('#confidence-donut', {{ donut_data|json_data }},
+        {{ donut_colors|json_data }});
+    MugiCharts.renderBarH('#top-agents-chart', {{ top_agents_chart|json_data }}, '#8B5CF6');
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Stats row -->
+<div class="stats-grid">
+    {% include "components/_stat_card.html" with title="Total Decisions" value=total_decisions|format_number icon="cpu" %}
+</div>
+
+<!-- Charts row -->
+<div class="two-col">
+    <div class="glass-card">
+        <h3 class="card-title">Confidence Distribution</h3>
+        <div id="confidence-donut" style="width: 100%; height: 250px; display: flex; justify-content: center;"></div>
+    </div>
+    <div class="glass-card glass-card--pink">
+        <h3 class="card-title">Top Routed Agents</h3>
+        <div id="top-agents-chart" style="width: 100%; min-height: 250px;"></div>
+    </div>
+</div>
+
+<!-- Top Projects -->
+{% if top_projects %}
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
+    <h3 class="card-title">Top Projects</h3>
+    <div class="glass-table-wrap">
+        <table class="glass-table">
+            <thead><tr><th>Project</th><th>Decisions</th></tr></thead>
+            <tbody>
+                {% for p in top_projects %}
+                <tr>
+                    <td>{{ p.projet }}</td>
+                    <td>{{ p.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Decisions table -->
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
+    <h3 class="card-title">Routing Decisions</h3>
+    {% include "components/_filters.html" with filters=filters hx_target="#decisions-table" hx_url="/orchestrator/" %}
+    <div id="decisions-table">
+        {% include "orchestrator/partials/_decisions_table.html" %}
+    </div>
+</div>
+{% endblock %}

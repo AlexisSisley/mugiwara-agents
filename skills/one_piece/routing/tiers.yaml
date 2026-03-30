@@ -1,0 +1,115 @@
+# ============================================================
+# Mugiwara Agents — Model Tier Assignment
+# Defines which model each agent/pipeline uses
+# ============================================================
+version: 2
+
+# Tier 0 — opus : Routage complexe, orchestration multi-agents
+tier_0:
+  model: opus
+  description: "Routage complexe, orchestration multi-agents"
+  agents:
+    - one_piece
+  pipelines:
+    - incident
+    - discovery
+    - mugiwara
+    - pre-launch
+    - onboard
+    - modernize
+    - doc-hunt
+    - api-postman
+
+# Tier 1 — opus : Raisonnement profond, architecture, securite
+tier_1:
+  model: opus
+  description: "Raisonnement profond, architecture, securite, subagents eleves"
+  subagents:
+    - chopper
+    - franky
+    - nami
+    - jinbe
+    - robin
+    - zorro
+    - sanji
+    - luffy
+    - brook
+    - usopp
+    - vivi
+  skills:
+    - shanks
+    - law
+    - doflamingo
+    - vegapunk
+    - rayleigh
+    - crocodile
+    - sanji-dotnet
+    - sanji-flutter
+    - sanji-python
+    - sanji-ts
+    - sanji-rust
+    - sanji-go
+    - sanji-java
+    - sanji-design
+    - sanji-i18n
+
+# Tier 2 — sonnet : Taches structurees, generation, templates
+tier_2:
+  model: sonnet
+  description: "Taches structurees, generation de config, templates"
+  agents:
+    - iceburg
+    - enel
+    - morgans
+    - law-sql
+    - ace
+    - hawkins
+    - sabo
+    - paulie
+    - coby
+    - ivankov
+    - kizaru
+    - fujitora
+    - katakuri
+    - big-mom
+    - magellan
+    - caesar
+    - aokiji
+    - yamato
+    - bartholomew
+    - perona
+    - senor-pink
+    - bon-clay
+    - poneglyph
+    - smoker
+
+# Tier 3 — haiku : Pure redirection, alias skills
+tier_3:
+  model: haiku
+  description: "Pure redirection, alias skills"
+  aliases:
+    - docker        # -> iceburg
+    - iis           # -> paulie
+    - infra-reseau  # -> coby
+    - firebase      # -> sabo
+    - azure         # -> kizaru
+    - gcp           # -> aokiji
+    - monitoring    # -> enel
+    - feature-flags # -> ivankov
+    - prod-listener # -> rayleigh
+    - a11y          # -> fujitora
+    - mlops         # -> katakuri
+    - agile         # -> big-mom
+    - bi            # -> hawkins
+    - dba           # -> magellan
+    - chaos         # -> caesar
+    - glpi          # -> smoker
+  pipeline_aliases:
+    - thousand-sunny # -> mugiwara
+    - merry          # -> discovery
+    - polar-tang     # -> incident
+    - oro-jackson    # -> pre-launch
+    - baratie        # -> onboard
+    - pluton         # -> modernize
+    - ohara          # -> doc-hunt
+    - maxim          # -> api-postman

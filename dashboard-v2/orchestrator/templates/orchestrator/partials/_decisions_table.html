@@ -1,0 +1,44 @@
+{% load dashboard_tags %}
+
+{% if decisions %}
+<div class="glass-table-wrap">
+    <table class="glass-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Request</th>
+                <th>Route</th>
+                <th>Confidence</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in decisions %}
+            <tr data-drawer-url="{% url 'decision_detail' d.pk %}"
+                data-drawer-title="Decision — {{ d.route_agent }}"
+                style="cursor: pointer;">
+                <td>{{ d.date }}</td>
+                <td class="truncate" style="max-width: 250px;">{{ d.demande|truncatewords:12 }}</td>
+                <td>
+                    <span class="neon-badge neon-badge--{{ d.route_agent|badge_class }}">
+                        {{ d.route_agent|default:d.route }}
+                    </span>
+                </td>
+                <td>
+                    <span class="neon-badge neon-badge--{{ d.confiance|badge_class }}">
+                        {{ d.confiance }}
+                    </span>
+                </td>
+                <td>
+                    <span class="neon-badge neon-badge--{{ d.resultat|badge_class }}">
+                        {{ d.resultat }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+{% include "components/_empty_state.html" with title="No decisions yet" message="One Piece routing decisions will appear here." icon="empty" %}
+{% endif %}

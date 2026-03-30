@@ -52,6 +52,44 @@ const entry = JSON.stringify({
 });
 
 fs.appendFileSync('$LOG_FILE', entry + '\n');
+
+// Also write to per-project memory (.mugiwara/memory/)
+const mugiwaraDir = path.join(cwd, '.mugiwara', 'memory');
+try {
+  fs.mkdirSync(path.join(mugiwaraDir, 'agents'), { recursive: true });
+
+  // Write routing log
+  const routingEntry = JSON.stringify({
+    ts: timestamp, request: args, route: agent,
+    confidence: 'unknown', result: response.slice(0, 100),
+    context: description
+  });
+  fs.appendFileSync(path.join(mugiwaraDir, 'routing.jsonl'), routingEntry + '\n');
+
+  // Write per-agent log
+  const agentLogFile = path.join(mugiwaraDir, 'agents', agent + '.jsonl');
+  const agentEntry = JSON.stringify({
+    ts: timestamp, request: args,
+    output_summary: response.slice(0, 200),
+    session_id: sessionId
+  });
+  fs.appendFileSync(agentLogFile, agentEntry + '\n');
+
+  // Cleanup: keep only last 50 entries per file
+  const cleanupFile = (filePath, maxEntries) => {
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8').trim();
+      const lines = content.split('\n');
+      if (lines.length > maxEntries) {
+        fs.writeFileSync(filePath, lines.slice(-maxEntries).join('\n') + '\n');
+      }
+    } catch(e) {}
+  };
+  cleanupFile(path.join(mugiwaraDir, 'routing.jsonl'), 50);
+  cleanupFile(agentLogFile, 50);
+} catch(e) {
+  // Silent failure - memory is optional
+}
 " -- "$INPUT" 2>/dev/null || true
 
 # Dual-write to SQLite (non-blocking, silent failures)

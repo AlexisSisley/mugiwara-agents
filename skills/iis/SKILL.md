@@ -5,7 +5,7 @@ argument-hint: "[site <name> | web-config <stack> | pool <name> | ssl <domain> |
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

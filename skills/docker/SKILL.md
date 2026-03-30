@@ -5,7 +5,7 @@ argument-hint: "[dockerfile <stack> | compose <services...> | swarm <stack> | k8
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

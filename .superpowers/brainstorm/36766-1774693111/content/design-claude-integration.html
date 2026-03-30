@@ -1,0 +1,246 @@
+<h2>Section 5 — OSC Interceptor & Intégration Claude Code</h2>
+<p class="subtitle">Détection intelligente de Claude Code — sans modifier son protocole</p>
+
+<!-- Detection strategy -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">🔍 Stratégie de détection — 3 niveaux</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.9; color:#a0a0a0;">
+
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <div style="padding:4px 12px; background:rgba(158,206,106,0.2); border-radius:4px; color:#9ece6a; font-size:12px;">NIVEAU 1</div>
+        <span style="color:#9ece6a; font-size:14px;">Process Tree Detection</span>
+      </div>
+      <div style="margin-left:24px; color:#565f89;">
+        Pour chaque PTY, le daemon inspecte l'arbre de processus fils.<br>
+        Cherche : <span style="color:#e0af68;">claude</span>, <span style="color:#e0af68;">claude-code</span>, <span style="color:#e0af68;">node .../claude-code/cli.js</span><br>
+        Polling léger toutes les 2s via <span style="color:#7aa2f7;">sysinfo</span> crate.<br>
+        <span style="color:#9ece6a;">→ Résultat :</span> is_claude_active: bool per pane
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <div style="padding:4px 12px; background:rgba(224,175,104,0.2); border-radius:4px; color:#e0af68; font-size:12px;">NIVEAU 2</div>
+        <span style="color:#e0af68; font-size:14px;">OSC Sequence Interception</span>
+      </div>
+      <div style="margin-left:24px; color:#565f89;">
+        Le vte parser du daemon filtre les séquences OSC en temps réel.<br>
+        Claude Code émet des OSC pour : titre, statut, notifications, progress.<br><br>
+        <span style="color:#e0af68;">Séquences interceptées :</span><br>
+        <div style="margin-top:8px; padding:12px; background:rgba(0,0,0,0.3); border-radius:6px;">
+          <span style="color:#bb9af7;">OSC 0;</span><span style="color:#a0a0a0;">{title}</span> <span style="color:#565f89;">→ window/tab title (process name, cwd)</span><br>
+          <span style="color:#bb9af7;">OSC 7;</span><span style="color:#a0a0a0;">{uri}</span> <span style="color:#565f89;">→ current working directory</span><br>
+          <span style="color:#bb9af7;">OSC 9;</span><span style="color:#a0a0a0;">{text}</span> <span style="color:#565f89;">→ notification (desktop notification trigger)</span><br>
+          <span style="color:#bb9af7;">OSC 1337;</span><span style="color:#a0a0a0;">...</span> <span style="color:#565f89;">→ iTerm2-style: images, badges, marks</span><br>
+          <span style="color:#bb9af7;">OSC 633;</span><span style="color:#a0a0a0;">...</span> <span style="color:#565f89;">→ VS Code shell integration (command start/end/output)</span><br>
+        </div>
+        <br>
+        <span style="color:#9ece6a;">→ Résultat :</span> cwd, title, notifications, command boundaries
+      </div>
+    </div>
+
+    <div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <div style="padding:4px 12px; background:rgba(187,154,247,0.2); border-radius:4px; color:#bb9af7; font-size:12px;">NIVEAU 3</div>
+        <span style="color:#bb9af7; font-size:14px;">Output Pattern Analysis</span>
+      </div>
+      <div style="margin-left:24px; color:#565f89;">
+        Analyse heuristique du texte affiché dans le terminal.<br>
+        Détecte les patterns Claude Code sans dépendre des OSC.<br><br>
+        <span style="color:#e0af68;">Patterns reconnus :</span><br>
+        <div style="margin-top:8px; padding:12px; background:rgba(0,0,0,0.3); border-radius:6px;">
+          <span style="color:#9ece6a;">╭──────────────────╮</span> <span style="color:#565f89;">→ Claude Code box border = session active</span><br>
+          <span style="color:#e0af68;">⏺ Thinking...</span> <span style="color:#565f89;">→ status = Thinking</span><br>
+          <span style="color:#7aa2f7;">⏺ Using tool: Read</span> <span style="color:#565f89;">→ status = ToolUse("Read")</span><br>
+          <span style="color:#9ece6a;">✓ Created file.rs</span> <span style="color:#565f89;">→ event: FileCreated</span><br>
+          <span style="color:#9ece6a;">✓ Updated file.rs</span> <span style="color:#565f89;">→ event: FileUpdated</span><br>
+          <span style="color:#f7768e;">✗ Error: ...</span> <span style="color:#565f89;">→ status = Error</span><br>
+          <span style="color:#bb9af7;">claude ›</span> <span style="color:#565f89;">→ prompt ready = Idle</span><br>
+        </div>
+        <br>
+        <span style="color:#9ece6a;">→ Résultat :</span> ClaudeStatus { Idle | Thinking | ToolUse(tool) | Error(msg) }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Event system -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">📡 Event Bus — du daemon vers le GUI</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.9; color:#a0a0a0;">
+
+    <span style="color:#e0af68; font-size:14px;">ClaudeEvent enum :</span><br><br>
+
+    <div style="padding:16px; background:rgba(0,0,0,0.3); border-radius:8px; margin-bottom:16px;">
+      <span style="color:#bb9af7;">enum</span> <span style="color:#9ece6a;">ClaudeEvent</span> {<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">SessionDetected</span> { pane_id, pid },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">SessionEnded</span> { pane_id },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">StatusChanged</span> { pane_id, status: ClaudeStatus },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">Notification</span> { pane_id, title, body, urgency },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">FileModified</span> { pane_id, path, action: Created|Updated|Deleted },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">ToolUsed</span> { pane_id, tool_name, duration_ms },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">CommandBoundary</span> { pane_id, command, exit_code, duration_ms },<br>
+      &nbsp;&nbsp;<span style="color:#7aa2f7;">CwdChanged</span> { pane_id, new_cwd },<br>
+      }
+    </div>
+
+    <span style="color:#e0af68; font-size:14px;">Transport :</span><br>
+    <div style="margin-top:8px; margin-left:16px;">
+      Les events sont envoyés via le <span style="color:#7aa2f7;">control socket</span> (même canal que les commandes).<br>
+      Protocol : <span style="color:#9ece6a;">MessagePack</span> avec tag type pour distinguer Command / Response / Event.<br>
+      Le GUI s'abonne aux events au connect (<span style="color:#bb9af7;">Subscribe { event_types: Vec }</span>).<br>
+      <br>
+      <span style="color:#565f89;">Daemon ──[Event stream]──▶ GUI (async channel, non-blocking)</span><br>
+      <span style="color:#565f89;">CLI peut aussi s'abonner : </span><span style="color:#e0af68;">cmux events --follow --pane 3</span>
+    </div>
+  </div>
+</div>
+
+<!-- GUI rendering of Claude status -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">🖥️ Rendu GUI des statuts Claude Code</div>
+  <div class="mockup-body" style="padding:0; overflow:hidden;">
+
+    <!-- Tab examples -->
+    <div style="padding:16px; border-bottom:1px solid #3b4261;">
+      <span style="color:#e0af68; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Sidebar — Tabs avec statut Claude</span>
+    </div>
+
+    <div style="padding:12px; font-family:monospace; font-size:12px;">
+      <!-- Idle -->
+      <div style="padding:8px 12px; background:rgba(158,206,106,0.05); border-left:3px solid #9ece6a; margin-bottom:6px; border-radius:0 4px 4px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#c0caf5;">main</span>
+          <span style="padding:2px 8px; background:rgba(158,206,106,0.15); color:#9ece6a; font-size:10px; border-radius:3px;">● IDLE</span>
+        </div>
+        <div style="font-size:10px; color:#565f89; margin-top:2px;">⎇ feat/cmux-core · claude ›</div>
+      </div>
+
+      <!-- Thinking -->
+      <div style="padding:8px 12px; background:rgba(187,154,247,0.05); border-left:3px solid #bb9af7; margin-bottom:6px; border-radius:0 4px 4px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#c0caf5;">agents</span>
+          <span style="padding:2px 8px; background:rgba(187,154,247,0.15); color:#bb9af7; font-size:10px; border-radius:3px; animation:pulse 1.5s infinite;">⏺ THINKING</span>
+        </div>
+        <div style="font-size:10px; color:#565f89; margin-top:2px;">⎇ main · "Implémente le seqlock..."</div>
+      </div>
+
+      <!-- Tool use -->
+      <div style="padding:8px 12px; background:rgba(122,162,247,0.05); border-left:3px solid #7aa2f7; margin-bottom:6px; border-radius:0 4px 4px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#c0caf5;">refactor</span>
+          <span style="padding:2px 8px; background:rgba(122,162,247,0.15); color:#7aa2f7; font-size:10px; border-radius:3px;">🔧 Edit file.rs</span>
+        </div>
+        <div style="font-size:10px; color:#565f89; margin-top:2px;">⎇ feat/refactor · 3 files modified</div>
+      </div>
+
+      <!-- Error -->
+      <div style="padding:8px 12px; background:rgba(247,118,142,0.05); border-left:3px solid #f7768e; margin-bottom:6px; border-radius:0 4px 4px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#c0caf5;">debug</span>
+          <span style="padding:2px 8px; background:rgba(247,118,142,0.15); color:#f7768e; font-size:10px; border-radius:3px;">✗ ERROR</span>
+        </div>
+        <div style="font-size:10px; color:#565f89; margin-top:2px;">⎇ fix/auth · "Permission denied"</div>
+      </div>
+
+      <!-- No Claude -->
+      <div style="padding:8px 12px; border-left:3px solid #3b4261; border-radius:0 4px 4px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#565f89;">build</span>
+          <span style="font-size:10px; color:#3b4261;">no agent</span>
+        </div>
+        <div style="font-size:10px; color:#3b4261; margin-top:2px;">⎇ main · cargo build</div>
+      </div>
+    </div>
+
+    <!-- Notification overlay example -->
+    <div style="padding:16px; border-top:1px solid #3b4261;">
+      <span style="color:#e0af68; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Notification popup (overlay)</span>
+      <div style="margin-top:12px; padding:12px 16px; background:rgba(187,154,247,0.1); border:1px solid rgba(187,154,247,0.3); border-radius:8px; max-width:400px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="color:#bb9af7;">🤖</span>
+          <span style="color:#c0caf5; font-size:13px; font-weight:bold;">Claude Code — pane:agents</span>
+          <span style="color:#565f89; font-size:11px; margin-left:auto;">il y a 3s</span>
+        </div>
+        <div style="color:#a0a0a0; font-size:12px; line-height:1.5;">
+          ✓ Implémentation du seqlock terminée.<br>
+          3 fichiers créés, 1 modifié. Tests passent (12/12).
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px;">
+          <span style="padding:4px 12px; background:rgba(122,162,247,0.15); color:#7aa2f7; font-size:11px; border-radius:4px; cursor:pointer;">Focus pane</span>
+          <span style="padding:4px 12px; background:rgba(86,95,137,0.2); color:#565f89; font-size:11px; border-radius:4px; cursor:pointer;">Dismiss</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pane border indicator -->
+    <div style="padding:16px; border-top:1px solid #3b4261;">
+      <span style="color:#e0af68; font-size:12px; text-transform:uppercase; letter-spacing:1px;">Pane border — indicateur visuel</span>
+      <div style="margin-top:12px; display:flex; gap:16px; flex-wrap:wrap;">
+        <div style="padding:12px; border:2px solid #3b4261; border-radius:4px; min-width:120px; text-align:center;">
+          <div style="color:#565f89; font-size:11px;">Normal</div>
+          <div style="color:#3b4261; font-size:10px; margin-top:4px;">border standard</div>
+        </div>
+        <div style="padding:12px; border:2px solid #9ece6a; border-radius:4px; min-width:120px; text-align:center;">
+          <div style="color:#9ece6a; font-size:11px;">Claude Idle</div>
+          <div style="color:#565f89; font-size:10px; margin-top:4px;">green glow</div>
+        </div>
+        <div style="padding:12px; border:2px solid #bb9af7; border-radius:4px; min-width:120px; text-align:center; animation:glow-purple 1.5s infinite;">
+          <div style="color:#bb9af7; font-size:11px;">Claude Thinking</div>
+          <div style="color:#565f89; font-size:10px; margin-top:4px;">purple pulse</div>
+        </div>
+        <div style="padding:12px; border:2px solid #7aa2f7; border-radius:4px; min-width:120px; text-align:center;">
+          <div style="color:#7aa2f7; font-size:11px;">Claude ToolUse</div>
+          <div style="color:#565f89; font-size:10px; margin-top:4px;">blue solid</div>
+        </div>
+        <div style="padding:12px; border:2px solid #f7768e; border-radius:4px; min-width:120px; text-align:center;">
+          <div style="color:#f7768e; font-size:11px;">Claude Error</div>
+          <div style="color:#565f89; font-size:10px; margin-top:4px;">red alert</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Future: Mugiwara routing -->
+<div class="mockup">
+  <div class="mockup-header">🔮 Futur — Intégration Mugiwara (phase 2)</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.9; color:#a0a0a0;">
+    <span style="color:#565f89;">Ces fonctionnalités viendront après le multiplexeur de base :</span><br><br>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+      <div style="padding:12px; background:rgba(187,154,247,0.05); border:1px solid rgba(187,154,247,0.15); border-radius:6px;">
+        <span style="color:#bb9af7;">Agent Spawner</span><br>
+        <span style="color:#565f89; font-size:12px;">cmux agent spawn --skill chopper</span><br>
+        <span style="color:#565f89; font-size:12px;">→ ouvre un pane, lance claude, injecte le prompt</span>
+      </div>
+      <div style="padding:12px; background:rgba(187,154,247,0.05); border:1px solid rgba(187,154,247,0.15); border-radius:6px;">
+        <span style="color:#bb9af7;">Multi-Agent Dashboard</span><br>
+        <span style="color:#565f89; font-size:12px;">Vue dédiée : tous les agents actifs</span><br>
+        <span style="color:#565f89; font-size:12px;">Status, logs, resource usage</span>
+      </div>
+      <div style="padding:12px; background:rgba(187,154,247,0.05); border:1px solid rgba(187,154,247,0.15); border-radius:6px;">
+        <span style="color:#bb9af7;">Context Sharing</span><br>
+        <span style="color:#565f89; font-size:12px;">Panes Claude partagent un contexte projet</span><br>
+        <span style="color:#565f89; font-size:12px;">Résultats d'un agent injectés dans un autre</span>
+      </div>
+      <div style="padding:12px; background:rgba(187,154,247,0.05); border:1px solid rgba(187,154,247,0.15); border-radius:6px;">
+        <span style="color:#bb9af7;">Mugiwara Router</span><br>
+        <span style="color:#565f89; font-size:12px;">Command palette : "debug this" → spawn Chopper</span><br>
+        <span style="color:#565f89; font-size:12px;">Routing intelligent basé sur le contexte pane</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes glow-purple {
+  0%, 100% { box-shadow: 0 0 4px rgba(187,154,247,0.3); }
+  50% { box-shadow: 0 0 12px rgba(187,154,247,0.6); }
+}
+</style>

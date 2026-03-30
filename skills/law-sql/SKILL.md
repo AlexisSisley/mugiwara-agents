@@ -11,7 +11,7 @@ argument-hint: "[requete SQL, fichier a convertir, schema a generer, ou probleme
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(ls *), Bash(python *), Bash(psql *), Bash(mysql *), Bash(sqlite3 *), Bash(sqlcmd *), Bash(pip *)
 ---
 

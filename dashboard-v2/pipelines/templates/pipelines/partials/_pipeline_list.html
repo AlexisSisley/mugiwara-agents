@@ -1,0 +1,57 @@
+{% load dashboard_tags %}
+
+{% if runs %}
+<div class="glass-table-wrap">
+    <table class="glass-table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Pipeline</th>
+                <th>Steps</th>
+                <th>Started</th>
+                <th>Duration</th>
+                <th>Session</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in runs %}
+            <tr class="pipeline-run-row">
+                <td>
+                    <button class="neon-btn neon-btn--sm"
+                            hx-get="{% url 'pipeline_steps' run.session_id %}"
+                            hx-target="#steps-{{ forloop.counter }}"
+                            hx-swap="innerHTML"
+                            aria-label="Expand steps">
+                        &#9654;
+                    </button>
+                </td>
+                <td>
+                    <span class="neon-badge neon-badge--pipeline">
+                        {{ run.name|default:"unknown" }}
+                    </span>
+                </td>
+                <td>{{ run.step_count }}</td>
+                <td>{{ run.start|timeago }}</td>
+                <td>
+                    {% if run.duration_seconds > 60 %}
+                        {{ run.duration_seconds|floatformat:"0" }}s
+                    {% elif run.duration_seconds > 0 %}
+                        {{ run.duration_seconds }}s
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="mono text-dimmed" style="font-size: 11px;">
+                    {{ run.session_id|truncate_id:16 }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6" id="steps-{{ forloop.counter }}" class="pipeline-steps-cell"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+{% include "components/_empty_state.html" with title="No pipeline runs" message="Pipeline executions will appear here when you use Mugiwara pipelines." icon="empty" %}
+{% endif %}

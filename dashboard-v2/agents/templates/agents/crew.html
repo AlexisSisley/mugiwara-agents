@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static dashboard_tags %}
+
+{% block title %}Crew{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+{% include "components/_filters.html" with filters=filters hx_target="#crew-grid" hx_url="/crew/" %}
+
+<div class="crew-summary" style="margin: var(--spacing-md) 0; color: var(--text-muted);">
+    {{ total_count }} agent{{ total_count|pluralize }} found
+</div>
+
+<!-- Agent grid (HTMX target) -->
+<div id="crew-grid">
+    {% include "agents/partials/_crew_grid.html" %}
+</div>
+{% endblock %}

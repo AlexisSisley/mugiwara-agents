@@ -5,7 +5,7 @@ argument-hint: "[auth <provider> | firestore <collection> | rules <service> | ho
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

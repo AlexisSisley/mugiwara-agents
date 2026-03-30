@@ -1,0 +1,3 @@
+{# Usage: {% include "components/_badge.html" with label="haute" type="haute" %} #}
+{# Types: haute, moyenne, basse, subagent, skill, pipeline, success, error, neutral #}
+<span class="neon-badge neon-badge--{{ type|default:'neutral' }}">{{ label }}</span>

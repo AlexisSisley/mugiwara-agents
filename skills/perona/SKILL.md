@@ -10,7 +10,7 @@ argument-hint: "[specifications d'API, analyse Bartholomew, ou fichier Swagger/O
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(ls *)
 ---
 

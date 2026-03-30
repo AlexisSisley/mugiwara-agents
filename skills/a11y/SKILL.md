@@ -10,7 +10,7 @@ argument-hint: "[audit <url> | wcag <criterion> | aria <pattern> | remediate <co
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *)
 ---
 

@@ -1,0 +1,39 @@
+# ============================================================
+# Preset: Data Engineering
+# For: Python + dbt + SQL + BI + MLOps projects
+# ============================================================
+version: 2
+preset: data-engineering
+description: "Data engineering & analytics (Python, dbt, SQL, Spark, BI, MLOps)"
+
+detected_stacks:
+  - python
+  - dbt
+  - spark
+  - airflow
+  - dagster
+  - jupyter
+
+agents:
+  active:
+    # Core crew (subagents)
+    - chopper      # Debug & Diagnostic
+    - franky       # Code Review
+    - nami         # QA & Tests
+    - sanji        # Architecture
+    - sanji-python # Scaffold Python
+    - robin        # System Cartography
+    - brook        # Documentation
+    - usopp        # DevOps & CI/CD
+    - jinbe        # Security
+    - luffy        # Synthesis & Roadmap
+    - zorro        # Business Analysis
+    # Data specialists
+    - law          # Data Engineering
+    - law-sql      # SQL Specialist
+    - magellan     # DBA
+    - hawkins      # BI & Data Viz
+    - katakuri     # AI/ML Ops
+  pipelines:
+    - mugiwara     # Full pipeline
+    - incident     # Incident response

@@ -5,7 +5,7 @@ argument-hint: "[firewall <platform> | dns <zone> | lb <backend> | vpn <type> | 
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

@@ -9,7 +9,7 @@ argument-hint: "[<chemin-vers-document> | summarize <file> | extract <file> <wha
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(wc *), Bash(ls *), Bash(file *), Bash(head *), Bash(tail *), Bash(jq *), Bash(csvtool *), Bash(xmllint *)
 ---
 

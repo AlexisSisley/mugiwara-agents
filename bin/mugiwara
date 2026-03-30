@@ -34,6 +34,8 @@ source "$LIB_DIR/cmd_update.sh"
 source "$LIB_DIR/cmd_list.sh"
 source "$LIB_DIR/cmd_search.sh"
 source "$LIB_DIR/cmd_info.sh"
+source "$LIB_DIR/cmd_project.sh"
+source "$LIB_DIR/cmd_guardrails.sh"
 
 # ── Global flags ─────────────────────────────────────────────
 VERBOSE=0
@@ -62,6 +64,8 @@ show_help() {
     echo "    list                     List installed and available agents"
     echo "    search <query>           Search agents by name or description"
     echo "    info <agent>             Show detailed agent information"
+    echo "    project <action>         Project configuration (init, add, remove, list, preset, sync)"
+    echo "    guardrails <action>      Agent guardrails (init, check, reset)"
     echo "    version                  Show CLI version"
     echo "    help                     Show this help message"
     echo ""
@@ -78,6 +82,9 @@ show_help() {
     echo "    mugiwara list --installed       Show only installed agents"
     echo "    mugiwara search \"qa\"             Search for QA-related agents"
     echo "    mugiwara info zorro             Show details about Zorro"
+    echo "    mugiwara project init           Initialize Mugiwara in a project"
+    echo "    mugiwara project add caesar     Add an agent to the project"
+    echo "    mugiwara project sync           Regenerate CLAUDE.md"
     echo ""
     echo -e "  ${DIM}https://github.com/AlexisSisley/mugiwara-agents${NC}"
     echo ""
@@ -192,6 +199,14 @@ main() {
             ;;
         version|-V|--version)
             show_version
+            ;;
+        project)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_project "${args[@]+"${args[@]}"}"
+            ;;
+        guardrails)
+            [[ "$QUIET" != "1" ]] && show_banner
+            cmd_guardrails "${args[@]+"${args[@]}"}"
             ;;
         self-update)
             [[ "$QUIET" != "1" ]] && show_banner

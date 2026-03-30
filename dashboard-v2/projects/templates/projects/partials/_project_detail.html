@@ -1,0 +1,90 @@
+{% load dashboard_tags %}
+
+<div class="project-detail">
+    <!-- Meta badges -->
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--spacing-md);">
+        <span class="neon-badge neon-badge--{{ project.category|badge_class }}">{{ project.category }}</span>
+        {% if project.stack %}
+            <span class="neon-badge neon-badge--neutral">{{ project.stack }}</span>
+        {% endif %}
+        {% if project.has_mugiwara %}
+            <span class="neon-badge neon-badge--subagent">Mugiwara</span>
+        {% endif %}
+        {% if project.is_dirty %}
+            <span class="neon-badge neon-badge--moyenne">Dirty</span>
+        {% endif %}
+    </div>
+
+    <!-- Git info -->
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Git</h4>
+        <p style="color: var(--text-secondary); margin: 0; font-size: 13px; line-height: 1.8;">
+            <strong>Branch:</strong> {{ project.branch|default:"-" }}<br>
+            <strong>Last commit:</strong> {{ project.last_commit|default:"-" }}<br>
+            <strong>Date:</strong> {{ project.last_commit_date|default:"-" }}
+        </p>
+    </div>
+
+    <!-- Path -->
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Path</h4>
+        <code class="mono text-dimmed" style="font-size: 12px; word-break: break-all;">{{ project.path }}</code>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+        {% include "components/_stat_card.html" with title="Invocations" value=project.invocations|format_number icon="zap" %}
+        {% if project.last_used %}
+            {% include "components/_stat_card.html" with title="Last Used" value=project.last_used|timeago icon="clock" %}
+        {% endif %}
+    </div>
+
+    <!-- Docs -->
+    {% if project.docs %}
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Documentation</h4>
+        <ul style="margin: 0; padding: 0 0 0 16px; color: var(--text-secondary); font-size: 13px;">
+            {% for doc in project.docs %}
+            <li>{{ doc }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Top Agents -->
+    {% if top_agents %}
+    <h4 style="margin-top: var(--spacing-lg); color: var(--text-primary);">Top Agents</h4>
+    <div class="glass-table-wrap">
+        <table class="glass-table">
+            <thead><tr><th>Agent</th><th>Calls</th></tr></thead>
+            <tbody>
+                {% for a in top_agents %}
+                <tr>
+                    <td><span class="neon-badge neon-badge--{{ a.agent|badge_class }}">{{ a.agent }}</span></td>
+                    <td>{{ a.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Recent Calls -->
+    {% if recent_calls %}
+    <h4 style="margin-top: var(--spacing-lg); color: var(--text-primary);">Recent Activity</h4>
+    <div class="glass-table-wrap">
+        <table class="glass-table">
+            <thead><tr><th>Time</th><th>Agent</th><th>Event</th></tr></thead>
+            <tbody>
+                {% for call in recent_calls %}
+                <tr>
+                    <td>{{ call.timestamp|timeago }}</td>
+                    <td>{{ call.agent }}</td>
+                    <td>{{ call.event }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>

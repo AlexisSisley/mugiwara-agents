@@ -1,0 +1,105 @@
+<h2>Architecture cmux — 3 approches</h2>
+<p class="subtitle">Choisis l'approche qui correspond le mieux à ta vision</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>🏗️ Monolithe modulaire</h3>
+      <p><strong>Un seul binaire</strong> qui fait tout : daemon + GUI dans le même process.</p>
+      <div style="margin-top:12px; padding:16px; background:rgba(255,255,255,0.03); border-radius:8px; font-family:monospace; font-size:13px; line-height:1.8; color:#a0a0a0;">
+        <span style="color:#7aa2f7;">cmux</span> (single process)<br>
+        ├── <span style="color:#9ece6a;">PTY Manager</span> (portable-pty, vte parsing)<br>
+        ├── <span style="color:#9ece6a;">Layout Engine</span> (workspace → tab → split tree)<br>
+        ├── <span style="color:#9ece6a;">GPU Renderer</span> (wgpu, glyph atlas, grid)<br>
+        ├── <span style="color:#9ece6a;">OSC Interceptor</span> (Claude Code detection)<br>
+        ├── <span style="color:#9ece6a;">Session Store</span> (state persistence on disk)<br>
+        └── <span style="color:#9ece6a;">Config / Keybinds</span>
+      </div>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>✅ Avantages</h4><ul>
+          <li>Simple à développer et débugger</li>
+          <li>Pas d'IPC, tout en mémoire directe</li>
+          <li>Un seul binaire à distribuer</li>
+        </ul></div>
+        <div class="cons"><h4>❌ Inconvénients</h4><ul>
+          <li>Si le GUI crash, les PTY meurent aussi</li>
+          <li>Pas de persistance totale possible</li>
+          <li>Pas d'accès distant (SSH + attach)</li>
+        </ul></div>
+      </div>
+      <p style="margin-top:8px; color:#f7768e;"><strong>⚠️ Incompatible avec ton choix de persistance totale</strong></p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>⭐ Client-Serveur classique (recommandé)</h3>
+      <p><strong>Daemon + Client GUI</strong> séparés. Le daemon gère les PTY, le client rend l'UI.</p>
+      <div style="margin-top:12px; padding:16px; background:rgba(255,255,255,0.03); border-radius:8px; font-family:monospace; font-size:13px; line-height:1.8; color:#a0a0a0;">
+        <span style="color:#f7768e;">cmux-daemon</span> (background process, always running)<br>
+        ├── <span style="color:#9ece6a;">PTY Manager</span> (spawn, resize, I/O)<br>
+        ├── <span style="color:#9ece6a;">Session Registry</span> (workspaces, tabs, panes)<br>
+        ├── <span style="color:#9ece6a;">Ring Buffer Pool</span> (shared mem per PTY)<br>
+        ├── <span style="color:#9ece6a;">OSC Interceptor</span> (Claude Code signals)<br>
+        ├── <span style="color:#9ece6a;">Control Socket</span> (commands in/out)<br>
+        └── <span style="color:#9ece6a;">State Persistence</span> (disk save/restore)<br>
+        <br>
+        <span style="color:#7aa2f7;">cmux-gui</span> (connects to daemon)<br>
+        ├── <span style="color:#9ece6a;">GPU Renderer</span> (wgpu, reads shared mem)<br>
+        ├── <span style="color:#9ece6a;">Layout Engine</span> (tree → screen rects)<br>
+        ├── <span style="color:#9ece6a;">Input Handler</span> (keybinds → control socket)<br>
+        ├── <span style="color:#9ece6a;">Widget System</span> (tabs, statusbar, panels)<br>
+        └── <span style="color:#9ece6a;">Theme Engine</span> (fonts, colors, styles)<br>
+        <br>
+        <span style="color:#bb9af7;">cmux</span> (CLI, thin client)<br>
+        └── <span style="color:#9ece6a;">Control Socket Client</span> (cmux split, cmux new-tab...)
+      </div>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>✅ Avantages</h4><ul>
+          <li>Persistance totale — GUI crash ≠ perte de sessions</li>
+          <li>CLI scriptable (cmux split-right, cmux send-keys)</li>
+          <li>Possible d'attacher plusieurs clients (SSH remote)</li>
+          <li>Architecture éprouvée (c'est ce que fait tmux)</li>
+        </ul></div>
+        <div class="cons"><h4>❌ Inconvénients</h4><ul>
+          <li>IPC shared memory + socket à implémenter</li>
+          <li>Deux binaires à builder et synchroniser</li>
+          <li>Complexité de démarrage (daemon auto-start)</li>
+        </ul></div>
+      </div>
+      <p style="margin-top:8px; color:#9ece6a;"><strong>✅ Correspond exactement à tes choix</strong></p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>🧩 Micro-services locaux</h3>
+      <p><strong>Plusieurs daemons spécialisés</strong> qui communiquent entre eux.</p>
+      <div style="margin-top:12px; padding:16px; background:rgba(255,255,255,0.03); border-radius:8px; font-family:monospace; font-size:13px; line-height:1.8; color:#a0a0a0;">
+        <span style="color:#f7768e;">cmux-pty-server</span> (PTY lifecycle only)<br>
+        <span style="color:#f7768e;">cmux-session-server</span> (workspace/tab/split state)<br>
+        <span style="color:#f7768e;">cmux-osc-watcher</span> (Claude Code signal extraction)<br>
+        <span style="color:#f7768e;">cmux-agent-broker</span> (Mugiwara routing, future)<br>
+        <span style="color:#7aa2f7;">cmux-gui</span> (rendering, connects to all)<br>
+        <span style="color:#bb9af7;">cmux</span> (CLI, connects to session-server)
+      </div>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>✅ Avantages</h4><ul>
+          <li>Chaque service testable et remplaçable isolément</li>
+          <li>Extensibilité maximale (plugin = nouveau service)</li>
+          <li>Crash d'un service n'affecte pas les autres</li>
+        </ul></div>
+        <div class="cons"><h4>❌ Inconvénients</h4><ul>
+          <li>Over-engineering pour un outil personnel</li>
+          <li>Latence IPC multipliée (N services × M connexions)</li>
+          <li>Orchestration complexe (qui démarre quoi ?)</li>
+          <li>Debugging distribué, même en local</li>
+        </ul></div>
+      </div>
+      <p style="margin-top:8px; color:#e0af68;"><strong>⚡ Puissant mais probablement excessif au début</strong></p>
+    </div>
+  </div>
+</div>

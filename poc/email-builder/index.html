@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email HTML Builder — Mugiwara PoC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-hover: rgba(255, 255, 255, 0.10);
+      --text: #f0f0f0;
+      --text-muted: #a0a0b0;
+      --accent: #7c5cfc;
+      --accent-glow: rgba(124, 92, 252, 0.3);
+      --danger: #ff6b6b;
+      --success: #51cf66;
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      background: #0a0a1a;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Animated gradient background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(124, 92, 252, 0.25), transparent),
+        radial-gradient(ellipse 60% 80% at 80% 80%, rgba(236, 72, 153, 0.2), transparent),
+        radial-gradient(ellipse 50% 50% at 50% 50%, rgba(56, 189, 248, 0.15), transparent);
+      animation: bgShift 12s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+
+    @keyframes bgShift {
+      0%   { transform: scale(1) translate(0, 0); }
+      50%  { transform: scale(1.1) translate(-2%, 3%); }
+      100% { transform: scale(1) translate(2%, -2%); }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #7c5cfc, #ec4899, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+
+    /* Glass panels */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 28px;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* Form fields */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    input[type="email"],
+    input[type="text"] {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    input::placeholder { color: rgba(255, 255, 255, 0.2); }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-bottom: none;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      flex-wrap: wrap;
+    }
+
+    .toolbar button {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toolbar button:hover {
+      background: var(--glass-hover);
+      color: var(--text);
+      border-color: var(--glass-border);
+    }
+
+    .toolbar button:active {
+      transform: scale(0.96);
+    }
+
+    /* Editor */
+    .editor {
+      min-height: 180px;
+      max-height: 350px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      padding: 18px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      outline: none;
+    }
+
+    .editor:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .editor:empty::before {
+      content: 'Composez votre email ici...';
+      color: rgba(255, 255, 255, 0.2);
+      pointer-events: none;
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(12px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #9b7bfc);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px var(--accent-glow);
+    }
+
+    .btn-secondary {
+      background: var(--glass-bg);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--glass-hover);
+    }
+
+    .btn-success {
+      background: rgba(81, 207, 102, 0.15);
+      color: var(--success);
+      border-color: rgba(81, 207, 102, 0.3);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    /* Preview iframe */
+    .preview-frame {
+      width: 100%;
+      height: 500px;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      background: white;
+    }
+
+    /* Source code */
+    .source-container {
+      display: none;
+      margin-top: 16px;
+    }
+
+    .source-container.visible { display: block; }
+
+    .source-code {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .source-code code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #c4b5fd;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 14px 24px;
+      background: rgba(81, 207, 102, 0.15);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(81, 207, 102, 0.3);
+      border-radius: var(--radius-sm);
+      color: var(--success);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Color picker row */
+    .color-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .color-row label { margin-bottom: 0; }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: 2px solid var(--glass-border);
+      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 3px; }
+    input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .header h1 { font-size: 1.6rem; }
+      .glass { padding: 20px; }
+      .actions { flex-direction: column; }
+      .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <div class="header">
+    <h1>Email HTML Builder</h1>
+    <p>Composez, visualisez et exportez vos emails HTML en temps reel</p>
+  </div>
+
+  <!-- Form Section -->
+  <div class="glass">
+    <div class="section-title">Parametres du mail</div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="to">Destinataire</label>
+        <input type="email" id="to" placeholder="contact@exemple.com">
+      </div>
+      <div class="field">
+        <label for="subject">Objet</label>
+        <input type="text" id="subject" placeholder="Objet de votre email">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label for="sender">Nom de l'expediteur</label>
+        <input type="text" id="sender" placeholder="Mon Entreprise" value="Mon Entreprise">
+      </div>
+      <div class="field">
+        <label>Couleur du header</label>
+        <div class="color-row">
+          <input type="color" id="headerColor" value="#7c5cfc">
+          <span id="headerColorLabel" style="font-size: 0.85rem; color: var(--text-muted);">#7c5cfc</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field full">
+      <label>Contenu de l'email</label>
+      <div class="toolbar">
+        <button onclick="execCmd('bold')" title="Gras"><strong>B</strong></button>
+        <button onclick="execCmd('italic')" title="Italique"><em>I</em></button>
+        <button onclick="execCmd('underline')" title="Souligner"><u>U</u></button>
+        <button onclick="execCmd('strikeThrough')" title="Barre">S</button>
+        <button onclick="insertLink()" title="Lien">&#128279; Lien</button>
+        <button onclick="execCmd('insertUnorderedList')" title="Liste a puces">&#8226; Liste</button>
+        <button onclick="execCmd('insertOrderedList')" title="Liste numerotee">1. Liste</button>
+        <button onclick="execCmd('formatBlock', 'h2')" title="Titre">H2</button>
+        <button onclick="execCmd('formatBlock', 'h3')" title="Sous-titre">H3</button>
+        <button onclick="execCmd('removeFormat')" title="Nettoyer le format">&#10060; Clear</button>
+      </div>
+      <div class="editor" id="editor" contenteditable="true"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="copyHTML()">&#128203; Copier le HTML</button>
+      <button class="btn btn-secondary" onclick="toggleSource()">&#128065; Voir le code source</button>
+      <button class="btn btn-secondary" onclick="downloadHTML()">&#11015; Telecharger .html</button>
+    </div>
+
+    <div class="source-container" id="sourceContainer">
+      <div class="source-code">
+        <code id="sourceCode"></code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="glass">
+    <div class="section-title">Apercu du mail</div>
+    <iframe class="preview-frame" id="preview" sandbox="allow-same-origin"></iframe>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">&#9989; HTML copie dans le presse-papier !</div>
+
+<script>
+  const editor = document.getElementById('editor');
+  const preview = document.getElementById('preview');
+  const toField = document.getElementById('to');
+  const subjectField = document.getElementById('subject');
+  const senderField = document.getElementById('sender');
+  const headerColorField = document.getElementById('headerColor');
+  const headerColorLabel = document.getElementById('headerColorLabel');
+  const sourceContainer = document.getElementById('sourceContainer');
+  const sourceCode = document.getElementById('sourceCode');
+  const toast = document.getElementById('toast');
+
+  // Default content
+  editor.innerHTML = `
+    <h2>Bienvenue !</h2>
+    <p>Bonjour,</p>
+    <p>Merci de votre interet pour nos services. Nous sommes ravis de vous compter parmi nos clients.</p>
+    <p>N'hesitez pas a nous contacter si vous avez des questions.</p>
+    <p>Cordialement,<br>L'equipe</p>
+  `;
+
+  // Toolbar command
+  function execCmd(cmd, value = null) {
+    if (cmd === 'formatBlock') {
+      document.execCommand(cmd, false, `<${value}>`);
+    } else {
+      document.execCommand(cmd, false, value);
+    }
+    editor.focus();
+    updatePreview();
+  }
+
+  function insertLink() {
+    const url = prompt('URL du lien :', 'https://');
+    if (url) {
+      document.execCommand('createLink', false, url);
+      updatePreview();
+    }
+  }
+
+  // Generate email HTML
+  function generateEmailHTML() {
+    const sender = senderField.value || 'Mon Entreprise';
+    const subject = subjectField.value || 'Sans objet';
+    const color = headerColorField.value || '#7c5cfc';
+    const content = editor.innerHTML || '<p>Contenu vide</p>';
+
+    return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHTML(subject)}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f4f7;font-family:Arial,Helvetica,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f7;">
+    <tr>
+      <td align="center" style="padding:40px 20px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+          <!-- HEADER -->
+          <tr>
+            <td style="background:linear-gradient(135deg, ${color}, ${adjustColor(color, 30)});padding:36px 40px;border-radius:16px 16px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td>
+                    <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">${escapeHTML(sender)}</h1>
+                    <p style="margin:6px 0 0;font-size:14px;color:rgba(255,255,255,0.8);font-weight:300;">${escapeHTML(subject)}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- BODY -->
+          <tr>
+            <td style="background-color:#ffffff;padding:40px;font-size:15px;line-height:1.7;color:#333333;">
+              ${content}
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="background-color:#fafafa;padding:28px 40px;border-radius:0 0 16px 16px;border-top:1px solid #eee;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="font-size:12px;color:#999999;text-align:center;line-height:1.6;">
+                    <p style="margin:0;">&copy; ${new Date().getFullYear()} ${escapeHTML(sender)}. Tous droits reserves.</p>
+                    <p style="margin:4px 0 0;">
+                      <a href="#" style="color:${color};text-decoration:none;font-weight:500;">Se desinscrire</a>
+                      &nbsp;&middot;&nbsp;
+                      <a href="#" style="color:${color};text-decoration:none;font-weight:500;">Preferences</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  }
+
+  function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function adjustColor(hex, amount) {
+    hex = hex.replace('#', '');
+    const r = Math.min(255, parseInt(hex.slice(0,2), 16) + amount);
+    const g = Math.min(255, parseInt(hex.slice(2,4), 16) + amount);
+    const b = Math.min(255, parseInt(hex.slice(4,6), 16) + amount);
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+  }
+
+  // Update preview
+  function updatePreview() {
+    const html = generateEmailHTML();
+    preview.srcdoc = html;
+
+    if (sourceContainer.classList.contains('visible')) {
+      sourceCode.textContent = html;
+    }
+  }
+
+  // Copy HTML
+  async function copyHTML() {
+    const html = generateEmailHTML();
+    try {
+      await navigator.clipboard.writeText(html);
+      showToast('HTML copie dans le presse-papier !');
+    } catch {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = html;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast('HTML copie (fallback) !');
+    }
+  }
+
+  // Toggle source
+  function toggleSource() {
+    sourceContainer.classList.toggle('visible');
+    if (sourceContainer.classList.contains('visible')) {
+      sourceCode.textContent = generateEmailHTML();
+    }
+  }
+
+  // Download HTML
+  function downloadHTML() {
+    const html = generateEmailHTML();
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `email-${Date.now()}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Fichier HTML telecharge !');
+  }
+
+  // Toast
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Event listeners
+  editor.addEventListener('input', updatePreview);
+  toField.addEventListener('input', updatePreview);
+  subjectField.addEventListener('input', updatePreview);
+  senderField.addEventListener('input', updatePreview);
+  headerColorField.addEventListener('input', () => {
+    headerColorLabel.textContent = headerColorField.value;
+    updatePreview();
+  });
+
+  // Initial preview
+  updatePreview();
+</script>
+
+</body>
+</html>

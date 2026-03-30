@@ -9,7 +9,7 @@ argument-hint: "[systeme, service ou fonctionnalite a optimiser / profiler]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(npm *), Bash(npx *), Bash(node *), Bash(python *), Bash(go *), Bash(cargo *), Bash(dotnet *), Bash(k6 *), Bash(ab *), Bash(curl *)
 ---
 

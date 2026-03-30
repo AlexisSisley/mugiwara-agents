@@ -10,7 +10,7 @@ argument-hint: "[decrivez votre besoin en accessibilite ou le composant a audite
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *)
 ---
 

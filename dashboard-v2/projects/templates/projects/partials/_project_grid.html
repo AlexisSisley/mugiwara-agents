@@ -1,0 +1,63 @@
+{% load dashboard_tags %}
+
+{% if projects %}
+<div class="card-grid">
+    {% for project in projects %}
+    <div class="glass-card crew-card">
+
+        <a href="{% url 'project_page' project.name %}" style="text-decoration: none; color: inherit;">
+            <div class="crew-card__header">
+                <span class="crew-card__name">{{ project.name }}</span>
+                <span class="neon-badge neon-badge--{{ project.category|badge_class }}">{{ project.category }}</span>
+            </div>
+
+            <div class="flex items-center gap-1" style="margin-bottom: 8px;">
+                {% if project.stack %}
+                    <span class="neon-badge neon-badge--neutral">{{ project.stack }}</span>
+                {% endif %}
+                {% if project.branch %}
+                    <span class="text-dimmed" style="font-size: 11px;">&#9741; {{ project.branch }}</span>
+                {% endif %}
+                {% if project.is_dirty %}
+                    <span class="neon-badge neon-badge--moyenne" title="Uncommitted changes">dirty</span>
+                {% endif %}
+            </div>
+
+            {% if project.last_commit %}
+            <p class="crew-card__desc truncate">{{ project.last_commit }}</p>
+            {% endif %}
+
+            <div class="crew-card__footer">
+                <span class="crew-card__stat">&#9889; {{ project.invocations|format_number }}</span>
+                {% if project.has_mugiwara %}
+                    <span class="neon-badge neon-badge--subagent" title="Has Mugiwara integration">&#9813;</span>
+                {% endif %}
+                {% if project.claude_session_count %}
+                    <span class="text-dimmed" style="font-size: 11px;">&#128172; {{ project.claude_session_count }} sessions</span>
+                {% endif %}
+                {% if project.docs %}
+                    <span class="text-dimmed" style="font-size: 11px;">&#128196; {{ project.docs|length }} docs</span>
+                {% endif %}
+            </div>
+        </a>
+
+        <div class="card-actions">
+            <button class="btn-action btn-claude"
+                    onclick="event.stopPropagation(); projectAction('{% url 'project_open' project.name %}');"
+                    title="Open Claude">Claude</button>
+            <button class="btn-action btn-yolo"
+                    onclick="event.stopPropagation(); projectAction('{% url 'project_open_yolo' project.name %}');"
+                    title="--dangerously-skip-permissions">YOLO</button>
+            <button class="btn-action btn-agent"
+                    onclick="event.stopPropagation(); openAgentPicker('{{ project.name }}', '{% url 'project_run_agent' project.name %}');"
+                    title="Run agent">Agent</button>
+            <button class="btn-action btn-explore"
+                    onclick="event.stopPropagation(); projectAction('{% url 'project_explore' project.name %}');"
+                    title="Open Explorer">Explorer</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+{% include "components/_empty_state.html" with title="No projects found" message="No projects found in the scanned directories." icon="folder" %}
+{% endif %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static dashboard_tags %}
+
+{% block title %}Overview{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sparklines
+    MugiCharts.renderSparkline('#sparkline-invocations', {{ sparkline_invocations|json_data }}, 'var(--accent-purple)');
+    MugiCharts.renderSparkline('#sparkline-sessions', {{ sparkline_sessions|json_data }}, 'var(--accent-pink)');
+
+    // Heatmap
+    MugiCharts.renderHeatmap('#heatmap', {{ heatmap_data|json_data }});
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- KPI Cards -->
+<div class="stats-grid">
+    {% include "components/_stat_card.html" with title="Total Invocations" value=total_invocations|format_number icon="zap" change=inv_change.value trend=inv_change.trend %}
+    {% include "components/_stat_card.html" with title="Sessions" value=total_sessions|format_number icon="users" %}
+    {% include "components/_stat_card.html" with title="Active Agents" value=unique_agents icon="cpu" %}
+    {% include "components/_stat_card.html" with title="Projects" value=active_projects icon="folder" %}
+</div>
+
+<!-- Sparklines row -->
+<div class="two-col">
+    <div class="glass-card">
+        <h3 class="card-title">Invocations (7 days)</h3>
+        <div id="sparkline-invocations" class="sparkline-container"></div>
+    </div>
+    <div class="glass-card glass-card--pink">
+        <h3 class="card-title">Sessions (7 days)</h3>
+        <div id="sparkline-sessions" class="sparkline-container"></div>
+    </div>
+</div>
+
+<!-- Heatmap -->
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
+    <h3 class="card-title">Activity Heatmap (30 days)</h3>
+    <div id="heatmap" class="heatmap-container"></div>
+</div>
+
+<!-- Activity Feed -->
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
+    <h3 class="card-title">Recent Activity</h3>
+    <div id="activity-feed">
+        {% include "agents/partials/_activity_feed.html" %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% load dashboard_tags %}
+
+<div class="decision-detail">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--spacing-md);">
+        <span class="neon-badge neon-badge--{{ decision.confiance|badge_class }}">
+            {{ decision.confiance }}
+        </span>
+        <span class="neon-badge neon-badge--{{ decision.resultat|badge_class }}">
+            {{ decision.resultat }}
+        </span>
+        {% if decision.category %}
+            <span class="neon-badge neon-badge--neutral">{{ decision.category }}</span>
+        {% endif %}
+    </div>
+
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Request</h4>
+        <p style="color: var(--text-secondary); margin: 0; line-height: 1.6;">{{ decision.demande }}</p>
+    </div>
+
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Route</h4>
+        <p style="color: var(--text-secondary); margin: 0;">
+            <strong>Agent:</strong> {{ decision.route_agent|default:"-" }}<br>
+            <strong>Route:</strong> {{ decision.route|default:"-" }}
+        </p>
+    </div>
+
+    {% if decision.sujet %}
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Subject</h4>
+        <p style="color: var(--text-secondary); margin: 0;">{{ decision.sujet }}</p>
+    </div>
+    {% endif %}
+
+    {% if decision.projet %}
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Project</h4>
+        <p style="color: var(--text-secondary); margin: 0;">{{ decision.projet }}</p>
+    </div>
+    {% endif %}
+
+    {% if decision.resultat_detail %}
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Result Detail</h4>
+        <p style="color: var(--text-secondary); margin: 0; line-height: 1.6;">{{ decision.resultat_detail }}</p>
+    </div>
+    {% endif %}
+
+    {% if decision.contexte %}
+    <div class="glass-card">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Context for next session</h4>
+        <p style="color: var(--text-secondary); margin: 0; line-height: 1.6;">{{ decision.contexte }}</p>
+    </div>
+    {% endif %}
+
+    <p class="text-dimmed" style="margin-top: var(--spacing-md); font-size: 12px;">
+        Date: {{ decision.date }}
+    </p>
+</div>

@@ -9,7 +9,7 @@ argument-hint: "[setup | dashboard <service> | alerts <service> | slo <service> 
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *)
 ---
 

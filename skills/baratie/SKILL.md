@@ -5,7 +5,7 @@ argument-hint: "[dossier du projet ou codebase a decouvrir]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static dashboard_tags %}
+
+{% block title %}Pipelines{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<div class="stats-grid">
+    {% include "components/_stat_card.html" with title="Total Runs" value=total_runs|format_number icon="chart" %}
+    {% include "components/_stat_card.html" with title="Unique Pipelines" value=unique_pipelines icon="cpu" %}
+</div>
+
+<!-- Filters -->
+{% include "components/_filters.html" with filters=filters hx_target="#pipeline-runs" hx_url="/pipelines/" %}
+
+<!-- Pipeline runs list -->
+<div id="pipeline-runs">
+    {% include "pipelines/partials/_pipeline_list.html" %}
+</div>
+{% endblock %}

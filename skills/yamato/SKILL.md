@@ -10,7 +10,7 @@ argument-hint: "[sujet de veille, stack à surveiller ou 'dashboard']"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Glob, Grep, Bash(curl *), Bash(cat *), Bash(date *), WebSearch, WebFetch
 ---
 

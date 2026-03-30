@@ -1,0 +1,70 @@
+{% load dashboard_tags %}
+
+<div class="crew-detail">
+    <div class="crew-detail__meta">
+        <span class="neon-badge neon-badge--{{ agent.role|badge_class }}">{{ agent.role }}</span>
+        {% if agent.elevated %}
+            <span class="neon-badge neon-badge--subagent">Elevated</span>
+        {% endif %}
+        {% if agent.version %}
+            <span class="neon-badge neon-badge--neutral">v{{ agent.version }}</span>
+        {% endif %}
+    </div>
+
+    <p class="crew-detail__desc" style="margin: var(--spacing-md) 0; color: var(--text-secondary);">
+        {{ agent.description }}
+    </p>
+
+    {% if agent.alias_of %}
+    <div class="glass-card" style="margin-bottom: var(--spacing-md); padding: var(--spacing-sm);">
+        <strong>Alias of:</strong> {{ agent.alias_of }}
+    </div>
+    {% endif %}
+
+    <!-- Stats -->
+    <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+        {% include "components/_stat_card.html" with title="Total Calls" value=total_invocations|format_number icon="zap" %}
+        {% include "components/_stat_card.html" with title="Last Used" value=last_used|timeago icon="clock" %}
+    </div>
+
+    <!-- Top Projects -->
+    {% if top_projects %}
+    <h4 style="margin-top: var(--spacing-lg); color: var(--text-primary);">Top Projects</h4>
+    <div class="glass-table-wrap">
+        <table class="glass-table">
+            <thead>
+                <tr><th>Project</th><th>Calls</th></tr>
+            </thead>
+            <tbody>
+                {% for p in top_projects %}
+                <tr>
+                    <td>{{ p.project }}</td>
+                    <td>{{ p.count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Recent Calls -->
+    {% if recent_calls %}
+    <h4 style="margin-top: var(--spacing-lg); color: var(--text-primary);">Recent Calls</h4>
+    <div class="glass-table-wrap">
+        <table class="glass-table">
+            <thead>
+                <tr><th>Time</th><th>Event</th><th>Project</th></tr>
+            </thead>
+            <tbody>
+                {% for call in recent_calls %}
+                <tr>
+                    <td>{{ call.timestamp|timeago }}</td>
+                    <td>{{ call.event }}</td>
+                    <td>{{ call.project|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>

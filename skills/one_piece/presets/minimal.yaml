@@ -1,0 +1,23 @@
+# ============================================================
+# Preset: Minimal
+# For: Small projects or when you want the core crew only
+# ============================================================
+version: 2
+preset: minimal
+description: "Core crew only (debug, review, QA, architecture, documentation)"
+
+detected_stacks: []
+
+agents:
+  active:
+    # Core crew only (subagents)
+    - chopper      # Debug & Diagnostic
+    - franky       # Code Review
+    - nami         # QA & Tests
+    - sanji        # Architecture
+    - robin        # System Cartography
+    - brook        # Documentation
+    - luffy        # Synthesis & Roadmap
+  pipelines:
+    - mugiwara     # Full pipeline
+    - incident     # Incident response

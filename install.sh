@@ -99,6 +99,24 @@ fi
 mkdir -p "$SCRIPT_DIR/logs"
 echo -e "  ${GREEN}[+]${NC} logs/ directory ready"
 
+# Copy presets to installed skill location
+PRESETS_SOURCE="$SCRIPT_DIR/skills/one_piece/presets"
+PRESETS_DEST="$SKILLS_DIR/one_piece/presets"
+if [ -d "$PRESETS_SOURCE" ]; then
+    mkdir -p "$PRESETS_DEST"
+    cp -r "$PRESETS_SOURCE/"* "$PRESETS_DEST/"
+    echo -e "  ${GREEN}[+]${NC} Presets: $(ls "$PRESETS_SOURCE" | wc -l) preset(s) installed"
+fi
+
+# Copy routing YAML to installed skill location
+ROUTING_SOURCE="$SCRIPT_DIR/skills/one_piece/routing"
+ROUTING_DEST="$SKILLS_DIR/one_piece/routing"
+if [ -d "$ROUTING_SOURCE" ]; then
+    mkdir -p "$ROUTING_DEST"
+    cp -r "$ROUTING_SOURCE/"* "$ROUTING_DEST/"
+    echo -e "  ${GREEN}[+]${NC} Routing: $(ls "$ROUTING_SOURCE" | wc -l) YAML file(s) installed"
+fi
+
 # Copy settings.json if not already present
 if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
     echo -e "  ${GREEN}[+]${NC} .claude/settings.json (hooks config) present"

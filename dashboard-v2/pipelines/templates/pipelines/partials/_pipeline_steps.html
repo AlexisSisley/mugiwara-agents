@@ -1,0 +1,25 @@
+{% load dashboard_tags %}
+
+{% if steps %}
+<div class="pipeline-steps">
+    {% for step in steps %}
+    <div class="pipeline-step glass-card" style="padding: 10px 14px; margin-bottom: 6px;">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1">
+                <span class="text-dimmed" style="font-size: 11px; width: 20px;">{{ forloop.counter }}.</span>
+                <span class="neon-badge neon-badge--{{ step.agent|badge_class }}">{{ step.agent }}</span>
+                <span class="text-muted" style="font-size: 12px;">{{ step.event }}</span>
+            </div>
+            <span class="text-dimmed" style="font-size: 11px;">{{ step.timestamp|timeago }}</span>
+        </div>
+        {% if step.args_preview %}
+        <p class="text-dimmed truncate" style="font-size: 11px; margin: 4px 0 0 24px; max-width: 500px;">
+            {{ step.args_preview|truncatewords:20 }}
+        </p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-dimmed" style="padding: 8px; font-size: 12px;">No steps found for this session.</p>
+{% endif %}

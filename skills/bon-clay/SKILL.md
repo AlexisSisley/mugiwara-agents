@@ -10,7 +10,7 @@ argument-hint: "[PROJECT_PATH et/ou description du projet — stack, theme, nive
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *), Bash(file *)
 ---
 

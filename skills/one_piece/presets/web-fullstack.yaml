@@ -1,0 +1,44 @@
+# ============================================================
+# Preset: Web Full-Stack
+# For: TypeScript/React/Next.js + DB + Docker + DevOps projects
+# ============================================================
+version: 2
+preset: web-fullstack
+description: "Full-stack web development (TypeScript, React, Next.js, databases, Docker, CI/CD)"
+
+detected_stacks:
+  - typescript
+  - javascript
+  - nextjs
+  - react
+  - vue
+  - angular
+  - svelte
+  - express
+  - nestjs
+
+agents:
+  active:
+    # Core crew (subagents)
+    - chopper      # Debug & Diagnostic
+    - franky       # Code Review
+    - nami         # QA & Tests
+    - sanji        # Architecture
+    - sanji-ts     # Scaffold TypeScript
+    - robin        # System Cartography
+    - brook        # Documentation
+    - usopp        # DevOps & CI/CD
+    - jinbe        # Security
+    - luffy        # Synthesis & Roadmap
+    - zorro        # Business Analysis
+    - vivi         # Product & UX
+    # Specialists
+    - iceburg      # Docker
+    - ace          # Performance
+    - magellan     # DBA
+  pipelines:
+    - mugiwara     # Full pipeline (Zorro > Sanji > Nami > Luffy)
+    - incident     # Incident response
+    - pre-launch   # Pre-deployment checklist
+    - onboard      # Developer onboarding
+    - api-postman  # API analysis + Postman

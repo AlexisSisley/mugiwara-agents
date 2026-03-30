@@ -11,7 +11,7 @@ argument-hint: "[type: qa|prod] [version, changelog, contexte de la release] [to
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(git log *), Bash(git diff *), Bash(git tag *), Bash(git show *), Bash(ls *), mcp__claude_ai_Gmail__gmail_get_profile, mcp__claude_ai_Gmail__gmail_create_draft
 ---
 

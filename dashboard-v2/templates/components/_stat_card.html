@@ -1,0 +1,26 @@
+{# Usage: {% include "components/_stat_card.html" with title="Invocations" value=total icon="zap" change="+12%" trend="up" %} #}
+<div class="glass-card neon-stat">
+    <div class="neon-stat__header">
+        <span class="neon-stat__icon" aria-hidden="true">
+            {% if icon == "zap" %}&#9889;{% endif %}
+            {% if icon == "users" %}&#128101;{% endif %}
+            {% if icon == "cpu" %}&#9881;{% endif %}
+            {% if icon == "folder" %}&#128194;{% endif %}
+            {% if icon == "chart" %}&#128200;{% endif %}
+            {% if icon == "shield" %}&#128737;{% endif %}
+            {% if icon == "clock" %}&#128339;{% endif %}
+            {% if icon == "star" %}&#11088;{% endif %}
+        </span>
+        <span class="neon-stat__title">{{ title }}</span>
+    </div>
+    <div class="neon-stat__value">{{ value }}</div>
+    {% if change %}
+        <div class="neon-stat__change {% if trend == 'up' %}neon-stat__change--up{% elif trend == 'down' %}neon-stat__change--down{% endif %}">
+            {% if trend == "up" %}&uarr;{% elif trend == "down" %}&darr;{% endif %}
+            {{ change }}
+        </div>
+    {% endif %}
+    {% if subtitle %}
+        <div class="neon-stat__subtitle">{{ subtitle }}</div>
+    {% endif %}
+</div>

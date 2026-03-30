@@ -1,0 +1,133 @@
+<h2>Section 1 — Architecture globale & workspace Cargo</h2>
+<p class="subtitle">Structure du projet Rust en workspace multi-crates</p>
+
+<div class="mockup">
+  <div class="mockup-header">Architecture Client-Serveur — Vue d'ensemble</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:2; color:#a0a0a0;">
+    <div style="display:flex; gap:32px; flex-wrap:wrap;">
+
+      <!-- Daemon -->
+      <div style="flex:1; min-width:300px; border:1px solid #3b4261; border-radius:8px; padding:16px;">
+        <div style="color:#f7768e; font-size:15px; font-weight:bold; margin-bottom:12px;">🔴 cmux-daemon</div>
+        <div style="padding:8px; background:rgba(247,118,142,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#f7768e;">pty-manager</span><br>
+          <span style="color:#565f89; font-size:12px;">portable-pty spawn/resize/kill</span><br>
+          <span style="color:#565f89; font-size:12px;">vte parsing → CellGrid per PTY</span><br>
+          <span style="color:#565f89; font-size:12px;">Écrit les cells dans shared memory</span>
+        </div>
+        <div style="padding:8px; background:rgba(247,118,142,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#f7768e;">session-registry</span><br>
+          <span style="color:#565f89; font-size:12px;">Workspace → Vec&lt;Tab&gt;</span><br>
+          <span style="color:#565f89; font-size:12px;">Tab → SplitTree (arbre binaire)</span><br>
+          <span style="color:#565f89; font-size:12px;">SplitNode::Leaf(PaneId) | SplitNode::Split { axis, ratio, left, right }</span>
+        </div>
+        <div style="padding:8px; background:rgba(247,118,142,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#f7768e;">osc-interceptor</span><br>
+          <span style="color:#565f89; font-size:12px;">Filtre les séquences OSC Claude Code</span><br>
+          <span style="color:#565f89; font-size:12px;">Émet des events (status, notification, progress)</span>
+        </div>
+        <div style="padding:8px; background:rgba(247,118,142,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#f7768e;">shm-pool</span><br>
+          <span style="color:#565f89; font-size:12px;">Ring buffer par PTY dans shared memory</span><br>
+          <span style="color:#565f89; font-size:12px;">Double-buffer : write-side (daemon) / read-side (GUI)</span>
+        </div>
+        <div style="padding:8px; background:rgba(247,118,142,0.08); border-radius:6px;">
+          <span style="color:#f7768e;">control-server</span><br>
+          <span style="color:#565f89; font-size:12px;">Named pipe (Windows) / Unix socket</span><br>
+          <span style="color:#565f89; font-size:12px;">MessagePack commands & responses</span>
+        </div>
+      </div>
+
+      <!-- Flux arrows -->
+      <div style="display:flex; flex-direction:column; justify-content:center; gap:16px; color:#565f89;">
+        <div style="text-align:center;">
+          <div style="color:#9ece6a;">shared memory</div>
+          <div style="font-size:20px;">◀══════▶</div>
+          <div style="font-size:11px;">ring buffers (CellGrid)</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="color:#7aa2f7;">named pipe</div>
+          <div style="font-size:20px;">◀──────▶</div>
+          <div style="font-size:11px;">commands (MessagePack)</div>
+        </div>
+      </div>
+
+      <!-- GUI -->
+      <div style="flex:1; min-width:300px; border:1px solid #3b4261; border-radius:8px; padding:16px;">
+        <div style="color:#7aa2f7; font-size:15px; font-weight:bold; margin-bottom:12px;">🔵 cmux-gui</div>
+        <div style="padding:8px; background:rgba(122,162,247,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#7aa2f7;">gpu-renderer</span><br>
+          <span style="color:#565f89; font-size:12px;">wgpu pipeline: glyph atlas + cell grid shader</span><br>
+          <span style="color:#565f89; font-size:12px;">Lit CellGrid depuis shared memory</span><br>
+          <span style="color:#565f89; font-size:12px;">60fps+ rendering, batched draw calls</span>
+        </div>
+        <div style="padding:8px; background:rgba(122,162,247,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#7aa2f7;">layout-engine</span><br>
+          <span style="color:#565f89; font-size:12px;">SplitTree → Rect calculations</span><br>
+          <span style="color:#565f89; font-size:12px;">Workspace tabs rendering</span><br>
+          <span style="color:#565f89; font-size:12px;">Resize handle hit-testing</span>
+        </div>
+        <div style="padding:8px; background:rgba(122,162,247,0.08); border-radius:6px; margin-bottom:8px;">
+          <span style="color:#7aa2f7;">input-handler</span><br>
+          <span style="color:#565f89; font-size:12px;">winit events → keybind resolution</span><br>
+          <span style="color:#565f89; font-size:12px;">Mouse: resize, focus, scroll</span><br>
+          <span style="color:#565f89; font-size:12px;">Keyboard → PTY write ou command</span>
+        </div>
+        <div style="padding:8px; background:rgba(122,162,247,0.08); border-radius:6px;">
+          <span style="color:#7aa2f7;">widget-system</span><br>
+          <span style="color:#565f89; font-size:12px;">Tab bar, status bar, command palette</span><br>
+          <span style="color:#565f89; font-size:12px;">Notification overlay</span><br>
+          <span style="color:#565f89; font-size:12px;">Claude Code status indicators</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLI -->
+    <div style="margin-top:24px; border:1px solid #3b4261; border-radius:8px; padding:16px;">
+      <div style="color:#bb9af7; font-size:15px; font-weight:bold; margin-bottom:8px;">🟣 cmux (CLI)</div>
+      <div style="color:#565f89; font-size:13px;">
+        Thin client — se connecte au control socket du daemon.<br>
+        <span style="color:#bb9af7;">cmux new-workspace</span> · <span style="color:#bb9af7;">cmux split-right</span> · <span style="color:#bb9af7;">cmux send-keys "ls -la"</span> · <span style="color:#bb9af7;">cmux list-panes</span> · <span style="color:#bb9af7;">cmux attach</span>
+      </div>
+    </div>
+
+    <!-- Cargo workspace -->
+    <div style="margin-top:24px; border:1px solid #3b4261; border-radius:8px; padding:16px;">
+      <div style="color:#e0af68; font-size:15px; font-weight:bold; margin-bottom:12px;">📦 Cargo Workspace</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:8px;">
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-core</span><br>
+          <span style="color:#565f89; font-size:11px;">Types partagés, CellGrid, SplitTree, Protocol</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-pty</span><br>
+          <span style="color:#565f89; font-size:11px;">PTY manager, vte parsing, OSC intercept</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-shm</span><br>
+          <span style="color:#565f89; font-size:11px;">Shared memory, ring buffers, sync primitives</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-ipc</span><br>
+          <span style="color:#565f89; font-size:11px;">Control socket, MessagePack protocol</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-daemon</span><br>
+          <span style="color:#565f89; font-size:11px;">Binary — orchestration daemon</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-gpu</span><br>
+          <span style="color:#565f89; font-size:11px;">wgpu renderer, glyph atlas, shaders</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-gui</span><br>
+          <span style="color:#565f89; font-size:11px;">Binary — winit window, layout, widgets, input</span>
+        </div>
+        <div style="padding:8px; background:rgba(224,175,104,0.08); border-radius:4px;">
+          <span style="color:#e0af68;">cmux-cli</span><br>
+          <span style="color:#565f89; font-size:11px;">Binary — thin CLI client (clap)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

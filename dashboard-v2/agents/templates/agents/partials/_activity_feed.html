@@ -1,0 +1,46 @@
+{% load dashboard_tags %}
+
+{% if feed %}
+<div class="glass-table-wrap">
+    <table class="glass-table">
+        <thead>
+            <tr>
+                <th>Agent</th>
+                <th>Event</th>
+                <th>Project</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for inv in feed %}
+            <tr>
+                <td>
+                    <span class="neon-badge neon-badge--{{ inv.tool|default:'agent'|badge_class }}">
+                        {{ inv.agent }}
+                    </span>
+                </td>
+                <td>{{ inv.event }}</td>
+                <td>{{ inv.project|default:"-" }}</td>
+                <td>{{ inv.timestamp|timeago }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if has_next %}
+<div style="text-align: center; margin-top: var(--spacing-md);">
+    <button class="neon-btn neon-btn--sm"
+            hx-get="{% url 'activity_feed_partial' %}?page={{ page|add:1 }}"
+            hx-target="#activity-feed"
+            hx-swap="innerHTML"
+            hx-indicator=".htmx-indicator">
+        Load more
+        <span class="htmx-indicator"><span class="neon-spinner neon-spinner--sm"></span></span>
+    </button>
+</div>
+{% endif %}
+
+{% else %}
+{% include "components/_empty_state.html" with title="No activity yet" message="Agent invocations will appear here as you use Mugiwara agents." icon="empty" %}
+{% endif %}

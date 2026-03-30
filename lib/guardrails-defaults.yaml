@@ -1,0 +1,58 @@
+# ============================================================
+# Mugiwara Agents — Guardrails Defaults
+# Global defaults for agent limits and scope enforcement.
+# Override per-project in .mugiwara/guardrails.yaml
+# Override per-agent in SKILL.md frontmatter guardrails:
+# ============================================================
+version: 2
+
+defaults:
+  agent:
+    # Maximum execution time per agent invocation (seconds)
+    timeout_seconds: 300
+
+    # Maximum output size (characters)
+    max_output_chars: 50000
+
+    # Maximum tool calls per single agent invocation
+    max_tool_calls: 25
+
+    # Rate limit: same agent max N times per session
+    rate_limit:
+      max_per_session: 10
+
+    # Scope enforcement: paths agents must never touch
+    scope:
+      forbidden_paths:
+        - ".env"
+        - "**/.env.*"
+        - "**/credentials*"
+        - "**/secrets*"
+        - "**/*.pem"
+        - "**/*.key"
+
+  pipeline:
+    # Maximum agents in a dynamic pipeline
+    max_agents: 8
+
+    # Maximum execution time for a full pipeline (seconds)
+    timeout_seconds: 900
+
+    # Maximum correction loops (feedback cycles)
+    max_correction_loops: 1
+
+  session:
+    # Total agent invocations per session
+    max_agent_invocations: 50
+
+    # Total pipeline runs per session
+    max_pipeline_runs: 5
+
+  enforcement:
+    # Graduated enforcement thresholds (percentage of limits)
+    # Below warn_threshold: silent
+    warn_threshold: 0.80
+    # Between warn and soft_limit: warning in additionalContext
+    soft_limit_threshold: 0.95
+    # At or above hard_limit: STOP
+    hard_limit_threshold: 1.00

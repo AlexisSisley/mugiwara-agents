@@ -5,7 +5,7 @@ argument-hint: "[produit, feature ou probleme utilisateur a explorer]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

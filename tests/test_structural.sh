@@ -63,13 +63,13 @@ section() {
 EXPECTED_AGENTS=(
     a11y ace agile aokiji api-postman azure baratie bartholomew bi big-mom bon-clay brook caesar chaos chopper
     coby crocodile dba discovery doc-hunt docker doflamingo enel
-    feature-flags firebase franky fujitora gcp hawkins iis iceburg incident
+    feature-flags firebase franky fujitora gcp glpi hawkins iis iceburg incident
     infra-reseau ivankov jinbe katakuri kizaru law law-sql
     luffy magellan maxim merry mlops modernize monitoring morgans mugiwara nami
     ohara onboard one_piece oro-jackson paulie
     perona pluton polar-tang poneglyph pre-launch prod-listener rayleigh robin sabo sanji sanji-design sanji-dotnet
     sanji-flutter sanji-go sanji-i18n sanji-java sanji-python
-    sanji-rust sanji-ts senor-pink shanks thousand-sunny usopp vegapunk
+    sanji-rust sanji-ts senor-pink shanks smoker thousand-sunny usopp vegapunk
     vivi yamato zorro
 )
 
@@ -223,12 +223,12 @@ for agent in "${EXPECTED_AGENTS[@]}"; do
         fail "$agent: context is '$ctx_value' (expected: fork)"
     fi
 
-    # T2.7 - model should be opus
+    # T2.7 - model should be opus, sonnet, or haiku (v2 tier system)
     model_value=$(echo "$front_matter" | grep "^model:" | sed 's/^model: *//')
-    if [ "$model_value" = "opus" ]; then
-        pass "$agent: model is opus"
+    if [ "$model_value" = "opus" ] || [ "$model_value" = "sonnet" ] || [ "$model_value" = "haiku" ]; then
+        pass "$agent: model is $model_value"
     else
-        fail "$agent: model is '$model_value' (expected: opus)"
+        fail "$agent: model is '$model_value' (expected: opus, sonnet, or haiku)"
     fi
 done
 
@@ -361,8 +361,8 @@ else
     fail "Agents with disable-model-invocation: true: ${dmi_true_agents[*]}"
 fi
 
-# T6.2 - All agents use model: opus
-non_opus_agents=()
+# T6.2 - All agents use a valid model tier (opus, sonnet, or haiku)
+invalid_model_agents=()
 for agent in "${EXPECTED_AGENTS[@]}"; do
     skill_file="$SKILLS_DIR/$agent/SKILL.md"
     [ ! -f "$skill_file" ] && continue
@@ -371,15 +371,15 @@ for agent in "${EXPECTED_AGENTS[@]}"; do
     front_matter=$(sed -n "2,$((closing_line - 1))p" "$skill_file")
     model=$(echo "$front_matter" | grep "^model:" | sed 's/^model: *//')
 
-    if [ "$model" != "opus" ]; then
-        non_opus_agents+=("$agent($model)")
+    if [ "$model" != "opus" ] && [ "$model" != "sonnet" ] && [ "$model" != "haiku" ]; then
+        invalid_model_agents+=("$agent($model)")
     fi
 done
 
-if [ ${#non_opus_agents[@]} -eq 0 ]; then
-    pass "All agents use model: opus"
+if [ ${#invalid_model_agents[@]} -eq 0 ]; then
+    pass "All agents use a valid model tier (opus/sonnet/haiku)"
 else
-    fail "Non-opus agents: ${non_opus_agents[*]}"
+    fail "Invalid model agents: ${invalid_model_agents[*]}"
 fi
 
 # T6.3 - All agents use context: fork

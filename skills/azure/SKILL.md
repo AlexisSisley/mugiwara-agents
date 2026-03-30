@@ -9,7 +9,7 @@ argument-hint: "[appservice <app> | functions <func> | cosmosdb <database> | aks
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *)
 ---
 

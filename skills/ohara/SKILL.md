@@ -5,7 +5,7 @@ argument-hint: "[API, librairie ou outil a documenter]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

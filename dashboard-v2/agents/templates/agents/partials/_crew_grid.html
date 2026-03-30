@@ -1,0 +1,42 @@
+{% load dashboard_tags %}
+
+{% if agents %}
+<div class="card-grid">
+    {% for agent in agents %}
+    <div class="glass-card crew-card"
+         data-drawer-url="{% url 'crew_detail' agent.name %}"
+         data-drawer-title="{{ agent.name }}"
+         role="button"
+         tabindex="0"
+         aria-label="View details for {{ agent.name }}">
+
+        <div class="crew-card__header">
+            <span class="crew-card__name">{{ agent.name }}</span>
+            <span class="neon-badge neon-badge--{{ agent.role|badge_class }}">{{ agent.role }}</span>
+        </div>
+
+        <p class="crew-card__desc">{{ agent.description|truncatewords:20 }}</p>
+
+        <div class="crew-card__footer">
+            <span class="crew-card__stat">
+                &#9889; {{ agent.invocations|format_number }}
+            </span>
+            {% if agent.last_used %}
+                <span class="crew-card__stat">
+                    {{ agent.last_used|timeago }}
+                </span>
+            {% endif %}
+            {% if agent.elevated %}
+                <span class="neon-badge neon-badge--subagent" title="Elevated subagent">&#9733;</span>
+            {% endif %}
+        </div>
+
+        {% if agent.alias_of %}
+            <div class="crew-card__alias">Alias of {{ agent.alias_of }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+{% include "components/_empty_state.html" with title="No agents match" message="Try adjusting your filters." icon="search" %}
+{% endif %}

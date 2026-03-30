@@ -1,0 +1,366 @@
+# ============================================================
+# Mugiwara Agents — Agent Routing Table
+# Source of truth for all agents: name, type, tier, category, signals
+# ============================================================
+version: 2
+
+agents:
+  # ─── Router ───
+  - name: one_piece
+    type: router
+    tier: 0
+    category: router
+    signals: []
+
+  # ─── Core (Subagents Eleves) ───
+  - name: zorro
+    type: subagent
+    tier: 1
+    category: analysis
+    intent: "Analyse business / specs"
+    signals: ["user stories", "specs fonctionnelles", "analyse business", "cahier des charges", "Gherkin", "BDD"]
+
+  - name: sanji
+    type: subagent
+    tier: 1
+    category: architecture
+    intent: "Architecture technique"
+    signals: ["architecture", "stack", "choix technique", "design systeme", "microservices vs monolithe"]
+
+  - name: nami
+    type: subagent
+    tier: 1
+    category: qa
+    intent: "QA / strategie de test"
+    signals: ["tests", "QA", "strategie de test", "couverture", "ISTQB", "edge cases", "plan de test"]
+
+  - name: luffy
+    type: subagent
+    tier: 1
+    category: management
+    intent: "Synthese / roadmap"
+    signals: ["roadmap", "synthese", "feuille de route", "KPI", "planning strategique"]
+
+  - name: franky
+    type: subagent
+    tier: 1
+    category: security
+    intent: "Code review / audit"
+    signals: ["review", "audit code", "code quality", "SOLID", "refactorer ce fichier", "anti-patterns"]
+
+  - name: robin
+    type: subagent
+    tier: 1
+    category: analysis
+    intent: "Cartographie systeme"
+    signals: ["cartographie", "mapper", "comprendre l'archi", "reverse engineering", "ADR", "dependances modules"]
+
+  - name: chopper
+    type: subagent
+    tier: 1
+    category: debugging
+    intent: "Debug / diagnostic"
+    signals: ["bug", "erreur", "TypeError", "exception", "stack trace", "diagnostiquer", "pourquoi ca plante"]
+
+  - name: brook
+    type: subagent
+    tier: 1
+    category: writing
+    intent: "Documentation interne"
+    signals: ["changelog", "README", "documentation", "guide", "ecrire la doc", "onboarding guide"]
+
+  - name: usopp
+    type: subagent
+    tier: 1
+    category: devops
+    intent: "DevOps / infra"
+    signals: ["CI/CD", "Docker", "Kubernetes", "Terraform", "pipeline", "deploiement", "infra"]
+
+  - name: jinbe
+    type: subagent
+    tier: 1
+    category: security
+    intent: "Securite / compliance"
+    signals: ["securite", "OWASP", "GDPR", "SOC2", "audit secu", "penetration test", "threat model"]
+
+  - name: vivi
+    type: subagent
+    tier: 1
+    category: management
+    intent: "Product / UX"
+    signals: ["personas", "user flow", "wireframes", "product discovery", "RICE", "UX research", "A/B test"]
+
+  # ─── Tier 1 opus (non-subagent eleves) ───
+  - name: shanks
+    type: skill
+    tier: 1
+    category: refactoring
+    intent: "Refactoring / migration"
+    signals: ["refactorer", "migrer", "strangler fig", "legacy vers", "migration progressive"]
+
+  - name: law
+    type: skill
+    tier: 1
+    category: data
+    intent: "Data engineering"
+    signals: ["ETL", "data warehouse", "dbt", "pipeline de donnees", "data quality", "Spark", "analytics"]
+
+  - name: doflamingo
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Event-driven architecture"
+    signals: ["Kafka", "RabbitMQ", "NATS", "event sourcing", "CQRS", "saga patterns", "schema registry"]
+
+  - name: vegapunk
+    type: skill
+    tier: 1
+    category: meta
+    intent: "Meta-audit agents"
+    signals: ["vegapunk", "auditer les agents", "ameliorer un agent", "creer un agent", "ecosysteme mugiwara"]
+
+  - name: rayleigh
+    type: skill
+    tier: 1
+    category: monitoring
+    intent: "Surveillance production / logs"
+    signals: ["surveiller les logs", "logs de prod", "sentinelle", "auto-fix", "triage erreur", "watcher", "log analysis", "rayleigh", "prod-listener", "health check production", "erreurs recurrentes", "log monitoring"]
+
+  - name: crocodile
+    type: skill
+    tier: 1
+    category: cloud
+    intent: "Cloud AWS"
+    signals: ["AWS", "EC2", "S3", "Lambda", "RDS", "CloudFront", "IAM", "CDK", "CloudFormation"]
+
+  - name: sanji-dotnet
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold C# / .NET"
+    signals: ["C#", ".NET", "ASP.NET", "Entity Framework", "Blazor"]
+
+  - name: sanji-flutter
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold Flutter / Dart"
+    signals: ["Flutter", "Dart", "mobile", "widget", "BLoC"]
+
+  - name: sanji-python
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold Python"
+    signals: ["Python", "Django", "FastAPI", "Flask", "pip"]
+
+  - name: sanji-ts
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold TypeScript / Node.js"
+    signals: ["TypeScript", "Node.js", "React", "Next.js", "Express"]
+
+  - name: sanji-rust
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold Rust"
+    signals: ["Rust", "cargo", "Tokio", "wasm"]
+
+  - name: sanji-go
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold Go"
+    signals: ["Go", "Golang", "goroutine", "gin", "fiber"]
+
+  - name: sanji-java
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Scaffold Java / Kotlin"
+    signals: ["Java", "Kotlin", "Spring", "Maven", "Gradle"]
+
+  - name: sanji-design
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Design UI/UX"
+    signals: ["moodboard", "palette couleurs", "design tokens", "direction artistique", "typographie", "UI design"]
+
+  - name: sanji-i18n
+    type: skill
+    tier: 1
+    category: architecture
+    intent: "Traduction / i18n"
+    signals: ["traduction", "i18n", "l10n", "localisation", "internationalisation", "fichiers de traduction", "traduire", "langue", "multilangue"]
+
+  # ─── Tier 2 sonnet (agents specialistes) ───
+  - name: iceburg
+    type: skill
+    tier: 2
+    category: infrastructure
+    intent: "Docker specialist"
+    signals: ["Dockerfile", "docker-compose", "multi-stage", "Swarm", "Helm"]
+
+  - name: enel
+    type: skill
+    tier: 2
+    category: monitoring
+    intent: "Monitoring / alerting"
+    signals: ["Prometheus", "Grafana", "PagerDuty", "OpsGenie", "SRE", "SLO", "dashboards"]
+
+  - name: morgans
+    type: skill
+    tier: 2
+    category: writing
+    intent: "Email de release"
+    signals: ["email release", "release QA", "release prod", "email mise en prod", "email MEP", "notification release", "email deploiement", "email recette", "communiquer la release", "morgans"]
+
+  - name: law-sql
+    type: skill
+    tier: 2
+    category: data
+    intent: "SQL specialist"
+    signals: ["requete SQL", "SQL", "script SQL", "procedure stockee", "DDL", "convertir en SQL", "doc to SQL", "excel to SQL", "docx to SQL", "csv to SQL", "optimiser requete", "migration SQL", "dialecte SQL"]
+
+  - name: ace
+    type: skill
+    tier: 2
+    category: performance
+    intent: "Performance"
+    signals: ["performance", "load test", "latence", "optimiser", "p99", "throughput", "capacity planning"]
+
+  - name: hawkins
+    type: skill
+    tier: 2
+    category: data
+    intent: "BI / data viz"
+    signals: ["Metabase", "Superset", "Looker", "Power BI", "Tableau", "DAX", "MDX", "data storytelling", "KPI dashboards"]
+
+  - name: sabo
+    type: skill
+    tier: 2
+    category: cloud
+    intent: "Firebase"
+    signals: ["Firebase", "Firestore", "Cloud Functions", "FCM", "Emulator Suite"]
+
+  - name: paulie
+    type: skill
+    tier: 2
+    category: infrastructure
+    intent: "IIS"
+    signals: ["IIS", "web.config", "application pool", "URL Rewrite", "ARR", "PowerShell"]
+
+  - name: coby
+    type: skill
+    tier: 2
+    category: infrastructure
+    intent: "Infrastructure reseau"
+    signals: ["firewall", "DNS", "load balancing", "VPN", "VLAN", "diagnostic reseau"]
+
+  - name: ivankov
+    type: skill
+    tier: 2
+    category: infrastructure
+    intent: "Feature flags"
+    signals: ["feature flags", "Unleash", "LaunchDarkly", "progressive delivery"]
+
+  - name: kizaru
+    type: skill
+    tier: 2
+    category: cloud
+    intent: "Cloud Azure"
+    signals: ["Azure", "App Service", "Cosmos DB", "AKS", "Bicep", "ARM", "Entra ID"]
+
+  - name: fujitora
+    type: skill
+    tier: 2
+    category: quality
+    intent: "Accessibilite a11y"
+    signals: ["WCAG", "ARIA", "RGAA", "axe-core", "Lighthouse", "accessibilite", "a11y"]
+
+  - name: katakuri
+    type: skill
+    tier: 2
+    category: ai-ml
+    intent: "AI/ML Ops"
+    signals: ["MLflow", "Kubeflow", "feature stores", "model serving", "drift detection", "GPU"]
+
+  - name: big-mom
+    type: skill
+    tier: 2
+    category: management
+    intent: "Agile / Scrum"
+    signals: ["ceremonies", "sprint planning", "retrospectives", "velocity", "Jira", "Linear", "SAFe", "Scrum"]
+
+  - name: magellan
+    type: skill
+    tier: 2
+    category: data
+    intent: "DBA"
+    signals: ["PostgreSQL tuning", "MySQL", "MongoDB", "Redis", "backup", "replication", "sharding"]
+
+  - name: caesar
+    type: skill
+    tier: 2
+    category: performance
+    intent: "Chaos engineering"
+    signals: ["Chaos Monkey", "Litmus", "Gremlin", "GameDay", "resilience", "blast radius"]
+
+  - name: aokiji
+    type: skill
+    tier: 2
+    category: cloud
+    intent: "Cloud GCP"
+    signals: ["GCP", "Cloud Run", "GKE", "BigQuery", "Pub/Sub", "Terraform GCP"]
+
+  - name: yamato
+    type: skill
+    tier: 2
+    category: intelligence
+    intent: "Veille technologique"
+    signals: ["tendances", "veille tech", "quoi de neuf", "dashboard tech", "tech radar", "comparatif outils"]
+
+  - name: bartholomew
+    type: skill
+    tier: 2
+    category: analysis
+    intent: "Analyse d'API locale"
+    signals: ["analyser API", "endpoints", "routes API", "extraire documentation API", "cartographie API", "swagger", "openapi", "lire les routes", "documentation API locale"]
+
+  - name: perona
+    type: skill
+    tier: 2
+    category: qa
+    intent: "Collection Postman"
+    signals: ["postman", "collection postman", "generer postman", "import postman", "tester API", "requetes API", "JSON postman", "collection JSON"]
+
+  - name: senor-pink
+    type: skill
+    tier: 2
+    category: qa
+    intent: "Tests E2E Postman"
+    signals: ["tests E2E", "end-to-end postman", "tests d'integration API", "collection E2E", "newman", "workflow E2E", "chaining postman", "tests bout en bout"]
+
+  - name: bon-clay
+    type: skill
+    tier: 2
+    category: meta
+    intent: "Easter eggs & secrets"
+    signals: ["easter egg", "secret", "surprise", "konami", "clin d'oeil", "hidden", "cache dans le code", "mini-jeu cache", "bon-clay", "bon clay"]
+
+  - name: poneglyph
+    type: skill
+    tier: 2
+    category: analysis
+    intent: "Analyse de documents"
+    signals: ["analyser document", "resume PDF", "lire spec", "extraire informations", "comparer documents", "audit document", "poneglyph", "dechiffrer", "analyser fichier", "resume fichier", "contrat", "spec technique"]
+
+  - name: smoker
+    type: skill
+    tier: 2
+    category: itsm
+    intent: "GLPI / tickets ITSM"
+    signals: ["GLPI", "ticket", "ITSM", "incident GLPI", "demande GLPI", "changement GLPI", "triage ticket"]

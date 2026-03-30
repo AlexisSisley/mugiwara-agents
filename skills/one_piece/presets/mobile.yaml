@@ -1,0 +1,40 @@
+# ============================================================
+# Preset: Mobile Development
+# For: Flutter/React Native + Firebase + i18n + a11y projects
+# ============================================================
+version: 2
+preset: mobile
+description: "Mobile development (Flutter, React Native, Firebase, i18n, a11y)"
+
+detected_stacks:
+  - flutter
+  - dart
+  - react-native
+  - swift
+  - kotlin-mobile
+
+agents:
+  active:
+    # Core crew (subagents)
+    - chopper      # Debug & Diagnostic
+    - franky       # Code Review
+    - nami         # QA & Tests
+    - sanji        # Architecture
+    - sanji-flutter # Scaffold Flutter
+    - robin        # System Cartography
+    - brook        # Documentation
+    - usopp        # DevOps & CI/CD
+    - jinbe        # Security
+    - luffy        # Synthesis & Roadmap
+    - zorro        # Business Analysis
+    - vivi         # Product & UX
+    # Mobile specialists
+    - sabo         # Firebase
+    - sanji-i18n   # Internationalization
+    - fujitora     # Accessibility
+    - ace          # Performance
+  pipelines:
+    - mugiwara     # Full pipeline
+    - incident     # Incident response
+    - pre-launch   # Pre-deployment checklist
+    - discovery    # Product discovery

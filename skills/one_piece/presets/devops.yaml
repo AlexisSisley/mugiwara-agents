@@ -1,0 +1,38 @@
+# ============================================================
+# Preset: DevOps & Infrastructure
+# For: Docker + K8s + Terraform + CI/CD + Monitoring projects
+# ============================================================
+version: 2
+preset: devops
+description: "DevOps & Infrastructure (Docker, Kubernetes, Terraform, CI/CD, Monitoring)"
+
+detected_stacks:
+  - docker
+  - kubernetes
+  - terraform
+  - ansible
+  - helm
+
+agents:
+  active:
+    # Core crew (subagents)
+    - chopper      # Debug & Diagnostic
+    - franky       # Code Review
+    - nami         # QA & Tests
+    - sanji        # Architecture
+    - robin        # System Cartography
+    - brook        # Documentation
+    - usopp        # DevOps & CI/CD
+    - jinbe        # Security
+    - luffy        # Synthesis & Roadmap
+    # Infrastructure specialists
+    - iceburg      # Docker
+    - enel         # Monitoring
+    - coby         # Network
+    - caesar       # Chaos Engineering
+    - ace          # Performance
+    - magellan     # DBA
+  pipelines:
+    - mugiwara     # Full pipeline
+    - incident     # Incident response
+    - pre-launch   # Pre-deployment checklist

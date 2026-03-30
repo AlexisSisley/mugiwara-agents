@@ -1,0 +1,204 @@
+<h2>Section 6 — Configuration, Theming & CLI</h2>
+<p class="subtitle">TOML config, thèmes, fonts, et CLI scriptable</p>
+
+<!-- Config files -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">⚙️ config.toml — Configuration principale</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.7; color:#a0a0a0;">
+    <span style="color:#565f89;"># ~/.cmux/config.toml</span><br><br>
+
+    <span style="color:#f7768e;">[daemon]</span><br>
+    <span style="color:#7aa2f7;">auto_start</span> = <span style="color:#9ece6a;">true</span>          <span style="color:#565f89;"># Lance le daemon au démarrage du GUI</span><br>
+    <span style="color:#7aa2f7;">detach_timeout</span> = <span style="color:#e0af68;">"30m"</span>     <span style="color:#565f89;"># Durée avant hibernation sans client</span><br>
+    <span style="color:#7aa2f7;">scrollback_lines</span> = <span style="color:#e0af68;">10000</span>   <span style="color:#565f89;"># Lignes de scrollback par pane</span><br>
+    <span style="color:#7aa2f7;">save_interval_ms</span> = <span style="color:#e0af68;">500</span>     <span style="color:#565f89;"># Debounce pour session.json</span><br>
+    <span style="color:#7aa2f7;">scrollback_flush_s</span> = <span style="color:#e0af68;">30</span>    <span style="color:#565f89;"># Flush scrollback sur disque</span><br>
+    <span style="color:#7aa2f7;">log_level</span> = <span style="color:#e0af68;">"info"</span>         <span style="color:#565f89;"># trace | debug | info | warn | error</span><br><br>
+
+    <span style="color:#f7768e;">[terminal]</span><br>
+    <span style="color:#7aa2f7;">shell</span> = <span style="color:#e0af68;">"pwsh.exe"</span>        <span style="color:#565f89;"># Shell par défaut (auto-detect si absent)</span><br>
+    <span style="color:#7aa2f7;">env</span> = { <span style="color:#7aa2f7;">TERM</span> = <span style="color:#e0af68;">"xterm-256color"</span>, <span style="color:#7aa2f7;">COLORTERM</span> = <span style="color:#e0af68;">"truecolor"</span> }<br>
+    <span style="color:#7aa2f7;">cursor_style</span> = <span style="color:#e0af68;">"block"</span>     <span style="color:#565f89;"># block | underline | bar</span><br>
+    <span style="color:#7aa2f7;">cursor_blink</span> = <span style="color:#9ece6a;">true</span><br>
+    <span style="color:#7aa2f7;">bell</span> = <span style="color:#e0af68;">"visual"</span>           <span style="color:#565f89;"># none | visual | audible</span><br><br>
+
+    <span style="color:#f7768e;">[gpu]</span><br>
+    <span style="color:#7aa2f7;">backend</span> = <span style="color:#e0af68;">"auto"</span>           <span style="color:#565f89;"># auto | vulkan | dx12 | metal</span><br>
+    <span style="color:#7aa2f7;">vsync</span> = <span style="color:#9ece6a;">true</span><br>
+    <span style="color:#7aa2f7;">frame_rate_cap</span> = <span style="color:#e0af68;">0</span>        <span style="color:#565f89;"># 0 = vsync, sinon cap en fps</span><br><br>
+
+    <span style="color:#f7768e;">[claude]</span><br>
+    <span style="color:#7aa2f7;">detect</span> = <span style="color:#9ece6a;">true</span>             <span style="color:#565f89;"># Active la détection Claude Code</span><br>
+    <span style="color:#7aa2f7;">process_poll_ms</span> = <span style="color:#e0af68;">2000</span>    <span style="color:#565f89;"># Intervalle polling process tree</span><br>
+    <span style="color:#7aa2f7;">pattern_analysis</span> = <span style="color:#9ece6a;">true</span>   <span style="color:#565f89;"># Niveau 3 : output pattern analysis</span><br>
+    <span style="color:#7aa2f7;">notifications</span> = <span style="color:#9ece6a;">true</span>      <span style="color:#565f89;"># Affiche les popups de notification</span><br>
+    <span style="color:#7aa2f7;">border_glow</span> = <span style="color:#9ece6a;">true</span>        <span style="color:#565f89;"># Bordure colorée selon le statut</span><br><br>
+
+    <span style="color:#f7768e;">[ui]</span><br>
+    <span style="color:#7aa2f7;">sidebar</span> = <span style="color:#9ece6a;">true</span>             <span style="color:#565f89;"># Affiche la sidebar</span><br>
+    <span style="color:#7aa2f7;">sidebar_width</span> = <span style="color:#e0af68;">220</span>       <span style="color:#565f89;"># Largeur en pixels</span><br>
+    <span style="color:#7aa2f7;">statusbar</span> = <span style="color:#9ece6a;">true</span>           <span style="color:#565f89;"># Affiche la status bar</span><br>
+    <span style="color:#7aa2f7;">tab_bar_position</span> = <span style="color:#e0af68;">"sidebar"</span> <span style="color:#565f89;"># sidebar | top | hidden</span><br>
+    <span style="color:#7aa2f7;">notification_duration_s</span> = <span style="color:#e0af68;">5</span><br>
+    <span style="color:#7aa2f7;">padding</span> = { <span style="color:#7aa2f7;">x</span> = <span style="color:#e0af68;">8</span>, <span style="color:#7aa2f7;">y</span> = <span style="color:#e0af68;">4</span> }  <span style="color:#565f89;"># Padding intérieur des panes</span>
+  </div>
+</div>
+
+<!-- Theme -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">🎨 theme.toml — Système de thèmes</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.7; color:#a0a0a0;">
+    <span style="color:#565f89;"># ~/.cmux/theme.toml</span><br>
+    <span style="color:#565f89;"># Compatible avec les thèmes Alacritty/Ghostty (conversion auto)</span><br><br>
+
+    <span style="color:#f7768e;">[font]</span><br>
+    <span style="color:#7aa2f7;">family</span> = <span style="color:#e0af68;">"JetBrains Mono"</span><br>
+    <span style="color:#7aa2f7;">size</span> = <span style="color:#e0af68;">14.0</span><br>
+    <span style="color:#7aa2f7;">bold_family</span> = <span style="color:#e0af68;">""</span>          <span style="color:#565f89;"># Vide = même famille en bold</span><br>
+    <span style="color:#7aa2f7;">italic_family</span> = <span style="color:#e0af68;">""</span><br>
+    <span style="color:#7aa2f7;">ligatures</span> = <span style="color:#9ece6a;">true</span><br>
+    <span style="color:#7aa2f7;">ui_family</span> = <span style="color:#e0af68;">"Inter"</span>       <span style="color:#565f89;"># Font pour la sidebar, tabs, status bar</span><br>
+    <span style="color:#7aa2f7;">ui_size</span> = <span style="color:#e0af68;">12.0</span><br><br>
+
+    <span style="color:#f7768e;">[colors]</span><br>
+    <span style="color:#7aa2f7;">background</span> = <span style="color:#e0af68;">"#1a1b26"</span><br>
+    <span style="color:#7aa2f7;">foreground</span> = <span style="color:#e0af68;">"#c0caf5"</span><br>
+    <span style="color:#7aa2f7;">cursor</span> = <span style="color:#e0af68;">"#c0caf5"</span><br>
+    <span style="color:#7aa2f7;">selection_bg</span> = <span style="color:#e0af68;">"#283457"</span><br>
+    <span style="color:#7aa2f7;">selection_fg</span> = <span style="color:#e0af68;">"#c0caf5"</span><br><br>
+
+    <span style="color:#565f89;"># ANSI 16 colors</span><br>
+    <span style="color:#f7768e;">[colors.normal]</span><br>
+    <span style="color:#7aa2f7;">black</span> = <span style="color:#e0af68;">"#15161e"</span> &nbsp; <span style="color:#7aa2f7;">red</span> = <span style="color:#e0af68;">"#f7768e"</span> &nbsp; <span style="color:#7aa2f7;">green</span> = <span style="color:#e0af68;">"#9ece6a"</span> &nbsp; <span style="color:#7aa2f7;">yellow</span> = <span style="color:#e0af68;">"#e0af68"</span><br>
+    <span style="color:#7aa2f7;">blue</span> = <span style="color:#e0af68;">"#7aa2f7"</span> &nbsp; <span style="color:#7aa2f7;">magenta</span> = <span style="color:#e0af68;">"#bb9af7"</span> &nbsp; <span style="color:#7aa2f7;">cyan</span> = <span style="color:#e0af68;">"#7dcfff"</span> &nbsp; <span style="color:#7aa2f7;">white</span> = <span style="color:#e0af68;">"#a9b1d6"</span><br><br>
+
+    <span style="color:#f7768e;">[colors.bright]</span><br>
+    <span style="color:#7aa2f7;">black</span> = <span style="color:#e0af68;">"#414868"</span> &nbsp; <span style="color:#7aa2f7;">red</span> = <span style="color:#e0af68;">"#f7768e"</span> &nbsp; <span style="color:#7aa2f7;">green</span> = <span style="color:#e0af68;">"#9ece6a"</span> &nbsp; <span style="color:#7aa2f7;">yellow</span> = <span style="color:#e0af68;">"#e0af68"</span><br>
+    <span style="color:#7aa2f7;">blue</span> = <span style="color:#e0af68;">"#7aa2f7"</span> &nbsp; <span style="color:#7aa2f7;">magenta</span> = <span style="color:#e0af68;">"#bb9af7"</span> &nbsp; <span style="color:#7aa2f7;">cyan</span> = <span style="color:#e0af68;">"#7dcfff"</span> &nbsp; <span style="color:#7aa2f7;">white</span> = <span style="color:#e0af68;">"#c0caf5"</span><br><br>
+
+    <span style="color:#f7768e;">[colors.ui]</span>  <span style="color:#565f89;"># Couleurs spécifiques à l'UI cmux</span><br>
+    <span style="color:#7aa2f7;">sidebar_bg</span> = <span style="color:#e0af68;">"#16161e"</span><br>
+    <span style="color:#7aa2f7;">statusbar_bg</span> = <span style="color:#e0af68;">"#16161e"</span><br>
+    <span style="color:#7aa2f7;">border</span> = <span style="color:#e0af68;">"#3b4261"</span><br>
+    <span style="color:#7aa2f7;">border_focused</span> = <span style="color:#e0af68;">"#7aa2f7"</span><br>
+    <span style="color:#7aa2f7;">claude_idle</span> = <span style="color:#e0af68;">"#9ece6a"</span><br>
+    <span style="color:#7aa2f7;">claude_thinking</span> = <span style="color:#e0af68;">"#bb9af7"</span><br>
+    <span style="color:#7aa2f7;">claude_tooluse</span> = <span style="color:#e0af68;">"#7aa2f7"</span><br>
+    <span style="color:#7aa2f7;">claude_error</span> = <span style="color:#e0af68;">"#f7768e"</span>
+  </div>
+</div>
+
+<!-- Keybinds -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">⌨️ keybinds.toml — Raccourcis personnalisables</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.7; color:#a0a0a0;">
+    <span style="color:#565f89;"># ~/.cmux/keybinds.toml</span><br>
+    <span style="color:#565f89;"># Format : action = "modifiers+key"</span><br>
+    <span style="color:#565f89;"># Modifiers : ctrl, shift, alt, super</span><br><br>
+
+    <span style="color:#f7768e;">[workspace]</span><br>
+    <span style="color:#7aa2f7;">new</span> = <span style="color:#e0af68;">"ctrl+shift+n"</span><br>
+    <span style="color:#7aa2f7;">close</span> = <span style="color:#e0af68;">"ctrl+shift+w"</span><br>
+    <span style="color:#7aa2f7;">next</span> = <span style="color:#e0af68;">"ctrl+pagedown"</span><br>
+    <span style="color:#7aa2f7;">prev</span> = <span style="color:#e0af68;">"ctrl+pageup"</span><br>
+    <span style="color:#7aa2f7;">jump_1</span> = <span style="color:#e0af68;">"ctrl+1"</span> &nbsp; <span style="color:#565f89;"># ... through jump_9</span><br><br>
+
+    <span style="color:#f7768e;">[tab]</span><br>
+    <span style="color:#7aa2f7;">new</span> = <span style="color:#e0af68;">"ctrl+t"</span><br>
+    <span style="color:#7aa2f7;">close</span> = <span style="color:#e0af68;">"ctrl+w"</span><br>
+    <span style="color:#7aa2f7;">next</span> = <span style="color:#e0af68;">"ctrl+tab"</span><br>
+    <span style="color:#7aa2f7;">prev</span> = <span style="color:#e0af68;">"ctrl+shift+tab"</span><br>
+    <span style="color:#7aa2f7;">rename</span> = <span style="color:#e0af68;">"ctrl+shift+r"</span><br><br>
+
+    <span style="color:#f7768e;">[pane]</span><br>
+    <span style="color:#7aa2f7;">split_right</span> = <span style="color:#e0af68;">"ctrl+d"</span><br>
+    <span style="color:#7aa2f7;">split_down</span> = <span style="color:#e0af68;">"ctrl+shift+d"</span><br>
+    <span style="color:#7aa2f7;">close</span> = <span style="color:#e0af68;">"ctrl+shift+x"</span><br>
+    <span style="color:#7aa2f7;">focus_left</span> = <span style="color:#e0af68;">"alt+left"</span><br>
+    <span style="color:#7aa2f7;">focus_right</span> = <span style="color:#e0af68;">"alt+right"</span><br>
+    <span style="color:#7aa2f7;">focus_up</span> = <span style="color:#e0af68;">"alt+up"</span><br>
+    <span style="color:#7aa2f7;">focus_down</span> = <span style="color:#e0af68;">"alt+down"</span><br>
+    <span style="color:#7aa2f7;">resize_left</span> = <span style="color:#e0af68;">"alt+shift+left"</span><br>
+    <span style="color:#7aa2f7;">resize_right</span> = <span style="color:#e0af68;">"alt+shift+right"</span><br>
+    <span style="color:#7aa2f7;">resize_up</span> = <span style="color:#e0af68;">"alt+shift+up"</span><br>
+    <span style="color:#7aa2f7;">resize_down</span> = <span style="color:#e0af68;">"alt+shift+down"</span><br>
+    <span style="color:#7aa2f7;">zoom_toggle</span> = <span style="color:#e0af68;">"ctrl+shift+z"</span>  <span style="color:#565f89;"># Zoom pane = full tab</span><br><br>
+
+    <span style="color:#f7768e;">[global]</span><br>
+    <span style="color:#7aa2f7;">command_palette</span> = <span style="color:#e0af68;">"ctrl+shift+p"</span><br>
+    <span style="color:#7aa2f7;">toggle_sidebar</span> = <span style="color:#e0af68;">"ctrl+b"</span><br>
+    <span style="color:#7aa2f7;">find</span> = <span style="color:#e0af68;">"ctrl+shift+f"</span><br>
+    <span style="color:#7aa2f7;">font_increase</span> = <span style="color:#e0af68;">"ctrl+equal"</span><br>
+    <span style="color:#7aa2f7;">font_decrease</span> = <span style="color:#e0af68;">"ctrl+minus"</span><br>
+    <span style="color:#7aa2f7;">font_reset</span> = <span style="color:#e0af68;">"ctrl+0"</span>
+  </div>
+</div>
+
+<!-- CLI -->
+<div class="mockup">
+  <div class="mockup-header">🟣 cmux CLI — Commandes complètes</div>
+  <div class="mockup-body" style="padding:24px;">
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="border-bottom:1px solid #3b4261;">
+        <th style="text-align:left; padding:8px; color:#7aa2f7;">Commande</th>
+        <th style="text-align:left; padding:8px; color:#7aa2f7;">Description</th>
+        <th style="text-align:left; padding:8px; color:#7aa2f7;">Exemple</th>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux start</td>
+        <td style="padding:8px; color:#a0a0a0;">Lance le daemon en background</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux start --log-level debug</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux attach</td>
+        <td style="padding:8px; color:#a0a0a0;">Ouvre le GUI et connecte au daemon</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux attach --workspace 2</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux ls</td>
+        <td style="padding:8px; color:#a0a0a0;">Liste workspaces/tabs/panes</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux ls --format json</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux new-workspace</td>
+        <td style="padding:8px; color:#a0a0a0;">Crée un workspace</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux new-workspace --name "api" --cwd ~/projects/api</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux new-tab</td>
+        <td style="padding:8px; color:#a0a0a0;">Crée un tab dans le workspace actif</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux new-tab --name "tests"</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux split</td>
+        <td style="padding:8px; color:#a0a0a0;">Split le pane actif</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux split --direction right --ratio 0.6</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux send-keys</td>
+        <td style="padding:8px; color:#a0a0a0;">Envoie des touches à un pane</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux send-keys --pane 3 "cargo test\n"</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux focus</td>
+        <td style="padding:8px; color:#a0a0a0;">Focus un workspace/tab/pane</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux focus --workspace 1 --tab 2 --pane 1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux events</td>
+        <td style="padding:8px; color:#a0a0a0;">Stream d'events (Claude, commandes...)</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux events --follow --filter claude</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux snapshot</td>
+        <td style="padding:8px; color:#a0a0a0;">Capture l'état d'un pane</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux snapshot --pane 2 --output screen.txt</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; color:#bb9af7; font-family:monospace;">cmux kill</td>
+        <td style="padding:8px; color:#a0a0a0;">Arrête le daemon proprement</td>
+        <td style="padding:8px; color:#565f89; font-family:monospace;">cmux kill --save</td>
+      </tr>
+    </table>
+  </div>
+</div>

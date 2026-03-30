@@ -1,0 +1,153 @@
+<h2>Section 2 — Flux de données terminal</h2>
+<p class="subtitle">Du keystroke à l'écran — le chemin critique</p>
+
+<!-- Input flow -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">⬇️ Input Flow — Clavier → Process</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:2; color:#a0a0a0;">
+    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
+      <div style="padding:8px 16px; background:rgba(122,162,247,0.15); border-radius:6px; color:#7aa2f7;">winit KeyEvent</div>
+      <span style="color:#565f89;">→</span>
+      <div style="padding:8px 16px; background:rgba(122,162,247,0.15); border-radius:6px; color:#7aa2f7;">input-handler</div>
+      <span style="color:#565f89;">→</span>
+      <div style="padding:8px 12px; background:rgba(86,95,137,0.3); border-radius:6px; color:#565f89; font-size:11px;">keybind?</div>
+    </div>
+    <div style="margin-left:40px; margin-top:8px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+        <span style="color:#9ece6a;">OUI →</span>
+        <div style="padding:6px 12px; background:rgba(122,162,247,0.1); border-radius:4px; color:#7aa2f7;">Action interne</div>
+        <span style="color:#565f89; font-size:11px;">(split, new-tab, focus, resize...)</span>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(122,162,247,0.1); border-radius:4px; color:#7aa2f7;">IPC command</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(247,118,142,0.1); border-radius:4px; color:#f7768e;">daemon</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="color:#e0af68;">NON →</span>
+        <div style="padding:6px 12px; background:rgba(122,162,247,0.1); border-radius:4px; color:#7aa2f7;">UTF-8 bytes</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(247,118,142,0.1); border-radius:4px; color:#f7768e;">PTY write (via shm)</div>
+        <span style="color:#565f89; font-size:11px;">latence cible : &lt;1ms</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Output flow -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">⬆️ Output Flow — Process → Écran</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:2; color:#a0a0a0;">
+    <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+      <div style="padding:8px 16px; background:rgba(247,118,142,0.15); border-radius:6px; color:#f7768e;">PTY read (raw bytes)</div>
+      <span style="color:#565f89;">→</span>
+      <div style="padding:8px 16px; background:rgba(247,118,142,0.15); border-radius:6px; color:#f7768e;">vte parser</div>
+      <span style="color:#565f89;">→</span>
+      <div style="padding:8px 12px; background:rgba(86,95,137,0.3); border-radius:6px; color:#565f89; font-size:11px;">séquence?</div>
+    </div>
+
+    <div style="margin-left:40px;">
+      <!-- Normal chars -->
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span style="color:#9ece6a; min-width:80px;">Caractères →</span>
+        <div style="padding:6px 12px; background:rgba(247,118,142,0.1); border-radius:4px; color:#f7768e;">CellGrid update</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(158,206,106,0.15); border-radius:4px; color:#9ece6a;">Ring Buffer (shm)</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(122,162,247,0.1); border-radius:4px; color:#7aa2f7;">GPU read</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(122,162,247,0.1); border-radius:4px; color:#7aa2f7;">🖥️ écran</div>
+      </div>
+
+      <!-- Control sequences -->
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span style="color:#e0af68; min-width:80px;">CSI/ESC →</span>
+        <div style="padding:6px 12px; background:rgba(247,118,142,0.1); border-radius:4px; color:#f7768e;">cursor move, color, scroll, clear</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(247,118,142,0.1); border-radius:4px; color:#f7768e;">CellGrid update</div>
+        <span style="color:#565f89;">→</span>
+        <span style="color:#565f89; font-size:11px;">même chemin shm → GPU</span>
+      </div>
+
+      <!-- OSC Claude Code -->
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="color:#bb9af7; min-width:80px;">OSC ✨ →</span>
+        <div style="padding:6px 12px; background:rgba(187,154,247,0.15); border-radius:4px; color:#bb9af7;">OSC Interceptor</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(187,154,247,0.1); border-radius:4px; color:#bb9af7;">Event Bus</div>
+        <span style="color:#565f89;">→</span>
+        <div style="padding:6px 12px; background:rgba(122,162,247,0.1); border-radius:4px; color:#7aa2f7;">GUI notifications</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Shared Memory detail -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">🧠 Shared Memory — Ring Buffer par PTY</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.8; color:#a0a0a0;">
+    <div style="margin-bottom:16px;">
+      <span style="color:#e0af68;">Structure par PTY :</span><br>
+      <div style="margin-left:16px; margin-top:8px;">
+        <span style="color:#9ece6a;">ShmRegion</span> {<br>
+        &nbsp;&nbsp;<span style="color:#7aa2f7;">header</span>: ShmHeader { write_seq: AtomicU64, read_seq: AtomicU64, cols: u16, rows: u16 }<br>
+        &nbsp;&nbsp;<span style="color:#7aa2f7;">cells</span>: [Cell; cols × rows × 2]  <span style="color:#565f89;">// double buffer</span><br>
+        &nbsp;&nbsp;<span style="color:#7aa2f7;">scrollback</span>: RingBuffer&lt;[Cell; cols]&gt;  <span style="color:#565f89;">// N lignes d'historique</span><br>
+        &nbsp;&nbsp;<span style="color:#7aa2f7;">dirty_flags</span>: AtomicBitset  <span style="color:#565f89;">// quelles lignes ont changé</span><br>
+        }
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <span style="color:#e0af68;">Cell :</span><br>
+      <div style="margin-left:16px; margin-top:8px;">
+        <span style="color:#9ece6a;">Cell</span> { char: u32, fg: Rgb, bg: Rgb, flags: u8 <span style="color:#565f89;">// bold, italic, underline, inverse</span> }
+      </div>
+    </div>
+    <div>
+      <span style="color:#e0af68;">Synchronisation :</span><br>
+      <div style="margin-left:16px; margin-top:8px;">
+        <span style="color:#f7768e;">daemon</span> écrit cells + incrémente write_seq + set dirty_flags<br>
+        <span style="color:#7aa2f7;">gui</span> compare read_seq vs write_seq → si différent, lit les lignes dirty → render<br>
+        <span style="color:#565f89;">Pas de lock — seqlock pattern (writer atomic increment, reader retry on mismatch)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Latency targets -->
+<div class="mockup">
+  <div class="mockup-header">⏱️ Objectifs de latence</div>
+  <div class="mockup-body" style="padding:24px;">
+    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+      <tr style="border-bottom:1px solid #3b4261;">
+        <th style="text-align:left; padding:8px; color:#7aa2f7;">Segment</th>
+        <th style="text-align:left; padding:8px; color:#7aa2f7;">Cible</th>
+        <th style="text-align:left; padding:8px; color:#7aa2f7;">Technique</th>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#a0a0a0;">Keystroke → PTY write</td>
+        <td style="padding:8px; color:#9ece6a;">&lt; 0.5ms</td>
+        <td style="padding:8px; color:#565f89;">Direct shm write, pas d'IPC</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#a0a0a0;">PTY output → CellGrid</td>
+        <td style="padding:8px; color:#9ece6a;">&lt; 1ms</td>
+        <td style="padding:8px; color:#565f89;">vte parse in-place, batch updates</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#a0a0a0;">CellGrid → GPU frame</td>
+        <td style="padding:8px; color:#9ece6a;">&lt; 2ms</td>
+        <td style="padding:8px; color:#565f89;">Dirty-line only upload, instanced rendering</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:8px; color:#a0a0a0;">Total keypress-to-pixel</td>
+        <td style="padding:8px; color:#e0af68; font-weight:bold;">&lt; 5ms</td>
+        <td style="padding:8px; color:#565f89;">vs ~15ms Alacritty, ~8ms WezTerm</td>
+      </tr>
+      <tr>
+        <td style="padding:8px; color:#a0a0a0;">Frame rate</td>
+        <td style="padding:8px; color:#e0af68; font-weight:bold;">vsync (60-144fps)</td>
+        <td style="padding:8px; color:#565f89;">wgpu present mode: Fifo</td>
+      </tr>
+    </table>
+  </div>
+</div>

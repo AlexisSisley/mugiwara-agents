@@ -5,7 +5,7 @@ argument-hint: "[stack actuelle ou systeme a moderniser]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

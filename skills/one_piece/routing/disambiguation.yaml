@@ -1,0 +1,189 @@
+# ============================================================
+# Mugiwara Agents — Disambiguation Rules
+# When two routes seem possible, apply these rules in order
+# ============================================================
+version: 2
+
+rules:
+  - id: 1
+    name: "Pipeline > Agent seul"
+    priority: 100
+    condition: "Un pipeline couvre le besoin"
+    resolution: "Preferer le pipeline a un agent individuel (le pipeline orchestre deja les agents necessaires)"
+
+  - id: 2
+    name: "Incident prioritaire"
+    priority: 99
+    condition: "Les mots 'prod', 'down', 'urgence', 'hotfix' apparaissent"
+    resolution: "Router vers /incident meme si d'autres signaux sont presents"
+    route: incident
+
+  - id: 3
+    name: "Debug vs Incident"
+    priority: 98
+    condition: "Bug detecte"
+    resolution: "Bug en dev/local -> /chopper ; bug en production -> /incident"
+    routes:
+      dev: chopper
+      prod: incident
+
+  - id: 4
+    name: "Modernize vs Shanks"
+    priority: 80
+    condition: "Demande de modernisation"
+    resolution: "Modernisation globale (toute la stack) -> /modernize ; ciblee (un module, un pattern) -> /shanks"
+    routes:
+      global: modernize
+      targeted: shanks
+
+  - id: 5
+    name: "Discovery vs Mugiwara"
+    priority: 80
+    condition: "Nouveau projet"
+    resolution: "Besoin encore flou (exploration, ideation) -> /discovery ; specs deja claires (on sait ce qu'on veut) -> /mugiwara"
+    routes:
+      fuzzy: discovery
+      clear: mugiwara
+
+  - id: 6
+    name: "Brook vs Doc-Hunt"
+    priority: 75
+    condition: "Demande liee a la documentation"
+    resolution: "Ecrire/generer de la doc interne (changelog, README, guide) -> /brook ; chercher la doc officielle d'une API/lib externe -> /doc-hunt"
+    routes:
+      internal: brook
+      external: doc-hunt
+
+  - id: 7
+    name: "Robin vs Bartholomew"
+    priority: 75
+    condition: "Demande de cartographie ou analyse"
+    resolution: "Cartographier un systeme entier (architecture, modules, dependances, ADR) -> /robin ; analyser specifiquement les endpoints/routes d'une API locale -> /bartholomew"
+    routes:
+      system: robin
+      api: bartholomew
+
+  - id: 8
+    name: "Bartholomew + Perona + Senor Pink"
+    priority: 90
+    condition: "Analyser une API ET generer une collection Postman (avec ou sans tests E2E)"
+    resolution: "Router vers le pipeline /api-postman qui orchestre les trois agents en sequence"
+    route: api-postman
+
+  - id: 9
+    name: "Perona vs Senor Pink"
+    priority: 70
+    condition: "Demande liee a Postman"
+    resolution: "Collection Postman basique (requetes individuelles, import rapide) -> /perona ; tests E2E (workflows chainees, assertions avancees, chaining, Newman, CI/CD) -> /senor-pink"
+    routes:
+      basic: perona
+      e2e: senor-pink
+
+  - id: 10
+    name: "Bon-Clay"
+    priority: 50
+    condition: "Ne jamais router vers /bon-clay sauf mention explicite"
+    resolution: "Uniquement si l'utilisateur mentionne explicitement 'easter egg', 'surprise', 'secret cache', 'konami' ou 'bon-clay'"
+    route: bon-clay
+
+  - id: 11
+    name: "Law vs Law-SQL"
+    priority: 75
+    condition: "Demande liee aux donnees"
+    resolution: "Architecture data (ETL, dbt, warehouse, pipeline, orchestration) -> /law ; requetes SQL brutes, conversion doc/excel en SQL, optimisation requetes, migration dialecte SQL -> /law-sql"
+    routes:
+      architecture: law
+      sql: law-sql
+
+  - id: 12
+    name: "Rayleigh vs Enel vs Incident"
+    priority: 85
+    condition: "Demande liee a la production/monitoring"
+    resolution: "Surveiller/analyser logs de prod et auto-fixer -> /rayleigh ; configurer monitoring/alerting (Prometheus, Grafana, dashboards, SLO) -> /enel ; incident actif (service down, crash) -> /incident"
+    routes:
+      logs: rayleigh
+      monitoring: enel
+      active_incident: incident
+
+  - id: 13
+    name: "Poneglyph vs Robin"
+    priority: 75
+    condition: "Demande d'analyse"
+    resolution: "Analyser un document specifique (PDF, spec, contrat, config, CSV) -> /poneglyph ; cartographier un systeme entier (architecture, modules, dependances) -> /robin"
+    routes:
+      document: poneglyph
+      system: robin
+
+  - id: 14
+    name: "Usopp vs Iceburg"
+    priority: 70
+    condition: "Demande Docker"
+    resolution: "DevOps global (CI/CD + Docker + K8s + Terraform) -> /usopp ; Docker pur (Dockerfile, compose, multi-stage) -> /iceburg"
+    routes:
+      devops: usopp
+      docker: iceburg
+
+  - id: 15
+    name: "Crocodile vs Kizaru vs Aokiji"
+    priority: 70
+    condition: "Demande cloud"
+    resolution: "AWS -> /crocodile ; Azure -> /kizaru ; GCP -> /aokiji ; multi-cloud ou cloud generique -> /usopp"
+    routes:
+      aws: crocodile
+      azure: kizaru
+      gcp: aokiji
+      generic: usopp
+
+  - id: 16
+    name: "Franky vs Shanks"
+    priority: 70
+    condition: "Demande d'amelioration de code"
+    resolution: "Audit/review (lire et commenter) -> /franky ; refactoring/migration (modifier activement) -> /shanks"
+    routes:
+      review: franky
+      refactor: shanks
+
+  - id: 17
+    name: "Magellan vs Law"
+    priority: 70
+    condition: "Demande liee aux bases de donnees"
+    resolution: "DBA (tuning, replication, backup, sharding) -> /magellan ; data engineering (ETL, warehouse, pipeline) -> /law"
+    routes:
+      dba: magellan
+      data_eng: law
+
+  - id: 18
+    name: "Vivi vs Zorro"
+    priority: 70
+    condition: "Demande produit/specs"
+    resolution: "UX research, personas, wireframes, product discovery -> /vivi ; specs fonctionnelles, user stories, Gherkin, cahier des charges -> /zorro"
+    routes:
+      ux: vivi
+      specs: zorro
+
+  - id: 19
+    name: "Nami vs Senor Pink"
+    priority: 70
+    condition: "Demande de tests"
+    resolution: "Strategie de test globale, QA, couverture -> /nami ; tests E2E API specifiquement (Postman, Newman) -> /senor-pink"
+    routes:
+      strategy: nami
+      api_e2e: senor-pink
+
+  - id: 20
+    name: "Caesar vs Ace"
+    priority: 65
+    condition: "Demande de resilience/performance"
+    resolution: "Chaos engineering (Chaos Monkey, GameDay, resilience) -> /caesar ; performance pure (load test, latence, p99) -> /ace"
+    routes:
+      chaos: caesar
+      performance: ace
+
+  - id: 21
+    name: "Smoker vs Chopper"
+    priority: 70
+    condition: "Demande de gestion d'incident/ticket"
+    resolution: "Tickets ITSM/GLPI (triage, workflow, categorisation) -> /smoker ; diagnostic technique d'un bug -> /chopper"
+    routes:
+      itsm: smoker
+      debug: chopper

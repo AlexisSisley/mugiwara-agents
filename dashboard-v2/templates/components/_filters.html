@@ -1,0 +1,31 @@
+{# Usage: {% include "components/_filters.html" with filters=filters hx_target="#target-id" hx_url="/some/url/" %} #}
+{# filters = [{"name": "search", "type": "search", "placeholder": "Search..."}, {"name": "type", "type": "select", "options": [("all", "All"), ("skill", "Skill")], "value": "all"}] #}
+<div class="filter-bar">
+    <form hx-get="{{ hx_url }}"
+          hx-target="{{ hx_target }}"
+          hx-swap="innerHTML"
+          hx-trigger="input changed delay:300ms from:find input, change from:find select"
+          hx-indicator=".htmx-indicator">
+
+        {% for f in filters %}
+            {% if f.type == "search" %}
+                <input type="search"
+                       name="{{ f.name }}"
+                       class="glass-input"
+                       placeholder="{{ f.placeholder|default:'Search...' }}"
+                       value="{{ f.value|default:'' }}"
+                       aria-label="{{ f.placeholder|default:'Search' }}">
+            {% elif f.type == "select" %}
+                <select name="{{ f.name }}" class="glass-input" aria-label="{{ f.label|default:f.name }}">
+                    {% for val, label in f.options %}
+                        <option value="{{ val }}" {% if f.value == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            {% endif %}
+        {% endfor %}
+
+        <div class="htmx-indicator">
+            <span class="neon-spinner"></span>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,62 @@
+# ============================================================
+# Mugiwara Agents — Pipeline Routing Table
+# Source of truth for all pipelines: name, signals, agents sequence
+# ============================================================
+version: 2
+
+pipelines:
+  - name: incident
+    alias: polar-tang
+    tier: 0
+    intent: "Incident production"
+    signals: ["500", "crash", "down", "timeout", "stack trace", "urgence", "prod cassee", "erreur en prod", "hotfix"]
+    agents: [chopper, franky, jinbe, usopp]
+
+  - name: discovery
+    alias: merry
+    tier: 0
+    intent: "Nouveau projet (besoin flou)"
+    signals: ["idee", "explorer", "SaaS idea", "discovery", "etude de marche", "besoin utilisateur", "je voudrais creer"]
+    agents: [vivi, mugiwara]
+
+  - name: mugiwara
+    alias: thousand-sunny
+    tier: 0
+    intent: "Nouveau projet (specs claires)"
+    signals: ["construire", "creer", "build", "scaffold", "bootstrapper", "generer un projet"]
+    agents: [zorro, sanji, nami, luffy]
+
+  - name: pre-launch
+    alias: oro-jackson
+    tier: 0
+    intent: "Pre-launch"
+    signals: ["go live", "mise en prod", "ready to ship", "checklist avant deploiement", "pre-production", "go/no-go"]
+    agents: [nami, franky, jinbe, usopp, ace, brook]
+
+  - name: onboard
+    alias: baratie
+    tier: 0
+    intent: "Onboarding"
+    signals: ["nouveau dev", "comprendre le code", "onboarding", "decouvrir la codebase", "nouvel arrivant"]
+    agents: [robin, franky, brook]
+
+  - name: modernize
+    alias: pluton
+    tier: 0
+    intent: "Modernisation globale"
+    signals: ["legacy", "migrer stack", "upgrade global", "moderniser l'ensemble", "dette technique globale", "refonte"]
+    agents: [yamato, robin, law, sanji, shanks, usopp]
+
+  - name: doc-hunt
+    alias: ohara
+    tier: 0
+    intent: "Documentation externe"
+    signals: ["documenter [API/lib]", "trouver la doc de", "doc-hunt", "chercher la doc officielle"]
+    agents: [yamato, brook]
+
+  - name: api-postman
+    alias: maxim
+    tier: 0
+    intent: "API > Postman + E2E"
+    signals: ["analyser API et generer postman", "bartholomew perona", "api-postman", "collection postman depuis le code", "du code a postman", "tests E2E postman", "tests end-to-end API"]
+    agents: [bartholomew, perona, senor-pink]

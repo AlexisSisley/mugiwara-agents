@@ -7,7 +7,7 @@ argument-hint: "[list | triage | fetch <ticket-id> | dispatch <ticket-id> | stat
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Read, Glob, Grep, Bash(curl *), Bash(jq *), Bash(ls *), Skill, mcp__glpi__*
 ---
 

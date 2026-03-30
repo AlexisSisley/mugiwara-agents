@@ -1,0 +1,23 @@
+<header class="topbar">
+    <div class="topbar-left">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+            <a href="{% url 'overview' %}" class="breadcrumb-link">Dashboard</a>
+            {% if breadcrumbs %}
+                {% for crumb in breadcrumbs %}
+                    <span class="breadcrumb-sep">/</span>
+                    {% if crumb.url %}
+                        <a href="{{ crumb.url }}" class="breadcrumb-link">{{ crumb.label }}</a>
+                    {% else %}
+                        <span class="breadcrumb-current">{{ crumb.label }}</span>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </nav>
+        {% if page_title %}
+            <h1 class="neon-title topbar-title">{{ page_title }}</h1>
+        {% endif %}
+    </div>
+    <div class="topbar-right">
+        {% block topbar_actions %}{% endblock %}
+    </div>
+</header>

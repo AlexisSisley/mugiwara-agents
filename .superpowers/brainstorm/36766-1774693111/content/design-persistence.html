@@ -1,0 +1,165 @@
+<h2>Section 4 — Persistance & Daemon Lifecycle</h2>
+<p class="subtitle">Le daemon survit à tout — crash GUI, fermeture, reboot</p>
+
+<!-- Daemon lifecycle -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">🔄 Cycle de vie du Daemon</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:2; color:#a0a0a0;">
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:24px;">
+      <!-- State machine -->
+      <div style="flex:1; min-width:320px;">
+        <span style="color:#e0af68; font-size:14px;">États du daemon :</span><br><br>
+
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <div style="padding:6px 16px; background:rgba(86,95,137,0.3); border-radius:20px; color:#565f89;">Off</div>
+          <span style="color:#565f89;">──</span>
+          <span style="color:#9ece6a; font-size:11px;">cmux start / auto-start</span>
+          <span style="color:#565f89;">──▶</span>
+          <div style="padding:6px 16px; background:rgba(158,206,106,0.2); border-radius:20px; color:#9ece6a;">Running</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <div style="padding:6px 16px; background:rgba(158,206,106,0.2); border-radius:20px; color:#9ece6a;">Running</div>
+          <span style="color:#565f89;">──</span>
+          <span style="color:#e0af68; font-size:11px;">GUI disconnects</span>
+          <span style="color:#565f89;">──▶</span>
+          <div style="padding:6px 16px; background:rgba(224,175,104,0.2); border-radius:20px; color:#e0af68;">Detached</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <div style="padding:6px 16px; background:rgba(224,175,104,0.2); border-radius:20px; color:#e0af68;">Detached</div>
+          <span style="color:#565f89;">──</span>
+          <span style="color:#9ece6a; font-size:11px;">GUI reconnects</span>
+          <span style="color:#565f89;">──▶</span>
+          <div style="padding:6px 16px; background:rgba(158,206,106,0.2); border-radius:20px; color:#9ece6a;">Running</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <div style="padding:6px 16px; background:rgba(224,175,104,0.2); border-radius:20px; color:#e0af68;">Detached</div>
+          <span style="color:#565f89;">──</span>
+          <span style="color:#565f89; font-size:11px;">timeout (configurable)</span>
+          <span style="color:#565f89;">──▶</span>
+          <div style="padding:6px 16px; background:rgba(247,118,142,0.2); border-radius:20px; color:#f7768e;">Hibernating</div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="padding:6px 16px; background:rgba(247,118,142,0.2); border-radius:20px; color:#f7768e;">Hibernating</div>
+          <span style="color:#565f89;">──</span>
+          <span style="color:#9ece6a; font-size:11px;">cmux attach</span>
+          <span style="color:#565f89;">──▶</span>
+          <div style="padding:6px 16px; background:rgba(158,206,106,0.2); border-radius:20px; color:#9ece6a;">Running</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auto-start behavior -->
+    <div style="padding:16px; background:rgba(122,162,247,0.05); border:1px solid #3b4261; border-radius:8px;">
+      <span style="color:#7aa2f7; font-size:14px;">Auto-start :</span><br>
+      <span style="color:#565f89;">Le GUI lance automatiquement le daemon s'il n'est pas déjà actif.</span><br>
+      <span style="color:#565f89;">Détection via lock file :</span> <span style="color:#e0af68;">~/.cmux/daemon.lock</span> <span style="color:#565f89;">(contient PID)</span><br>
+      <span style="color:#565f89;">Si le PID est mort → cleanup + relance. Si vivant → attach.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Persistence layers -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">💾 Couches de persistance</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.8; color:#a0a0a0;">
+
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="border-bottom:1px solid #3b4261;">
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Couche</th>
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Quoi</th>
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Où</th>
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Quand</th>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:10px; color:#9ece6a;">L1 — Live</td>
+        <td style="padding:10px; color:#a0a0a0;">PTY processes vivants, shared memory</td>
+        <td style="padding:10px; color:#565f89;">RAM (daemon process)</td>
+        <td style="padding:10px; color:#565f89;">Tant que le daemon tourne</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:10px; color:#e0af68;">L2 — Session</td>
+        <td style="padding:10px; color:#a0a0a0;">Layout complet (workspaces, tabs, splits, pane metadata)</td>
+        <td style="padding:10px; color:#565f89;">~/.cmux/sessions/current.json</td>
+        <td style="padding:10px; color:#565f89;">Toute mutation (debounced 500ms)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:10px; color:#f7768e;">L3 — Scrollback</td>
+        <td style="padding:10px; color:#a0a0a0;">Historique terminal par pane (N lignes)</td>
+        <td style="padding:10px; color:#565f89;">~/.cmux/scrollback/{pane_id}.bin</td>
+        <td style="padding:10px; color:#565f89;">Périodique (toutes les 30s) + on shutdown</td>
+      </tr>
+      <tr>
+        <td style="padding:10px; color:#bb9af7;">L4 — Snapshot</td>
+        <td style="padding:10px; color:#a0a0a0;">Screen buffer complet (ce qui est visible)</td>
+        <td style="padding:10px; color:#565f89;">~/.cmux/snapshots/{pane_id}.bin</td>
+        <td style="padding:10px; color:#565f89;">On hibernate + on graceful shutdown</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- File structure -->
+<div class="mockup" style="margin-bottom:24px;">
+  <div class="mockup-header">📁 Structure fichiers — ~/.cmux/</div>
+  <div class="mockup-body" style="padding:24px; font-family:monospace; font-size:13px; line-height:1.9; color:#a0a0a0;">
+    <span style="color:#e0af68;">~/.cmux/</span><br>
+    ├── <span style="color:#f7768e;">daemon.lock</span>          <span style="color:#565f89;">// PID du daemon actif</span><br>
+    ├── <span style="color:#f7768e;">daemon.sock</span>          <span style="color:#565f89;">// Named pipe / Unix socket</span><br>
+    ├── <span style="color:#7aa2f7;">config.toml</span>          <span style="color:#565f89;">// Configuration globale</span><br>
+    ├── <span style="color:#7aa2f7;">keybinds.toml</span>        <span style="color:#565f89;">// Custom keybindings</span><br>
+    ├── <span style="color:#7aa2f7;">theme.toml</span>           <span style="color:#565f89;">// Couleurs, fonts, style</span><br>
+    ├── <span style="color:#9ece6a;">sessions/</span><br>
+    │   ├── <span style="color:#9ece6a;">current.json</span>     <span style="color:#565f89;">// État live (workspaces, tabs, splits)</span><br>
+    │   └── <span style="color:#9ece6a;">backups/</span>         <span style="color:#565f89;">// 5 derniers snapshots auto</span><br>
+    │       ├── 2026-03-28T10-00.json<br>
+    │       └── 2026-03-27T18-30.json<br>
+    ├── <span style="color:#f7768e;">scrollback/</span><br>
+    │   ├── <span style="color:#f7768e;">pane_a1b2.bin</span>    <span style="color:#565f89;">// Ring buffer sérialisé</span><br>
+    │   └── <span style="color:#f7768e;">pane_c3d4.bin</span><br>
+    ├── <span style="color:#bb9af7;">snapshots/</span><br>
+    │   ├── <span style="color:#bb9af7;">pane_a1b2.bin</span>    <span style="color:#565f89;">// Screen buffer at hibernate</span><br>
+    │   └── <span style="color:#bb9af7;">pane_c3d4.bin</span><br>
+    └── <span style="color:#565f89;">logs/</span><br>
+        ├── daemon.log<br>
+        └── gui.log
+  </div>
+</div>
+
+<!-- Recovery scenarios -->
+<div class="mockup">
+  <div class="mockup-header">🛡️ Scénarios de recovery</div>
+  <div class="mockup-body" style="padding:24px;">
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="border-bottom:1px solid #3b4261;">
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Scénario</th>
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Ce qui survit</th>
+        <th style="text-align:left; padding:10px; color:#7aa2f7;">Recovery</th>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:10px; color:#9ece6a;">GUI crash / close</td>
+        <td style="padding:10px; color:#a0a0a0;">✅ Tout — PTY vivants, scrollback, layout</td>
+        <td style="padding:10px; color:#565f89;">cmux attach → reconnexion instantanée</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:10px; color:#e0af68;">Daemon graceful shutdown</td>
+        <td style="padding:10px; color:#a0a0a0;">✅ Layout + scrollback + screen snapshots</td>
+        <td style="padding:10px; color:#565f89;">Auto-relance → restore layout, show snapshots, re-spawn PTY, re-exec last commands</td>
+      </tr>
+      <tr style="border-bottom:1px solid #1a1b26;">
+        <td style="padding:10px; color:#f7768e;">Daemon crash (SIGKILL)</td>
+        <td style="padding:10px; color:#a0a0a0;">⚠️ Layout + scrollback (dernière save)</td>
+        <td style="padding:10px; color:#565f89;">Détection lock stale → cleanup → restore from last session JSON + scrollback files</td>
+      </tr>
+      <tr>
+        <td style="padding:10px; color:#f7768e;">Machine reboot</td>
+        <td style="padding:10px; color:#a0a0a0;">⚠️ Layout + scrollback + snapshots</td>
+        <td style="padding:10px; color:#565f89;">Daemon auto-start (registre Windows / systemd) → full restore avec proposition de re-exec commands</td>
+      </tr>
+    </table>
+  </div>
+</div>

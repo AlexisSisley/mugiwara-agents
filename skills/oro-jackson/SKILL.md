@@ -5,7 +5,7 @@ argument-hint: "[systeme, feature ou release a valider avant production]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

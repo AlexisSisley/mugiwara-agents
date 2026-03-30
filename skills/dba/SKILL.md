@@ -9,7 +9,7 @@ argument-hint: "[postgres <task> | mysql <task> | mongo <task> | redis <task> | 
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *), Skill
 ---
 

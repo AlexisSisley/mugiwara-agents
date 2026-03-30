@@ -1,0 +1,32 @@
+{% load dashboard_tags %}
+
+<div class="report-detail">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--spacing-md);">
+        <span class="neon-badge neon-badge--{{ report.status|badge_class }}">{{ report.status }}</span>
+        {% if report.generated_at %}
+        <span class="text-dimmed" style="font-size: 12px;">Generated {{ report.generated_at|timeago }}</span>
+        {% endif %}
+    </div>
+
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 4px;">Period</h4>
+        <p style="color: var(--text-secondary); margin: 0;">{{ report.week_start }} &mdash; {{ report.week_end }}</p>
+    </div>
+
+    {% if html_content %}
+    <div class="glass-card" style="margin-bottom: var(--spacing-md);">
+        <h4 style="color: var(--text-primary); margin: 0 0 8px;">Report Preview</h4>
+        <div class="report-html-preview" style="max-height: 500px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+            {{ html_content|safe }}
+        </div>
+    </div>
+    {% else %}
+    <p class="text-dimmed">No HTML report file found at: {{ report.html_path }}</p>
+    {% endif %}
+
+    {% if report.html_path %}
+    <p class="mono text-dimmed" style="font-size: 11px; word-break: break-all;">
+        File: {{ report.html_path }}
+    </p>
+    {% endif %}
+</div>

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static dashboard_tags %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<!-- Generate button -->
+<div class="flex items-center justify-between" style="margin-bottom: var(--spacing-lg);">
+    <span class="text-muted">Weekly reports generated from Mugiwara activity data.</span>
+    <form method="post" action="{% url 'report_generate' %}">
+        <button type="submit" class="neon-btn">
+            &#9889; Generate Current Week
+        </button>
+    </form>
+</div>
+
+<!-- Reports grid -->
+{% if reports %}
+<div class="card-grid">
+    {% for report in reports %}
+    <div class="glass-card crew-card"
+         data-drawer-url="{% url 'report_detail' report.pk %}"
+         data-drawer-title="Report — {{ report.week_start }}"
+         role="button"
+         tabindex="0">
+
+        <div class="crew-card__header">
+            <span class="crew-card__name">Week of {{ report.week_start }}</span>
+            <span class="neon-badge neon-badge--{{ report.status|badge_class }}">{{ report.status }}</span>
+        </div>
+
+        <p class="crew-card__desc">
+            {{ report.week_start }} &mdash; {{ report.week_end }}
+        </p>
+
+        <div class="crew-card__footer">
+            {% if report.generated_at %}
+            <span class="crew-card__stat">Generated {{ report.generated_at|timeago }}</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+{% include "components/_empty_state.html" with title="No reports yet" message="Click 'Generate Current Week' to create your first weekly report." icon="empty" %}
+{% endif %}
+{% endblock %}

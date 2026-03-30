@@ -1,0 +1,108 @@
+# ============================================================
+# Mugiwara Agents — Alias Routing Table
+# Maps alias names to their real agent/pipeline
+# All aliases are Tier 3 (haiku) skills
+# ============================================================
+version: 2
+
+aliases:
+  # ─── Infrastructure aliases ───
+  - alias: docker
+    target: iceburg
+    category: infrastructure
+
+  - alias: iis
+    target: paulie
+    category: infrastructure
+
+  - alias: infra-reseau
+    target: coby
+    category: infrastructure
+
+  # ─── Cloud aliases ───
+  - alias: firebase
+    target: sabo
+    category: cloud
+
+  - alias: azure
+    target: kizaru
+    category: cloud
+
+  - alias: gcp
+    target: aokiji
+    category: cloud
+
+  # ─── Monitoring / Feature aliases ───
+  - alias: monitoring
+    target: enel
+    category: monitoring
+
+  - alias: feature-flags
+    target: ivankov
+    category: infrastructure
+
+  - alias: prod-listener
+    target: rayleigh
+    category: monitoring
+
+  # ─── Quality / Domain aliases ───
+  - alias: a11y
+    target: fujitora
+    category: quality
+
+  - alias: mlops
+    target: katakuri
+    category: ai-ml
+
+  - alias: agile
+    target: big-mom
+    category: management
+
+  - alias: bi
+    target: hawkins
+    category: data
+
+  - alias: dba
+    target: magellan
+    category: data
+
+  - alias: chaos
+    target: caesar
+    category: performance
+
+  - alias: glpi
+    target: smoker
+    category: itsm
+
+  # ─── Pipeline aliases (navires) ───
+  - alias: thousand-sunny
+    target: mugiwara
+    category: pipeline
+
+  - alias: merry
+    target: discovery
+    category: pipeline
+
+  - alias: polar-tang
+    target: incident
+    category: pipeline
+
+  - alias: oro-jackson
+    target: pre-launch
+    category: pipeline
+
+  - alias: baratie
+    target: onboard
+    category: pipeline
+
+  - alias: pluton
+    target: modernize
+    category: pipeline
+
+  - alias: ohara
+    target: doc-hunt
+    category: pipeline
+
+  - alias: maxim
+    target: api-postman
+    category: pipeline

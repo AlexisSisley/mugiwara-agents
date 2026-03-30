@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+{% load static dashboard_tags %}
+
+{% block title %}{{ project.name }} — Projects{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="detail-header">
+    <a href="{% url 'project_list' %}" class="btn-action" style="flex-shrink: 0;">&larr; Back</a>
+    <div class="detail-header__info">
+        <div class="detail-header__title">
+            {{ project.name }}
+            <span class="neon-badge neon-badge--{{ project.category|badge_class }}">{{ project.category }}</span>
+            {% if project.has_mugiwara %}
+                <span class="neon-badge neon-badge--subagent" title="Mugiwara integration">&#9813;</span>
+            {% endif %}
+            {% if project.is_dirty %}
+                <span class="neon-badge neon-badge--moyenne">dirty</span>
+            {% endif %}
+        </div>
+        <div class="detail-header__path">{{ project.path }}</div>
+    </div>
+    <div class="detail-header__actions">
+        <button class="btn-action btn-claude"
+                onclick="projectAction('{% url 'project_open' project.name %}')"
+                title="Open Claude">Claude</button>
+        <button class="btn-action btn-yolo"
+                onclick="projectAction('{% url 'project_open_yolo' project.name %}')"
+                title="--dangerously-skip-permissions">YOLO</button>
+        <button class="btn-action btn-agent"
+                onclick="openAgentPicker('{{ project.name }}', '{% url 'project_run_agent' project.name %}')"
+                title="Run agent">Agent</button>
+        <button class="btn-action btn-explore"
+                onclick="projectAction('{% url 'project_explore' project.name %}')"
+                title="Open Explorer">Explorer</button>
+    </div>
+</div>
+
+<!-- 2-column content -->
+<div class="detail-content">
+    <!-- Left Column -->
+    <div class="detail-col">
+
+        <!-- Info Section -->
+        <div class="detail-section">
+            <h4 class="detail-section__title">Infos</h4>
+            {% if project.stack %}
+            <div class="detail-field">
+                <span class="detail-field__label">Stack</span>
+                <span class="detail-field__value">
+                    <span class="neon-badge neon-badge--neutral">{{ project.stack }}</span>
+                </span>
+            </div>
+            {% endif %}
+            {% if project.last_commit_date %}
+            <div class="detail-field">
+                <span class="detail-field__label">Last modified</span>
+                <span class="detail-field__value">{{ project.last_commit_date }}</span>
+            </div>
+            {% endif %}
+            {% if project.claude_session_count %}
+            <div class="detail-field">
+                <span class="detail-field__label">Claude Code Sessions</span>
+                <span class="detail-field__value detail-field__value--accent">{{ project.claude_session_count }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Git Section -->
+        {% if project.branch %}
+        <div class="detail-section">
+            <h4 class="detail-section__title">Git</h4>
+            <div class="detail-field">
+                <span class="detail-field__label">Branch</span>
+                <span class="detail-field__value detail-field__value--accent mono">{{ project.branch }}</span>
+            </div>
+            {% if project.last_commit %}
+            <div class="detail-field">
+                <span class="detail-field__label">Last commit</span>
+                <span class="detail-field__value">{{ project.last_commit }}</span>
+            </div>
+            {% endif %}
+            {% if project.last_commit_date %}
+            <div class="detail-field">
+                <span class="detail-field__label">Date</span>
+                <span class="detail-field__value">{{ project.last_commit_date }}</span>
+            </div>
+            {% endif %}
+            <div class="detail-field">
+                <span class="detail-field__label">Status</span>
+                <span class="detail-field__value {% if project.is_dirty %}detail-field__value--dirty{% else %}detail-field__value--clean{% endif %}">
+                    {% if project.is_dirty %}Dirty (uncommitted changes){% else %}Clean{% endif %}
+                </span>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Mugiwara Stats -->
+        <div class="detail-section">
+            <h4 class="detail-section__title">Stats Mugiwara</h4>
+            <div class="detail-field">
+                <span class="detail-field__label">Sessions</span>
+                <span class="detail-field__value">{{ session_count }}</span>
+            </div>
+            <div class="detail-field">
+                <span class="detail-field__label">Invocations</span>
+                <span class="detail-field__value">{{ project.invocations|format_number }}</span>
+            </div>
+            {% if top_agents %}
+            <div class="detail-field">
+                <span class="detail-field__label">Top Agents</span>
+                <div class="agent-bars">
+                    {% for a in top_agents %}
+                    <div class="agent-bar">
+                        <span class="agent-bar__name">{{ a.agent }}</span>
+                        <div class="agent-bar__fill" style="width: {{ a.width }}%;"></div>
+                        <span class="agent-bar__count">{{ a.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% if project.last_used %}
+            <div class="detail-field">
+                <span class="detail-field__label">Last activity</span>
+                <span class="detail-field__value">{{ project.last_used|timeago }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Documentation & Files -->
+        {% if doc_categories %}
+        <div class="detail-section">
+            <h4 class="detail-section__title">Documentation & Files</h4>
+            <span class="text-dimmed" style="font-size: 11px;">{{ total_doc_files }} file{{ total_doc_files|pluralize }}</span>
+            {% for cat in doc_categories %}
+            <div class="doc-category">
+                <span class="doc-category__label">{{ cat.icon }} {{ cat.label }}</span>
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    {% for file in cat.files %}
+                    <button class="doc-file-btn"
+                            onclick="openFileViewer('{{ project.name }}', '{{ file.relative_path }}')">
+                        <span class="doc-file-name mono">{{ file.relative_path }}</span>
+                        <span class="doc-file-size">{{ file.size_bytes|filesizeformat }}</span>
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Right Column -->
+    <div class="detail-col">
+
+        <!-- Claude Activity -->
+        <div class="detail-section">
+            <h4 class="detail-section__title">Claude Activity</h4>
+            {% if claude_sessions %}
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--accent-purple-light); font-weight: 600;">
+                <span>{{ claude_sessions|length }} session{{ claude_sessions|length|pluralize }}</span>
+                <span style="opacity: 0.4;">-</span>
+                <span>{{ claude_total_messages }} messages</span>
+            </div>
+            {% for cs in claude_sessions %}
+            <div class="session-entry session-entry--claude">
+                <div class="session-entry__header">
+                    <span class="session-entry__date">{{ cs.start_time|timeago }}</span>
+                    <span class="session-entry__duration">{{ cs.duration_ms|format_duration }}</span>
+                </div>
+                <div class="session-entry__details">
+                    <span>{{ cs.user_messages }} msg user / {{ cs.assistant_messages }} msg assistant</span>
+                    {% if cs.git_branch %}
+                        <span class="mono" style="color: var(--accent-purple-light); font-weight: 600;">{{ cs.git_branch }}</span>
+                    {% endif %}
+                </div>
+                {% if cs.tools_used %}
+                <div class="session-tools">
+                    {% for tool in cs.tools_used|slice:":8" %}
+                    <span class="tool-tag">{{ tool }}</span>
+                    {% endfor %}
+                    {% if cs.tools_used|length > 8 %}
+                    <span class="tool-tag" style="opacity: 0.5;">+{{ cs.tools_used|length|add:"-8" }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <span class="sessions-empty">No Claude Code sessions detected for this project.</span>
+            {% endif %}
+        </div>
+
+        <!-- Mugiwara Sessions -->
+        <div class="detail-section">
+            <h4 class="detail-section__title">Mugiwara Sessions</h4>
+            {% if mugi_sessions %}
+            {% for sess in mugi_sessions %}
+            <div class="session-entry">
+                <div class="session-entry__header">
+                    <span class="session-entry__date">{{ sess.start|timeago }}</span>
+                    <span class="session-entry__count">{{ sess.count }} invocation{{ sess.count|pluralize }}</span>
+                </div>
+                <div class="session-tools">
+                    {% for agent in sess.agents %}
+                    <span class="agent-tag">{{ agent }}</span>
+                    {% endfor %}
+                </div>
+                {% if sess.pipeline %}
+                <span class="session-pipeline">Pipeline: {{ sess.pipeline }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <span class="sessions-empty">No Mugiwara sessions recorded for this project.</span>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<!-- File Viewer Modal -->
+<div class="file-viewer-overlay" id="file-viewer-overlay">
+    <div class="file-viewer">
+        <div class="file-viewer__header">
+            <div class="file-viewer__info">
+                <span class="file-viewer__name" id="file-viewer-name">-</span>
+                <span class="file-viewer__lang" id="file-viewer-lang">-</span>
+            </div>
+            <button class="file-viewer__toggle" id="file-viewer-toggle"
+                    onclick="toggleMarkdownView()" style="display:none;">Raw</button>
+            <button class="file-viewer__close" onclick="closeFileViewer()">&times;</button>
+        </div>
+        <div class="file-viewer__body">
+            <pre class="file-viewer__content" id="file-viewer-content"></pre>
+            <div class="file-viewer__markdown" id="file-viewer-markdown" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Agent Picker Modal -->
+<div class="agent-picker-overlay" id="agent-picker-overlay">
+    <div class="agent-picker">
+        <h3 class="agent-picker__title">Run Agent</h3>
+        <form id="agent-picker-form" onsubmit="submitAgentPicker(event)">
+            <input type="hidden" id="agent-picker-url" value="">
+            <div class="agent-picker__field">
+                <label for="agent-select">Agent</label>
+                <select id="agent-select" class="glass-input" style="width: 100%;">
+                    {% for name in agent_names %}
+                    <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="agent-picker__field">
+                <label for="agent-message">Message (optional)</label>
+                <input type="text" id="agent-message" class="glass-input" style="width: 100%;"
+                       placeholder="Describe what you need...">
+            </div>
+            <div class="agent-picker__actions">
+                <button type="button" class="btn-action" onclick="closeAgentPicker()">Cancel</button>
+                <button type="submit" class="btn-action btn-claude">Launch</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+<script>
+/* Project action buttons (POST requests) */
+function projectAction(url) {
+    fetch(url, { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                if (window.MugiToast) window.MugiToast('Action launched: ' + (data.action || 'ok'), 'success');
+            } else {
+                if (window.MugiToast) window.MugiToast('Error: ' + (data.error || 'unknown'), 'error');
+            }
+        })
+        .catch(function(e) {
+            if (window.MugiToast) window.MugiToast('Network error', 'error');
+        });
+}
+
+/* File Viewer */
+function openFileViewer(projectName, filePath) {
+    var overlay = document.getElementById('file-viewer-overlay');
+    var nameEl = document.getElementById('file-viewer-name');
+    var langEl = document.getElementById('file-viewer-lang');
+    var contentEl = document.getElementById('file-viewer-content');
+
+    var toggleBtn = document.getElementById('file-viewer-toggle');
+    var mdEl = document.getElementById('file-viewer-markdown');
+
+    nameEl.textContent = filePath;
+    langEl.textContent = '...';
+    contentEl.textContent = 'Loading...';
+    contentEl.style.display = '';
+    mdEl.style.display = 'none';
+    mdEl.innerHTML = '';
+    toggleBtn.style.display = 'none';
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    fetch('/projects/' + encodeURIComponent(projectName) + '/file/?path=' + encodeURIComponent(filePath))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                contentEl.textContent = 'Error: ' + data.error;
+                langEl.textContent = 'error';
+            } else {
+                contentEl.textContent = data.content;
+                langEl.textContent = data.language;
+
+                if (data.language === 'markdown' && typeof marked !== 'undefined') {
+                    var rawHtml = marked.parse(data.content);
+                    mdEl.innerHTML = (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(rawHtml) : rawHtml;
+                    contentEl.style.display = 'none';
+                    mdEl.style.display = 'block';
+                    toggleBtn.style.display = '';
+                    toggleBtn.textContent = 'Raw';
+                    toggleBtn.setAttribute('data-mode', 'rendered');
+                }
+            }
+        })
+        .catch(function(e) {
+            contentEl.textContent = 'Failed to load file.';
+            langEl.textContent = 'error';
+        });
+}
+
+function closeFileViewer() {
+    document.getElementById('file-viewer-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+/* Close file viewer on Escape or overlay click */
+document.getElementById('file-viewer-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeFileViewer();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeFileViewer();
+        closeAgentPicker();
+    }
+});
+
+/* Markdown Toggle */
+function toggleMarkdownView() {
+    var toggleBtn = document.getElementById('file-viewer-toggle');
+    var contentEl = document.getElementById('file-viewer-content');
+    var mdEl = document.getElementById('file-viewer-markdown');
+
+    if (toggleBtn.getAttribute('data-mode') === 'rendered') {
+        contentEl.style.display = '';
+        mdEl.style.display = 'none';
+        toggleBtn.textContent = 'Rendered';
+        toggleBtn.setAttribute('data-mode', 'raw');
+    } else {
+        contentEl.style.display = 'none';
+        mdEl.style.display = 'block';
+        toggleBtn.textContent = 'Raw';
+        toggleBtn.setAttribute('data-mode', 'rendered');
+    }
+}
+
+/* Agent Picker */
+function openAgentPicker(projectName, url) {
+    document.getElementById('agent-picker-url').value = url;
+    document.getElementById('agent-picker-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAgentPicker() {
+    document.getElementById('agent-picker-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+document.getElementById('agent-picker-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAgentPicker();
+});
+
+function submitAgentPicker(e) {
+    e.preventDefault();
+    var url = document.getElementById('agent-picker-url').value;
+    var agent = document.getElementById('agent-select').value;
+    var message = document.getElementById('agent-message').value;
+
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent: agent, message: message }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        closeAgentPicker();
+        if (data.ok) {
+            if (window.MugiToast) window.MugiToast('Agent ' + agent + ' launched!', 'success');
+        } else {
+            if (window.MugiToast) window.MugiToast('Error: ' + (data.error || 'unknown'), 'error');
+        }
+    })
+    .catch(function() {
+        closeAgentPicker();
+        if (window.MugiToast) window.MugiToast('Network error', 'error');
+    });
+}
+
+/* Expose for card grid */
+window.projectAction = projectAction;
+window.openAgentPicker = openAgentPicker;
+</script>
+{% endblock %}

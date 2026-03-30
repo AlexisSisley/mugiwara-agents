@@ -5,7 +5,7 @@ argument-hint: "[fichier, dossier ou specification d'API a analyser et transform
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: haiku
 allowed-tools: Skill
 ---
 

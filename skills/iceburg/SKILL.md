@@ -9,7 +9,7 @@ argument-hint: "[dockerfile <stack> | compose <services...> | swarm <stack> | k8
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *)
 ---
 

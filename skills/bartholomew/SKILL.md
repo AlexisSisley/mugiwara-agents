@@ -11,7 +11,7 @@ argument-hint: "[fichier, dossier ou specification d'API a analyser]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(ls *), Bash(tree *)
 ---
 
