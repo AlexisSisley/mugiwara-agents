@@ -13,7 +13,7 @@ router.get('/health', (_req, res) => {
   const response: HealthResponse = {
     status: allFilesPresent ? 'ok' : 'degraded',
     uptime: Date.now() - startTime,
-    version: '0.1.0',
+    version: '3.2.0',
     dataFiles,
   };
 

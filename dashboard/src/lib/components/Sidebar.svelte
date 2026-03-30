@@ -15,6 +15,7 @@
     { path: '/pipelines', label: 'Pipelines', icon: '🚀', crew: 'Expeditions' },
     { path: '/projects', label: 'Projects', icon: '📁', crew: 'Iles Visitees' },
     { path: '/reports', label: 'Reports', icon: '📜', crew: 'Journal de Bord' },
+    { path: '/mcp', label: 'MCP & Plugins', icon: '🔌', crew: 'Den Den Mushi' },
   ];
 
   function navigate(path: string) {
@@ -43,7 +44,7 @@
   </div>
 
   <div class="sidebar-footer">
-    <span class="version">v3.1.0</span>
+    <span class="version">v3.2.0</span>
   </div>
 </nav>
 

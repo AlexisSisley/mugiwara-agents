@@ -12,6 +12,7 @@ import projectsRouter from './routes/projects.js';
 import overviewRouter from './routes/overview.js';
 import crewRouter from './routes/crew.js';
 import orchestratorRouter from './routes/orchestrator.js';
+import mcpRouter from './routes/mcp.js';
 import { eggHeadersMiddleware } from './__eggs__/headers.js';
 import { openDb, closeDb } from './db/index.js';
 import { aggregateAllDailyStats } from './db/queries.js';
@@ -34,6 +35,7 @@ app.use('/api', projectsRouter);
 app.use('/api', overviewRouter);
 app.use('/api', crewRouter);
 app.use('/api', orchestratorRouter);
+app.use('/api', mcpRouter);
 
 // ── API 404 handler ───────────────────────────────────────────
 // "People's dreams... don't ever end!" — Blackbeard

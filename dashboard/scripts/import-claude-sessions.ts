@@ -15,6 +15,7 @@ import {
   aggregateAllDailyStats,
 } from '../server/db/queries.js';
 import type { InvocationInput, SessionInput, MemoryInput } from '../server/db/queries.js';
+import { detectCategory } from '../server/db/category-detector.js';
 
 const CLAUDE_PROJECTS_DIR = path.join(
   process.env['HOME'] || process.env['USERPROFILE'] || '~',
@@ -88,25 +89,59 @@ interface ImportStats {
   errors: number;
 }
 
+/**
+ * Extract a human-readable project name from a Claude projects slug.
+ *
+ * Slug examples from real machine:
+ *   C--Users-alexis-bourdon-Documents-Projet-mugiwara-agents
+ *   c--Users-alexis-bourdon-Documents-Projet-Dev-MERCH-BO-dev
+ *   C--Users-alexis-bourdon-Documents-Perso-magic-app-magic-companion
+ *
+ * Strategy: match the slug against known scan directories on disk,
+ * then extract the last path component(s) as the project name.
+ */
 function slugToProjectName(slug: string): string {
+  // Known path anchors — these appear in slugs as-is (case-insensitive)
+  // Order matters: longest first to match most specific
+  const anchors = [
+    'Documents-Projet-Dev-Nouveau-dossier-',
+    'Documents-Projet-flutter-',
+    'Documents-Projet-django-',
+    'Documents-Projet-Android-',
+    'Documents-Projet-etude-',
+    'Documents-Projet-perso-',
+    'Documents-Projet-Dev-',
+    'Documents-Projet-',
+    'Documents-Perso-',
+    'source-repos-',
+  ];
+
+  const slugLower = slug.toLowerCase();
+  for (const anchor of anchors) {
+    const idx = slugLower.indexOf(anchor.toLowerCase());
+    if (idx >= 0) {
+      return slug.slice(idx + anchor.length);
+    }
+  }
+
+  // Fallback: everything after the user directory pattern
+  // C--Users-alexis-bourdon-... → take after last known directory segment
+  const userMatch = slug.match(/^[Cc]--Users-[^-]+-[^-]+-(.+)$/);
+  if (userMatch) return userMatch[1]!;
+
+  // Last resort: last segment after '--'
+  const segments = slug.split('--');
+  if (segments.length > 1) return segments[segments.length - 1]!;
+
   const parts = slug.split('-');
-  const projetIdx = parts.lastIndexOf('projet');
-  if (projetIdx >= 0 && projetIdx + 1 < parts.length) {
-    return parts.slice(projetIdx + 1).join('-');
-  }
-  const downloadsIdx = parts.lastIndexOf('Downloads');
-  if (downloadsIdx >= 0 && downloadsIdx + 1 < parts.length) {
-    return parts.slice(downloadsIdx + 1).join('-');
-  }
   return parts.slice(-2).join('-');
 }
 
-function detectCategory(project: string): 'pro' | 'poc' | 'perso' {
-  const pro = ['mugiwara-agents', 'magic-compagnion', 'mpcfill-custom-cards'];
-  const perso = ['voxel-craft', 'poly-tron'];
-  if (pro.some((p) => project.includes(p))) return 'pro';
-  if (perso.some((p) => project.includes(p))) return 'perso';
-  return 'poc';
+/**
+ * Reconstruct a best-effort path representation from a slug for category detection.
+ */
+function slugToPath(slug: string): string {
+  return slug.replace(/--/g, path.sep).replace(/-/g, path.sep);
 }
 
 function extractSessionData(filePath: string): {
@@ -266,7 +301,8 @@ async function main() {
   for (const dirName of projectDirs) {
     const dirPath = path.join(CLAUDE_PROJECTS_DIR, dirName);
     const projectName = slugToProjectName(dirName);
-    const category = detectCategory(projectName);
+    const reconstructedPath = slugToPath(dirName);
+    const category = detectCategory({ projet: projectName, cwd: reconstructedPath });
 
     const sessionFiles = readdirSync(dirPath).filter((f) => f.endsWith('.jsonl'));
     if (sessionFiles.length === 0) continue;

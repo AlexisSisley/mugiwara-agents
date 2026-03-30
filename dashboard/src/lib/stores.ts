@@ -18,6 +18,7 @@ import type {
   ProjectTimelineResponse,
   ReportsResponse,
   ReportDetailResponse,
+  McpResponse,
 } from '../../shared/types';
 
 // ── Polling interval ──────────────────────────────────────────
@@ -215,6 +216,18 @@ export async function generateReport(weekStart?: string): Promise<ReportDetailRe
   }
 }
 
+export async function regenerateReport(weekStart?: string): Promise<ReportDetailResponse | null> {
+  try {
+    reportsError.set(null);
+    const data = await api.regenerateReport(weekStart);
+    await fetchReports();
+    return data;
+  } catch (err) {
+    reportsError.set(err instanceof Error ? err.message : 'Unknown error');
+    return null;
+  }
+}
+
 export async function fetchReport(weekStart: string): Promise<void> {
   try {
     const data = await api.getReport(weekStart);
@@ -237,6 +250,25 @@ export function stopPolling(): void {
   if (pollTimer !== null) {
     clearInterval(pollTimer);
     pollTimer = null;
+  }
+}
+
+// ── MCP / Plugins Store ──────────────────────────────────────
+export const mcp = writable<McpResponse | null>(null);
+export const mcpLoading = writable(false);
+export const mcpError = writable<string | null>(null);
+
+export async function fetchMcp(forceRefresh = false): Promise<void> {
+  try {
+    mcpLoading.set(true);
+    mcpError.set(null);
+    const params = forceRefresh ? { refresh: 'true' } : undefined;
+    const data = await api.getMcp(params);
+    mcp.set(data);
+  } catch (err) {
+    mcpError.set(err instanceof Error ? err.message : 'Unknown error');
+  } finally {
+    mcpLoading.set(false);
   }
 }
 

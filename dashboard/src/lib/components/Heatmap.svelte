@@ -1,3 +1,4 @@
+<!-- svelte-ignore unused-export-let -->
 <script lang="ts">
   import type { HeatmapCell } from '../../../shared/types';
 

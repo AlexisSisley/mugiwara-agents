@@ -1,3 +1,4 @@
+<!-- svelte-ignore unused-export-let -->
 <script lang="ts">
   export let label: string;
   export let value: string | number;

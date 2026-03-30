@@ -24,6 +24,7 @@ import type {
   ProjectTimelineResponse,
   ReportsResponse,
   ReportDetailResponse,
+  McpResponse,
 } from '../../../shared/types';
 
 const BASE_URL = '/api';
@@ -178,6 +179,16 @@ class ApiClient {
 
   async generateReport(weekStart?: string): Promise<ReportDetailResponse> {
     return this.post<ReportDetailResponse>('/reports/generate', { weekStart });
+  }
+
+  async regenerateReport(weekStart?: string): Promise<ReportDetailResponse> {
+    return this.post<ReportDetailResponse>('/reports/regenerate', { weekStart });
+  }
+
+  // ── MCP / Plugins ─────────────────────────────────────────
+
+  async getMcp(params?: Record<string, string>): Promise<McpResponse> {
+    return this.fetch<McpResponse>('/mcp', params);
   }
 }
 

@@ -11,7 +11,7 @@
 // ============================================================
 
 import { Router } from 'express';
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 import { readFileSync, statSync } from 'fs';
 import nodePath from 'path';
 import {
@@ -347,14 +347,14 @@ router.get('/projects/:name/timeline', (req, res) => {
     // Git activity — run git log in project directory
     const gitCommits: ProjectGitCommit[] = [];
     try {
-      const { execSync } = require('child_process');
+      // Use %x00 (null byte) as delimiter to avoid Windows cmd.exe issues with | and "
       const gitLog = execSync(
-        'git log --oneline --format="%H|||%s|||%aI|||%an" -20',
+        'git log --format=%H%x00%s%x00%aI%x00%an -20',
         { cwd: project.path, encoding: 'utf-8', timeout: 5000 }
       );
       for (const line of gitLog.trim().split('\n')) {
         if (!line) continue;
-        const [hash, message, date, author] = line.split('|||');
+        const [hash, message, date, author] = line.split('\0');
         if (hash && message && date && author) {
           gitCommits.push({ hash: hash.substring(0, 8), message, date, author });
         }

@@ -9,6 +9,7 @@
   import PipelinesPage from './routes/PipelinesPage.svelte';
   import ProjectsPage from './routes/ProjectsPage.svelte';
   import ReportsPage from './routes/ReportsPage.svelte';
+  import McpPage from './routes/McpPage.svelte';
   import { activeRoute } from '$lib/stores';
 
   function parseHash(): string {
@@ -42,6 +43,8 @@
       <ProjectsPage />
     {:else if $activeRoute === '/reports'}
       <ReportsPage />
+    {:else if $activeRoute === '/mcp'}
+      <McpPage />
     {:else}
       <OverviewPage />
     {/if}

@@ -209,7 +209,7 @@ while (currentDate < now) {
       agentLines.push({
         timestamp: isoDate(smokeTime),
         event: 'smoke_tests',
-        trigger_file: `C:/Users/Alexi/Documents/projet/mugiwara-agents/skills/${agent}/SKILL.md`,
+        trigger_file: path.join(ROOT_DIR, 'skills', agent, 'SKILL.md').replace(/\\/g, '/'),
         exit_code: passed ? 0 : 1,
         summary: passed
           ? '  FAIL: 0\n  WARN: 0\n  Total: 342 tests\n\n  All tests passed!'

@@ -344,7 +344,7 @@
 
   <!-- File Viewer Overlay -->
   {#if selectedFile}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
     <div class="file-viewer-overlay" on:click|self={closeViewer} role="dialog" aria-label="File viewer">
       <div class="file-viewer">
         <div class="file-viewer-header">

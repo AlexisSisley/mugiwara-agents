@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'pipelines',
     'projects',
     'reports',
+    'tokens',
 ]
 
 # Minimal middleware — no auth, no CSRF, no sessions (local tool)

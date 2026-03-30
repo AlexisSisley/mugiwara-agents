@@ -25,6 +25,7 @@
     { id: 'page-pipelines', label: 'Pipelines', subtitle: 'Expeditions', icon: '\u{1F680}', action: () => navigate('/pipelines') },
     { id: 'page-projects', label: 'Projects', subtitle: 'Iles Visitees', icon: '\u{1F4C1}', action: () => navigate('/projects') },
     { id: 'page-reports', label: 'Reports', subtitle: 'Journal de Bord', icon: '\u{1F4DC}', action: () => navigate('/reports') },
+    { id: 'page-mcp', label: 'MCP & Plugins', subtitle: 'Den Den Mushi', icon: '\u{1F50C}', action: () => navigate('/mcp') },
   ];
 
   function navigate(path: string) {
@@ -124,7 +125,7 @@
 {#if open}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div class="palette-backdrop" on:click={handleBackdropClick} role="presentation">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
     <div class="palette" on:click|stopPropagation role="dialog" aria-label="Palette de commandes">
       <div class="palette-input-wrapper">
         <span class="palette-search-icon">{'\u{1F50D}'}</span>
@@ -142,13 +143,14 @@
 
       <div class="palette-results">
         {#each filtered as item, i}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-click-events-have-key-events a11y-interactive-supports-focus -->
           <div
             class="palette-item"
             class:selected={i === selectedIndex}
             on:click={() => item.action()}
             on:mouseenter={() => { selectedIndex = i; }}
             role="option"
+            tabindex="-1"
             aria-selected={i === selectedIndex}
           >
             <span class="palette-item-icon">{item.icon}</span>

@@ -595,3 +595,46 @@ export interface ReportDetailResponse extends WeeklyReport {
   readonly alreadyExisted?: boolean;
   readonly summary?: Record<string, unknown>;
 }
+
+// ── MCP / Plugins ───────────────────────────────────────────
+
+export type McpServerStatus = 'connected' | 'failed' | 'auth_required';
+export type McpServerTransport = 'stdio' | 'http';
+export type McpServerSource = 'plugin' | 'user' | 'cloud';
+
+export interface McpServer {
+  readonly name: string;
+  readonly displayName: string;
+  readonly command: string;
+  readonly status: McpServerStatus;
+  readonly transport: McpServerTransport;
+  readonly source: McpServerSource;
+  readonly version?: string;
+  readonly installedAt?: string;
+  readonly scope?: string;
+  readonly toolCount?: number;
+}
+
+export interface McpPlugin {
+  readonly name: string;
+  readonly marketplace: string;
+  readonly version: string;
+  readonly installedAt: string;
+  readonly lastUpdated: string;
+  readonly scope: string;
+  readonly installPath: string;
+  readonly mcpServers: readonly McpServer[];
+}
+
+export interface McpResponse {
+  readonly servers: readonly McpServer[];
+  readonly plugins: readonly McpPlugin[];
+  readonly total: number;
+  readonly stats: {
+    readonly connected: number;
+    readonly failed: number;
+    readonly authRequired: number;
+    readonly totalPlugins: number;
+    readonly totalServers: number;
+  };
+}

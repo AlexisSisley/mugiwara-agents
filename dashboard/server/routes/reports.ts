@@ -101,4 +101,40 @@ router.post('/reports/generate', (req, res) => {
   }
 });
 
+// Regenerate report (force re-creation even if exists)
+router.post('/reports/regenerate', (req, res) => {
+  try {
+    const weekStart = (req.body as { weekStart?: string })?.weekStart ?? getPreviousMonday();
+
+    // Generate fresh data
+    const data = generateWeeklyReport(weekStart);
+    const html = renderWeeklyReportHtml(data);
+
+    // Save HTML file (overwrite if exists)
+    const reportsDir = path.join(homedir(), '.mugiwara', 'reports');
+    mkdirSync(reportsDir, { recursive: true });
+    const htmlPath = path.join(reportsDir, `weekly-${weekStart}.html`);
+    writeFileSync(htmlPath, html, 'utf-8');
+
+    // Upsert to DB (saveReport uses INSERT OR REPLACE)
+    saveReport({
+      weekStart,
+      weekEnd: data.weekEnd,
+      htmlPath,
+      status: 'generated',
+    });
+
+    res.json({
+      week_start: weekStart,
+      week_end: data.weekEnd,
+      html_path: htmlPath,
+      status: 'generated',
+      summary: data.summary,
+      html,
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'internal', message: 'Failed to regenerate report' });
+  }
+});
+
 export default router;
