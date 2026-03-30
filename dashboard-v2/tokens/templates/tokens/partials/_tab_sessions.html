@@ -1,0 +1,95 @@
+{% load token_filters %}
+
+<div class="glass-card">
+    <div class="table-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 class="card-title" style="margin:0">Sessions ({{ total_sessions }})</h3>
+    </div>
+
+    <div class="table-responsive">
+        <table class="glass-table">
+            <thead>
+                <tr>
+                    <th>
+                        <a href="#" class="table-sort"
+                           hx-get="{% url 'token_tab_sessions' %}?sort=date&order={% if sort_field == 'date' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&period={{ current_period }}"
+                           hx-target="#tab-content" hx-swap="innerHTML">
+                            Date {% if sort_field == 'date' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+                        </a>
+                    </th>
+                    <th>Project</th>
+                    <th>Model</th>
+                    <th>
+                        <a href="#" class="table-sort"
+                           hx-get="{% url 'token_tab_sessions' %}?sort=tokens&order={% if sort_field == 'tokens' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&period={{ current_period }}"
+                           hx-target="#tab-content" hx-swap="innerHTML">
+                            Tokens {% if sort_field == 'tokens' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" class="table-sort"
+                           hx-get="{% url 'token_tab_sessions' %}?sort=cost&order={% if sort_field == 'cost' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&period={{ current_period }}"
+                           hx-target="#tab-content" hx-swap="innerHTML">
+                            Cost {% if sort_field == 'cost' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" class="table-sort"
+                           hx-get="{% url 'token_tab_sessions' %}?sort=messages&order={% if sort_field == 'messages' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&period={{ current_period }}"
+                           hx-target="#tab-content" hx-swap="innerHTML">
+                            Msgs {% if sort_field == 'messages' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in sessions %}
+                <tr class="clickable-row"
+                    hx-get="{% url 'token_session_detail' s.session_id %}"
+                    hx-target="#drawer-body"
+                    hx-swap="innerHTML"
+                    onclick="document.getElementById('drawer').classList.add('open');document.getElementById('drawer-overlay').classList.add('open');">
+                    <td>{{ s.first_ts|date:"d/m/Y H:i" }}</td>
+                    <td>{{ s.project }}</td>
+                    <td><span class="badge">{{ s.dominant_model }}</span></td>
+                    <td>{{ s.total_tokens|format_tokens }}</td>
+                    <td>{{ s.total_cost|format_cost }}</td>
+                    <td>{{ s.msg_count }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">
+                        No session data found for this period.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <nav class="pagination" style="margin-top:12px">
+        {% if has_prev %}
+        <a href="#" class="pagination-link"
+           hx-get="{% url 'token_tab_sessions' %}?page={{ prev_page }}&sort={{ sort_field }}&order={{ sort_order }}&period={{ current_period }}"
+           hx-target="#tab-content" hx-swap="innerHTML">
+            &laquo; Prev
+        </a>
+        {% else %}
+        <span class="pagination-link pagination-link--disabled">&laquo; Prev</span>
+        {% endif %}
+
+        <span class="pagination-info">Page {{ page }} / {{ total_pages }}</span>
+
+        {% if has_next %}
+        <a href="#" class="pagination-link"
+           hx-get="{% url 'token_tab_sessions' %}?page={{ next_page }}&sort={{ sort_field }}&order={{ sort_order }}&period={{ current_period }}"
+           hx-target="#tab-content" hx-swap="innerHTML">
+            Next &raquo;
+        </a>
+        {% else %}
+        <span class="pagination-link pagination-link--disabled">Next &raquo;</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+</div>

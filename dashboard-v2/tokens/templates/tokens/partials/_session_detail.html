@@ -1,0 +1,45 @@
+{% load token_filters %}
+
+<div class="drawer-section">
+    <h3>Session: {{ session_id|truncatechars:20 }}</h3>
+    <div class="stat-grid stat-grid--2" style="margin-bottom:16px">
+        <div class="mini-stat">
+            <span class="mini-stat__label">Total Cost</span>
+            <span class="mini-stat__value" style="color:var(--neon-green)">{{ total_cost|format_cost }}</span>
+        </div>
+        <div class="mini-stat">
+            <span class="mini-stat__label">Total Tokens</span>
+            <span class="mini-stat__value">{{ total_tokens|format_tokens }}</span>
+        </div>
+    </div>
+
+    <h4 style="margin-top:16px;color:var(--text-secondary)">Messages ({{ messages|length }})</h4>
+    <div class="table-responsive">
+        <table class="glass-table glass-table--compact">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Model</th>
+                    <th>In</th>
+                    <th>Out</th>
+                    <th>Cache R</th>
+                    <th>Cache W</th>
+                    <th>Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in messages %}
+                <tr>
+                    <td>{{ m.timestamp|date:"H:i:s" }}</td>
+                    <td><span class="badge badge--sm">{{ m.model }}</span></td>
+                    <td>{{ m.input_tokens|format_tokens }}</td>
+                    <td>{{ m.output_tokens|format_tokens }}</td>
+                    <td>{{ m.cache_read_tokens|format_tokens }}</td>
+                    <td>{{ m.cache_creation_tokens|format_tokens }}</td>
+                    <td>{{ m.cost|format_cost }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
