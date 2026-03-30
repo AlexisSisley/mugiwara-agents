@@ -13,7 +13,7 @@
     <h3 class="card-title">Daily Cost Trend</h3>
     <div id="chart-daily-cost" style="height:120px"
          data-chart="sparkline"
-         data-chart-data='{{ daily_chart|safe }}'
+         data-chart-data='{{ daily_chart|to_json }}'
          data-chart-color="#10B981">
     </div>
 </div>
@@ -26,7 +26,7 @@
         <h3 class="card-title">Cost by Model</h3>
         <div id="chart-cost-model" style="height:200px"
              data-chart="donut"
-             data-chart-data='{{ model_chart|safe }}'>
+             data-chart-data='{{ model_chart|to_json }}'>
         </div>
     </div>
     {% endif %}
@@ -36,7 +36,7 @@
         <h3 class="card-title">Cost by Project (Top 10)</h3>
         <div id="chart-cost-project" style="height:300px"
              data-chart="barh"
-             data-chart-data='{{ project_chart|safe }}'
+             data-chart-data='{{ project_chart|to_json }}'
              data-chart-color="#8B5CF6">
         </div>
     </div>
