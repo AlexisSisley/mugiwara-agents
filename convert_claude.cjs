@@ -43,10 +43,11 @@ const TIER_2 = [
   'docker', 'iis', 'firebase', 'feature-flags',
   'sanji-ts', 'sanji-python', 'sanji-dotnet', 'sanji-java',
   'sanji-flutter', 'sanji-go', 'sanji-rust',
+  'morgans-release', 'morgans-info', 'morgans-rfp', 'morgans-ticket',
 ];
 
 // ─── Elevated agents — promoted to direct subagents alongside one_piece ──────
-const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy', 'brook', 'usopp', 'vivi'];
+const ELEVATED_AGENTS = ['chopper', 'franky', 'nami', 'jinbe', 'robin', 'zorro', 'sanji', 'luffy', 'brook', 'usopp', 'vivi', 'morgans'];
 
 // ─── Non-Mugiwara agents to preserve during cleanup ─────────────────────────
 // certified-code-reviewer → replaced by franky
@@ -358,6 +359,37 @@ Covers: market analysis, competitive intelligence, persona development, Jobs-To-
     ],
     memory: 'project',
   },
+
+  morgans: {
+    color: 'yellow',
+    description: `Use this agent when the user needs to write or send professional emails of any kind. This agent should be used proactively after deployments for release communication.
+
+Covers: release emails (QA/production), internal communication & announcements, RFP responses & commercial proposals, incident/ticketing emails, escalations, and Gmail draft creation.`,
+    examples: [
+      {
+        input: "Genere un email de release QA pour la version 2.3.0",
+        response: "Je vais rediger l'email de release QA.",
+        action: 'route to morgans-release to generate QA release email with changelog, test perimeter, and HTML template',
+      },
+      {
+        input: "Redige un email de reponse a l'appel d'offre ref AO-2026-042",
+        response: "Je vais preparer la reponse a l'appel d'offre.",
+        action: 'route to morgans-rfp to generate a structured RFP response with company presentation, technical proposal, and references',
+      },
+      {
+        input: "Envoie un email d'incident P1 pour la panne du service auth",
+        response: "Je vais rediger la notification d'incident.",
+        action: 'route to morgans-ticket to generate a P1 incident notification with severity, impact, actions, and SLA tracking',
+      },
+      {
+        input: "On vient de deployer en production",
+        response: "Je vais preparer l'email de mise en production.",
+        action: 'proactively route to morgans-release to generate production deployment notification email',
+        proactive: true,
+      },
+    ],
+    memory: 'project',
+  },
 };
 
 // ─── Category → Color mapping ────────────────────────────────────────────────
@@ -388,6 +420,7 @@ const CATEGORY_COLORS = {
   a11y:           'green',
   agile:          'pink',
   itsm:            'blue',
+  communication:  'yellow',
   router:         'gray',
   pipeline:       'pink',
   'ai-ml':        'cyan',
@@ -422,6 +455,7 @@ const CATEGORY_TRIGGERS = {
   a11y:           'the user needs accessibility auditing, WCAG compliance, or a11y remediation',
   agile:          'the user needs agile coaching, sprint planning, retrospectives, or ceremony facilitation',
   itsm:            'the user needs GLPI ticket management, ITSM triage, incident dispatch, or service desk operations',
+  communication:  'the user needs to write or send professional emails — release notifications, internal communication, RFP responses, or incident/ticketing emails',
   router:         "the user has a general problem or doesn't know which specialist agent to use — they want automatic routing to the best Mugiwara agent",
   pipeline:       'the user needs an end-to-end workflow combining multiple specialist agents in sequence',
   'ai-ml':        'the user needs AI/ML architecture, model evaluation, prompt engineering, or LLM integration',
@@ -717,6 +751,18 @@ const EXAMPLE_BANK = {
       input: "Aide-nous a estimer le backlog pour le prochain sprint",
       response: "Je vais accompagner le sprint planning.",
       action: 'guide sprint planning and story estimation',
+    },
+  ],
+  communication: [
+    {
+      input: "Genere un email de release QA pour la version 2.3.0",
+      response: "Je vais rediger l'email de release.",
+      action: 'generate a QA release email with changelog, test perimeter, and HTML template',
+    },
+    {
+      input: "Redige un email de notification d'incident P1 pour la panne du service auth",
+      response: "Je vais rediger la notification d'incident.",
+      action: 'generate a P1 incident notification email with severity, impact, and SLA tracking',
     },
   ],
   itsm: [

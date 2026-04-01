@@ -212,11 +212,11 @@ agents:
     signals: ["Prometheus", "Grafana", "PagerDuty", "OpsGenie", "SRE", "SLO", "dashboards"]
 
   - name: morgans
-    type: skill
-    tier: 2
-    category: writing
-    intent: "Email de release"
-    signals: ["email release", "release QA", "release prod", "email mise en prod", "email MEP", "notification release", "email deploiement", "email recette", "communiquer la release", "morgans"]
+    type: subagent
+    tier: 1
+    category: communication
+    intent: "Email professionnel (release, info, RFP, ticketing)"
+    signals: ["email", "mail", "communication", "release QA", "release prod", "email mise en prod", "email MEP", "notification release", "email deploiement", "email recette", "communiquer la release", "morgans", "appel d'offre", "AO", "RFP", "proposition commerciale", "ticket", "incident", "escalade", "support", "annonce", "newsletter", "information interne"]
 
   - name: law-sql
     type: skill

@@ -119,7 +119,7 @@ Les autres sont des **skills** (invocation via `Skill` tool).
 | Analyse d'API locale | "analyser API", "endpoints", "routes API", "documentation API", "swagger", "openapi", "lire les routes" | `bartholomew` | skill |
 | Collection Postman | "postman", "collection postman", "generer postman", "import postman", "requetes API", "JSON postman" | `perona` | skill |
 | Tests E2E Postman | "tests E2E", "end-to-end postman", "tests d'integration API", "newman", "workflow E2E", "chaining postman" | `senor-pink` | skill |
-| Email de release | "email release", "release QA", "release prod", "email MEP", "notification release", "morgans" | `morgans` | skill |
+| Email professionnel | "email", "mail", "communication", "release QA", "release prod", "email MEP", "notification release", "morgans", "appel d'offre", "AO", "RFP", "ticket", "incident mail", "escalade", "annonce" | `morgans` | **subagent** |
 | Easter eggs & secrets | "easter egg", "secret", "surprise", "konami", "clin d'oeil", "bon-clay", "bon clay" | `bon-clay` | skill |
 | Surveillance production | "surveiller les logs", "logs de prod", "sentinelle", "auto-fix", "rayleigh", "log monitoring" | `rayleigh` | skill |
 | Analyse de documents | "analyser document", "resume PDF", "lire spec", "extraire informations", "poneglyph", "contrat" | `poneglyph` | skill |
@@ -508,7 +508,7 @@ faire (ex: "aide", "help", "qu'est-ce que tu sais faire ?", "liste les agents",
 | | Bartholomew | `/bartholomew` | Analyse d'API locale | skill |
 | | Perona | `/perona` | Collection Postman | skill |
 | | Senor Pink | `/senor-pink` | Tests E2E Postman | skill |
-| | Morgans | `/morgans` | Release Email Generator (QA & Prod) | skill |
+| | **Morgans** | `/morgans` | Big News Communication Hub (release, info, RFP, ticketing) | **subagent** |
 | | Rayleigh | `/rayleigh` | Sentinelle de Production (auto-fix & escalade) | skill |
 | | Poneglyph | `/poneglyph` | Analyste de Documents (PDF, specs, contrats) | skill |
 | | Vegapunk | `/vegapunk` | Meta-Auditor & Agent Engineer | skill |

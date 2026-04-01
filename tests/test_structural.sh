@@ -65,7 +65,7 @@ EXPECTED_AGENTS=(
     coby crocodile dba discovery doc-hunt docker doflamingo enel
     feature-flags firebase franky fujitora gcp glpi hawkins iis iceburg incident
     infra-reseau ivankov jinbe katakuri kizaru law law-sql
-    luffy magellan maxim merry mlops modernize monitoring morgans mugiwara nami
+    luffy magellan maxim merry mlops modernize monitoring morgans morgans-info morgans-release morgans-rfp morgans-ticket mugiwara nami
     ohara onboard one_piece oro-jackson paulie
     perona pluton polar-tang poneglyph pre-launch prod-listener rayleigh robin sabo sanji sanji-design sanji-dotnet
     sanji-flutter sanji-go sanji-i18n sanji-java sanji-python

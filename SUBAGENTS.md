@@ -5,7 +5,7 @@
 L'ecosysteme Mugiwara utilise un modele **hub-and-spoke avec agents eleves** :
 
 - **1 orchestrateur** : `one_piece` — routeur intelligent, point d'entree universel
-- **11 subagents eleves** : agents promus pour invocation directe via `Agent` tool
+- **12 subagents eleves** : agents promus pour invocation directe via `Agent` tool
 - **65+ skills** : agents specialises invoquables via `Skill` tool par one_piece ou directement
 
 ```
@@ -16,11 +16,11 @@ L'ecosysteme Mugiwara utilise un modele **hub-and-spoke avec agents eleves** :
 │  │            System Prompt (descriptions)             │  │
 │  │  one_piece | chopper | franky | nami | jinbe        │  │
 │  │  robin | zorro | sanji | luffy | brook              │  │
-│  │  usopp | vivi                                       │  │
+│  │  usopp | vivi | morgans                              │  │
 │  └────────────────────────────────────────────────────┘  │
 │           │                      │                        │
 │     Agent tool              Skill tool                    │
-│     (11 subagents)          (skills & pipelines)          │
+│     (12 subagents)          (skills & pipelines)          │
 │           │                      │                        │
 │  ┌────────┴──────┐    ┌─────────┴──────────────┐        │
 │  │ chopper (debug)│    │ yamato, shanks, ace    │        │
@@ -53,7 +53,7 @@ Criteres d'elevation (3+ requis) :
 | **Usage direct frequent** | Invoque souvent sans passer par one_piece |
 | **Isolation securitaire** | Travaille sur des sujets sensibles (securite, compliance) |
 
-### Les 11 eleves
+### Les 12 eleves
 
 | Subagent | Role | Declenchement proactif | Remplace |
 |----------|------|------------------------|----------|
@@ -68,6 +68,7 @@ Criteres d'elevation (3+ requis) :
 | **brook** | Technical Writer (Diataxis, changelogs, guides, release notes) | Non — invocation explicite | — |
 | **usopp** | DevOps & IaC (CI/CD, K8s, Terraform, 9 phases) | Oui — apres scaffold de projet | — |
 | **vivi** | Product Manager & UX (personas, RICE, wireframes, A/B) | Non — invocation explicite | — |
+| **morgans** | Communication Hub (emails release, info, RFP, ticketing) | Oui — apres deploiement | — |
 
 ### Difference Subagent vs Skill
 

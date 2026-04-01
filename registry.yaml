@@ -343,9 +343,30 @@ agents:
     role: agent
     elevated: true
   morgans:
-    version: 1.5.0
-    description: "Generateur d'emails de release QA et mise en production"
-    category: writing
+    version: 2.0.0
+    description: "Big News Communication Hub — Hub d'emails professionnels (release, info, RFP, ticketing)"
+    category: communication
+    role: agent
+    elevated: true
+  morgans-release:
+    version: 2.0.0
+    description: "Sous-agent emails de release QA et mise en production (Attach, pigeon messager)"
+    category: communication
+    role: agent
+  morgans-info:
+    version: 2.0.0
+    description: "Sous-agent emails d'information et communication interne (Sterry, communicant royal)"
+    category: communication
+    role: agent
+  morgans-rfp:
+    version: 2.0.0
+    description: "Sous-agent emails de reponse a appels d'offre et propositions (Vander Decken IX)"
+    category: communication
+    role: agent
+  morgans-ticket:
+    version: 2.0.0
+    description: "Sous-agent emails de ticketing, incidents et support (Absalom, messager invisible)"
+    category: communication
     role: agent
   nami:
     version: 1.5.0

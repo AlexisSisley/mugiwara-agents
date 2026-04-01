@@ -35,7 +35,7 @@ Si l'utilisateur nomme explicitement un agent ou une commande slash (ex: `/chopp
 ## Subagents eleves [S]
 
 Les agents suivants disposent d'un subagent_type natif et peuvent etre invoques via l'outil `Agent` (au lieu de `Skill`) pour tourner dans leur propre contexte, en parallele ou en background :
-chopper, franky, nami, jinbe, robin, zorro, sanji, luffy, brook, usopp, vivi.
+chopper, franky, nami, jinbe, robin, zorro, sanji, luffy, brook, usopp, vivi, morgans.
 
 Le routeur `one_piece` sait quand utiliser Agent vs Skill — laisse-le decider.
 
