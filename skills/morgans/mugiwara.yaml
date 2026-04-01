@@ -1,15 +1,14 @@
 name: morgans
-version: 1.5.0
-description: Generateur d'emails de release QA et mise en production
-category: writing
+version: 2.0.0
+description: "Big News Communication Hub — Hub d'emails professionnels (release, info, RFP, ticketing)"
+category: communication
 role: agent
+elevated: true
 author: AlexisSisley
 license: MIT
 files:
   - SKILL.md
 depends: []
 requires:
-  mugiwara-cli: ">=1.5.0"
-tags: []
-checksum:
-  SKILL.md: "97df62482001dfd23461466f53b5c48530a6f9f928350b54f886d26859a6c12b"
+  mugiwara-cli: ">=2.0.0"
+tags: ["email", "communication", "release", "RFP", "ticketing", "hub"]
