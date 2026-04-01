@@ -1,0 +1,38 @@
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:var(--spacing-lg);">
+    <!-- Top Agents -->
+    <div class="glass-card" style="padding:16px;">
+        <div style="font-size:11px;font-weight:bold;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Top Agents</div>
+        {% for agent in top_agents %}
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="color:var(--text-primary);font-size:12px;width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ agent.agent }}</span>
+            <div style="flex:1;background:rgba(255,255,255,0.06);border-radius:4px;height:16px;">
+                <div style="background:var(--accent-purple);border-radius:4px;height:16px;width:{{ agent.width }}%;min-width:4px;"></div>
+            </div>
+            <span style="color:var(--text-dimmed);font-size:11px;width:28px;text-align:right;">{{ agent.count }}</span>
+        </div>
+        {% empty %}
+        <p class="text-dimmed" style="font-size:12px;font-style:italic;">Aucune invocation cette semaine</p>
+        {% endfor %}
+    </div>
+
+    <!-- Projects & Subjects -->
+    <div class="glass-card" style="padding:16px;">
+        <div style="font-size:11px;font-weight:bold;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Projets</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+            {% for proj in top_projects %}
+            <span style="background:rgba(59,130,246,0.12);color:#93C5FD;padding:3px 10px;border-radius:12px;font-size:11px;">{{ proj.project }}</span>
+            {% empty %}
+            <span class="text-dimmed" style="font-size:12px;font-style:italic;">Aucun projet</span>
+            {% endfor %}
+        </div>
+
+        <div style="font-size:11px;font-weight:bold;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Sujets</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            {% for sujet in subjects %}
+            <span style="background:rgba(16,185,129,0.12);color:#6EE7B7;padding:3px 10px;border-radius:12px;font-size:11px;">{{ sujet|truncatechars:60 }}</span>
+            {% empty %}
+            <span class="text-dimmed" style="font-size:12px;font-style:italic;">Aucun sujet</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
