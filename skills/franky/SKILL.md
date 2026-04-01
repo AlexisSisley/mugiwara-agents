@@ -9,7 +9,7 @@ argument-hint: "[fichier, dossier ou logs à auditer]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *)
 ---
 

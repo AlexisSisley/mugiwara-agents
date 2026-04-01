@@ -9,7 +9,7 @@ argument-hint: "[infrastructure, pipeline ou besoin DevOps à concevoir]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Glob, Grep, Bash(docker *), Bash(kubectl *), Bash(terraform *), Bash(helm *), Bash(git *), Bash(ls *), Bash(cat *)
 ---
 

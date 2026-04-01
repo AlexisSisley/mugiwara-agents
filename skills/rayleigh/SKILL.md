@@ -9,7 +9,7 @@ argument-hint: "[analyze <log-file> | triage <error> | watch <service> | status 
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(tail *), Bash(cat *), Bash(curl *), Bash(jq *), Bash(ls *), Bash(wc *), Bash(date *), Skill
 ---
 

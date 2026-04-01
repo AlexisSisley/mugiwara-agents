@@ -9,7 +9,7 @@ argument-hint: "[codebase, systeme ou composant a migrer/refactorer]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git diff *)
 ---
 

@@ -10,7 +10,7 @@ argument-hint: "[fonctionnalite ou systeme a tester + PROJECT_PATH si disponible
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(flutter *), Bash(dart *), Bash(dotnet *), Bash(npm *), Bash(npx *), Bash(pnpm *), Bash(node *), Bash(cargo *), Bash(go *), Bash(mvn *), Bash(gradle *), Bash(java *), Bash(python *), Bash(uv *), Bash(poetry *), Bash(pip *), Bash(ls *)
 ---
 

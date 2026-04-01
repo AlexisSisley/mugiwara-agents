@@ -9,7 +9,7 @@ argument-hint: "[produit, feature ou probleme utilisateur a analyser]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, WebSearch, WebFetch
 ---
 

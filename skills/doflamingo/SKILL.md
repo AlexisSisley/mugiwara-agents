@@ -8,7 +8,7 @@ argument-hint: "[decrivez votre besoin en architecture event-driven]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(cat *), Bash(ls *)
 ---
 

@@ -9,7 +9,7 @@ argument-hint: "[code, commits, feature ou sujet à documenter]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Write, Glob, Grep, Bash(git log *), Bash(git diff *), Bash(git tag *), Bash(git show *)
 ---
 

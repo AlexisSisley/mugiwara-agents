@@ -9,7 +9,7 @@ argument-hint: "[système, code ou périmètre à auditer]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep, Bash(cat *), Bash(wc *), Bash(file *), Bash(git log *), Bash(git diff *), Bash(npm audit *), Bash(pip audit *), Bash(trivy *), Bash(gitleaks *)
 ---
 

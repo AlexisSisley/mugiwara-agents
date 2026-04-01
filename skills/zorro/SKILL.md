@@ -9,7 +9,7 @@ argument-hint: "[décrivez votre problème ici]"
 disable-model-invocation: false
 context: fork
 agent: general-purpose
-model: opus
+model: sonnet
 allowed-tools: Read, Glob, Grep
 ---
 
