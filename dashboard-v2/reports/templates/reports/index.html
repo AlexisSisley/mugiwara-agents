@@ -18,11 +18,7 @@
 {% if reports %}
 <div class="card-grid">
     {% for report in reports %}
-    <div class="glass-card crew-card"
-         data-drawer-url="{% url 'report_detail' report.pk %}"
-         data-drawer-title="Report — {{ report.week_start }}"
-         role="button"
-         tabindex="0">
+    <a href="{% url 'report_detail_page' report.pk %}" class="glass-card crew-card" style="text-decoration:none;color:inherit;display:block;">
 
         <div class="crew-card__header">
             <span class="crew-card__name">Week of {{ report.week_start }}</span>
@@ -38,7 +34,7 @@
             <span class="crew-card__stat">Generated {{ report.generated_at|timeago }}</span>
             {% endif %}
         </div>
-    </div>
+    </a>
     {% endfor %}
 </div>
 {% else %}
