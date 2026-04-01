@@ -1,0 +1,34 @@
+{% load token_filters %}
+
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:var(--spacing-lg);">
+    <!-- Sessions -->
+    <div class="glass-card" style="padding:14px;text-align:center;border-color:rgba(56,189,248,0.3);background:rgba(56,189,248,0.06);">
+        <div style="font-size:22px;font-weight:bold;color:#38BDF8;">{{ total_sessions }}</div>
+        <div style="font-size:10px;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Sessions</div>
+    </div>
+    <!-- Invocations -->
+    <div class="glass-card" style="padding:14px;text-align:center;border-color:rgba(251,146,60,0.3);background:rgba(251,146,60,0.06);">
+        <div style="font-size:22px;font-weight:bold;color:#FB923C;">{{ total_invocations }}</div>
+        <div style="font-size:10px;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Invocations</div>
+    </div>
+    <!-- Tokens -->
+    <div class="glass-card" style="padding:14px;text-align:center;border-color:rgba(167,139,250,0.3);background:rgba(167,139,250,0.06);">
+        <div style="font-size:22px;font-weight:bold;color:#A78BFA;">{{ total_tokens|format_tokens }}</div>
+        <div style="font-size:10px;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Tokens</div>
+    </div>
+    <!-- Cost -->
+    <div class="glass-card" style="padding:14px;text-align:center;border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.06);">
+        <div style="font-size:22px;font-weight:bold;color:#10B981;">{{ total_cost|format_cost }}</div>
+        <div style="font-size:10px;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Co&ucirc;t</div>
+    </div>
+    <!-- Agents -->
+    <div class="glass-card" style="padding:14px;text-align:center;border-color:rgba(244,114,182,0.3);background:rgba(244,114,182,0.06);">
+        <div style="font-size:22px;font-weight:bold;color:#F472B6;">{{ unique_agents }}</div>
+        <div style="font-size:10px;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Agents</div>
+    </div>
+    <!-- Cache Hit -->
+    <div class="glass-card" style="padding:14px;text-align:center;border-color:rgba(34,211,238,0.3);background:rgba(34,211,238,0.06);">
+        <div style="font-size:22px;font-weight:bold;color:#22D3EE;">{{ cache_hit_rate|floatformat:0 }}%</div>
+        <div style="font-size:10px;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Cache Hit</div>
+    </div>
+</div>
