@@ -1,0 +1,13 @@
+name: morgans-release
+version: 2.0.0
+description: "Sous-agent specialise emails de release QA et mise en production (Attach, pigeon messager de Morgans)"
+category: communication
+role: agent
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=2.0.0"
+tags: ["email", "release", "QA", "production", "communication"]

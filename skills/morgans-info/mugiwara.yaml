@@ -1,0 +1,13 @@
+name: morgans-info
+version: 2.0.0
+description: "Sous-agent specialise emails d'information et communication interne (Sterry, le communicant royal)"
+category: communication
+role: agent
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=2.0.0"
+tags: ["email", "information", "annonce", "communication", "interne"]

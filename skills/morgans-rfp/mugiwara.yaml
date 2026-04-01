@@ -1,0 +1,13 @@
+name: morgans-rfp
+version: 2.0.0
+description: "Sous-agent specialise emails de reponse a appels d'offre et propositions commerciales (Vander Decken IX, le tireur de precision)"
+category: communication
+role: agent
+author: AlexisSisley
+license: MIT
+files:
+  - SKILL.md
+depends: []
+requires:
+  mugiwara-cli: ">=2.0.0"
+tags: ["email", "appel d'offre", "RFP", "proposition", "commercial"]
