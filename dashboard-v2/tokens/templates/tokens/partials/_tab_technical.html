@@ -1,7 +1,7 @@
 {% load token_filters %}
 
 <!-- KPI Cards -->
-<div class="stat-grid stat-grid--4">
+<div class="stats-grid">
     {% include "components/_stat_card.html" with title="Total Tokens" value=total_tokens|format_tokens icon="zap" %}
     {% include "components/_stat_card.html" with title="Cache Hit Rate" value=cache_hit_rate|format_pct icon="cpu" %}
     {% include "components/_stat_card.html" with title="Cache Reads" value=total_cache_read|format_tokens icon="shield" %}
@@ -9,7 +9,7 @@
 </div>
 
 <!-- Charts row -->
-<div class="grid-2col" style="margin-top:16px">
+<div class="two-col" style="margin-top: var(--spacing-lg);">
     <!-- Token composition donut -->
     {% if composition_chart %}
     <div class="glass-card">
@@ -23,9 +23,9 @@
 
     <!-- Cache hit rate sparkline -->
     {% if cache_sparkline %}
-    <div class="glass-card">
+    <div class="glass-card glass-card--pink">
         <h3 class="card-title">Cache Hit Rate Trend</h3>
-        <div id="chart-cache-trend" style="height:120px"
+        <div id="chart-cache-trend" class="sparkline-container"
              data-chart="sparkline"
              data-chart-data='{{ cache_sparkline|to_json }}'
              data-chart-color="#F59E0B">
@@ -36,7 +36,7 @@
 
 <!-- Tokens by model -->
 {% if model_chart %}
-<div class="glass-card" style="margin-top:16px">
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
     <h3 class="card-title">Tokens by Model</h3>
     <div id="chart-tokens-model" style="height:200px"
          data-chart="barh"

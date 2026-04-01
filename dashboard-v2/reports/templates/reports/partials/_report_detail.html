@@ -1,11 +1,20 @@
 {% load dashboard_tags %}
 
 <div class="report-detail">
-    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--spacing-md);">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--spacing-md); align-items: center;">
         <span class="neon-badge neon-badge--{{ report.status|badge_class }}">{{ report.status }}</span>
         {% if report.generated_at %}
         <span class="text-dimmed" style="font-size: 12px;">Generated {{ report.generated_at|timeago }}</span>
         {% endif %}
+        <div style="margin-left: auto;">
+            <button type="button"
+                    class="neon-btn neon-btn--sm"
+                    id="copy-email-html-btn"
+                    data-report-id="{{ report.pk }}"
+                    title="Copy email-ready HTML to clipboard">
+                &#128203; Copy HTML for Email
+            </button>
+        </div>
     </div>
 
     <div class="glass-card" style="margin-bottom: var(--spacing-md);">
@@ -30,3 +39,73 @@
     </p>
     {% endif %}
 </div>
+
+<!-- Toast notification for copy feedback -->
+<div id="copy-toast" style="display: none; position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; backdrop-filter: blur(16px); border: 1px solid rgba(139,92,246,0.3); box-shadow: 0 0 20px rgba(139,92,246,0.15); transition: opacity 0.3s ease;">
+</div>
+
+<script>
+(function() {
+    const btn = document.getElementById('copy-email-html-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', async function() {
+        const reportId = this.dataset.reportId;
+        const toast = document.getElementById('copy-toast');
+
+        // Visual feedback — loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = '&#8987; Copying...';
+        this.disabled = true;
+
+        try {
+            const resp = await fetch(`/reports/${reportId}/email-html/`);
+            if (!resp.ok) throw new Error('Failed to fetch email HTML');
+
+            const data = await resp.json();
+            if (!data.html) throw new Error('No HTML content');
+
+            // Copy to clipboard
+            await navigator.clipboard.writeText(data.html);
+
+            // Success feedback
+            this.innerHTML = '&#10003; Copied!';
+            showToast(toast, 'Email HTML copied to clipboard!', 'success');
+
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 2000);
+        } catch (err) {
+            console.error('Copy failed:', err);
+            this.innerHTML = '&#10007; Error';
+            showToast(toast, 'Failed to copy: ' + err.message, 'error');
+
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 2000);
+        }
+    });
+
+    function showToast(el, message, type) {
+        el.textContent = message;
+        if (type === 'success') {
+            el.style.background = 'rgba(16, 185, 129, 0.15)';
+            el.style.color = '#34D399';
+            el.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        } else {
+            el.style.background = 'rgba(248, 113, 113, 0.15)';
+            el.style.color = '#F87171';
+            el.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+        }
+        el.style.display = 'block';
+        el.style.opacity = '1';
+
+        setTimeout(() => {
+            el.style.opacity = '0';
+            setTimeout(() => { el.style.display = 'none'; }, 300);
+        }, 3000);
+    }
+})();
+</script>

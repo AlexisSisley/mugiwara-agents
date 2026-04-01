@@ -1,17 +1,18 @@
 {% load token_filters %}
 
 <!-- KPI Cards -->
-<div class="stat-grid stat-grid--3">
+<div class="stats-grid">
     {% include "components/_stat_card.html" with title="Today" value=cost_today|format_cost icon="coin" %}
     {% include "components/_stat_card.html" with title="This Week" value=cost_week|format_cost icon="chart" %}
     {% include "components/_stat_card.html" with title="This Month" value=cost_month|format_cost icon="star" %}
+    {% include "components/_stat_card.html" with title=period_label value=cost_total|format_cost icon="zap" %}
 </div>
 
 <!-- Daily cost sparkline -->
 {% if daily_chart %}
-<div class="glass-card" style="margin-top:16px">
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
     <h3 class="card-title">Daily Cost Trend</h3>
-    <div id="chart-daily-cost" style="height:120px"
+    <div id="chart-daily-cost" class="sparkline-container"
          data-chart="sparkline"
          data-chart-data='{{ daily_chart|to_json }}'
          data-chart-color="#10B981">
@@ -20,7 +21,7 @@
 {% endif %}
 
 <!-- Breakdowns -->
-<div class="grid-2col" style="margin-top:16px">
+<div class="two-col" style="margin-top: var(--spacing-lg);">
     {% if model_chart %}
     <div class="glass-card">
         <h3 class="card-title">Cost by Model</h3>

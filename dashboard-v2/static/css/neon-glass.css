@@ -85,6 +85,34 @@ body {
 a { color: var(--accent-purple-light); text-decoration: none; }
 a:hover { color: var(--accent-purple); }
 
+/* ── Custom Scrollbar (neon-glass theme) ───────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.35) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.55);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* ── App Layout ─────────────────────────────────────────────── */
 .app-layout {
   min-height: 100vh;
@@ -438,6 +466,17 @@ select.glass-input {
   background-repeat: no-repeat;
   background-position: right 10px center;
   padding-right: 30px;
+  cursor: pointer;
+}
+
+select.glass-input option {
+  background: #1a0a2e;
+  color: #FAFAFA;
+}
+
+select.glass-input option:checked {
+  background: rgba(139, 92, 246, 0.3);
+  color: #A78BFA;
 }
 
 /* ── Glass Table ────────────────────────────────────────────── */
@@ -1171,6 +1210,224 @@ select.glass-input {
   color: var(--accent-purple-light);
 }
 
+.btn-init {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accent-purple-light);
+  border-color: var(--accent-purple);
+  font-weight: 700;
+}
+
+.btn-init:hover {
+  background: var(--accent-purple);
+  color: #fff;
+}
+
+.btn-config {
+  background: rgba(139, 92, 246, 0.08);
+  color: var(--text-dimmed);
+  border-color: var(--glass-border);
+  font-size: 11px;
+}
+
+.btn-config:hover {
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accent-purple-light);
+  border-color: var(--accent-purple);
+}
+
+/* Transfer list (two-column agent/pipeline selector) */
+.transfer-list {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.transfer-list__col {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  flex-direction: column;
+  max-height: 240px;
+  overflow: hidden;
+}
+
+.transfer-list__header {
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dimmed);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.transfer-list__header input {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 2px 8px;
+  width: 120px;
+  outline: none;
+}
+
+.transfer-list__header input:focus {
+  border-color: var(--accent-purple);
+}
+
+.transfer-list__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.transfer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 6px;
+}
+
+.transfer-item:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.transfer-item__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.transfer-item__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transfer-item__desc {
+  font-size: 10px;
+  color: var(--text-dimmed);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transfer-item__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-dimmed);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.transfer-item__btn:hover {
+  background: var(--accent-purple);
+  color: #fff;
+  border-color: var(--accent-purple);
+}
+
+.transfer-item .neon-badge {
+  font-size: 9px;
+  flex-shrink: 0;
+}
+
+/* Diff preview panel */
+.diff-panel {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  margin-top: var(--spacing-md);
+  overflow: hidden;
+}
+
+.diff-panel__toggle {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
+  color: var(--accent-purple-light);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diff-panel__toggle:hover {
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.diff-panel__content {
+  display: none;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.diff-panel__content.open {
+  display: flex;
+}
+
+.diff-col {
+  flex: 1;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.diff-col--old {
+  border-right: 1px solid var(--glass-border);
+  color: var(--text-dimmed);
+}
+
+.diff-col--new {
+  color: var(--text-secondary);
+}
+
+.diff-line--removed {
+  background: rgba(248, 113, 113, 0.1);
+  color: #F87171;
+}
+
+.diff-line--added {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34D399;
+}
+
+.diff-no-changes {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-dimmed);
+  font-size: 12px;
+}
+
 /* ── Detail Content Layout ─────────────────────────────────── */
 .detail-content {
   display: grid;
@@ -1603,6 +1860,32 @@ select.glass-input {
   border-left: 3px solid var(--accent-purple);
 }
 
+.btn-resume-session {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--accent-purple);
+  border-radius: var(--radius-sm);
+  background: rgba(var(--accent-purple-rgb, 139, 92, 246), 0.15);
+  color: var(--accent-purple-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+}
+
+.session-entry--claude:hover .btn-resume-session {
+  opacity: 1;
+}
+
+.btn-resume-session:hover {
+  background: var(--accent-purple);
+  color: #fff;
+  opacity: 1;
+}
+
 .session-entry__header {
   display: flex;
   align-items: center;
@@ -1678,6 +1961,35 @@ select.glass-input {
 }
 
 /* ── Agent Picker Modal ────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-content {
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 .agent-picker-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -1735,15 +2047,67 @@ select.glass-input {
 /* ── Card Action Buttons (on project cards) ────────────────── */
 .card-actions {
   display: flex;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 4px;
   margin-top: var(--spacing-sm);
   padding-top: var(--spacing-sm);
   border-top: 1px solid var(--glass-border);
 }
 
 .card-actions .btn-action {
-  padding: 4px 10px;
-  font-size: 11px;
-  flex: 1;
+  padding: 3px 8px;
+  font-size: 10px;
   text-align: center;
+  white-space: nowrap;
+}
+
+/* ── Neon Tabs ─────────────────────────────────────────────── */
+.neon-tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: var(--spacing-lg);
+  padding: 4px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+.neon-tab {
+  all: unset;
+  box-sizing: border-box;
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-dimmed);
+  font-family: var(--font-main);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.neon-tab:hover {
+  color: var(--text-secondary);
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border);
+}
+
+.neon-tab.active {
+  color: var(--accent-purple-light);
+  background: var(--glass-bg-active);
+  border-color: var(--accent-purple);
+  box-shadow: var(--glass-glow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.neon-tab:focus-visible {
+  outline: 2px solid var(--accent-purple);
+  outline-offset: 2px;
 }

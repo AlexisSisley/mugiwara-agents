@@ -26,12 +26,24 @@ PRICING = {
     },
 }
 
+# Alias: versioned model names map to their base pricing
+MODEL_ALIASES = {
+    'claude-sonnet-4-5-20250929': 'claude-sonnet-4-5',
+    'claude-opus-4-6-20250115': 'claude-opus-4-6',
+    'claude-haiku-3-5-20241022': 'claude-haiku-3-5',
+}
+
 DEFAULT_TIER = 'claude-sonnet-4-5'
 
 
 def get_rates(model_name: str) -> dict:
     """Get pricing rates for a model. Falls back to DEFAULT_TIER for unknown models."""
     rates = PRICING.get(model_name)
+    if rates is None:
+        # Try alias (versioned model names)
+        alias = MODEL_ALIASES.get(model_name)
+        if alias:
+            rates = PRICING.get(alias)
     if rates is None:
         logger.warning('Unknown model %r, using default tier %s', model_name, DEFAULT_TIER)
         rates = PRICING[DEFAULT_TIER]

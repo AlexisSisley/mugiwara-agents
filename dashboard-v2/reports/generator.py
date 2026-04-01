@@ -91,15 +91,23 @@ def generate_weekly_report(week_start: date) -> WeeklyReport:
         'generated_at': timezone.now(),
     }
 
-    # Render HTML
+    # Render HTML (dashboard preview)
     html = render_to_string('reports/report_template.html', context)
 
-    # Save to file
+    # Render email-ready HTML (table-based, inline styles, email-client compatible)
+    email_html = render_to_string('reports/email_template.html', context)
+
+    # Save to files
     reports_dir = Path.home() / '.mugiwara' / 'reports'
     reports_dir.mkdir(parents=True, exist_ok=True)
+
     filename = f'weekly-{monday.isoformat()}.html'
     filepath = reports_dir / filename
     filepath.write_text(html, encoding='utf-8')
+
+    email_filename = f'weekly-{monday.isoformat()}-email.html'
+    email_filepath = reports_dir / email_filename
+    email_filepath.write_text(email_html, encoding='utf-8')
 
     # Save/update DB record
     report, _ = WeeklyReport.objects.update_or_create(
@@ -108,6 +116,7 @@ def generate_weekly_report(week_start: date) -> WeeklyReport:
             'week_end': sunday,
             'generated_at': timezone.now(),
             'html_path': str(filepath),
+            'email_html_path': str(email_filepath),
             'status': 'generated',
         },
     )

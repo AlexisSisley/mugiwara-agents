@@ -76,6 +76,7 @@ def tab_costs(request):
         s=Sum('cost'))['s'] or 0
     cost_month = qs.filter(timestamp__gte=month_start).aggregate(
         s=Sum('cost'))['s'] or 0
+    cost_total = qs.aggregate(s=Sum('cost'))['s'] or 0
 
     # Daily cost chart data
     daily_costs = (
@@ -112,10 +113,16 @@ def tab_costs(request):
         for d in by_project
     ]
 
+    # Period label for "Total" card
+    period_labels = {'7d': '7 days', '30d': '30 days', '90d': '90 days', 'all': 'All time'}
+    period_label = period_labels.get(period, period)
+
     context = {
         'cost_today': cost_today,
         'cost_week': cost_week,
         'cost_month': cost_month,
+        'cost_total': cost_total,
+        'period_label': period_label,
         'daily_chart': daily_chart,
         'model_chart': model_chart,
         'project_chart': project_chart,

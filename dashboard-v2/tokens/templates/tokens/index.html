@@ -5,66 +5,68 @@
 {% block title %}Token Usage &amp; Costs{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="page-header__left">
-        <h1 class="page-title">{{ page_title }}</h1>
-    </div>
-    <div class="page-header__right" style="display:flex;gap:8px;align-items:center">
-        <!-- Period filter -->
-        <select class="glass-select" id="period-select"
-                onchange="updateTokenPeriod(this.value)">
-            <option value="7d" {% if current_period == '7d' %}selected{% endif %}>7 days</option>
-            <option value="30d" {% if current_period == '30d' %}selected{% endif %}>30 days</option>
-            <option value="90d" {% if current_period == '90d' %}selected{% endif %}>90 days</option>
-            <option value="all" {% if current_period == 'all' %}selected{% endif %}>All time</option>
-        </select>
+<!-- Filter bar -->
+<div class="filter-bar" style="margin-bottom: var(--spacing-md);">
+    <select class="glass-input" id="period-select"
+            onchange="updateTokenPeriod(this.value)">
+        <option value="7d" {% if current_period == '7d' %}selected{% endif %}>7 days</option>
+        <option value="30d" {% if current_period == '30d' %}selected{% endif %}>30 days</option>
+        <option value="90d" {% if current_period == '90d' %}selected{% endif %}>90 days</option>
+        <option value="all" {% if current_period == 'all' %}selected{% endif %}>All time</option>
+    </select>
 
-        <!-- Project filter -->
-        {% if projects %}
-        <select class="glass-select" id="project-select"
-                onchange="updateTokenProject(this.value)">
-            <option value="">All projects</option>
-            {% for p in projects %}
-            <option value="{{ p }}" {% if current_project == p %}selected{% endif %}>{{ p }}</option>
-            {% endfor %}
-        </select>
-        {% endif %}
+    {% if projects %}
+    <select class="glass-input" id="project-select"
+            onchange="updateTokenProject(this.value)">
+        <option value="">All projects</option>
+        {% for p in projects %}
+        <option value="{{ p }}" {% if current_project == p %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
 
-        <!-- Refresh button -->
-        <button class="glass-btn glass-btn--sm"
-                hx-post="{% url 'token_refresh' %}"
-                hx-swap="none"
-                hx-indicator="#refresh-spinner">
-            <span id="refresh-spinner" class="htmx-indicator" style="display:none">
-                &#8987;
-            </span>
-            &#x21BB; Refresh
-        </button>
-    </div>
+    <button class="neon-btn neon-btn--sm"
+            hx-post="{% url 'token_refresh' %}"
+            hx-swap="none"
+            hx-indicator="#refresh-spinner">
+        <span id="refresh-spinner" class="htmx-indicator" style="display:none">
+            &#8987;
+        </span>
+        &#x21BB; Refresh
+    </button>
 </div>
 
 <!-- Tabs -->
-<div class="glass-tabs" id="token-tabs">
-    <button class="glass-tab active" data-tab="costs"
+<div class="neon-tabs" id="token-tabs">
+    <button class="neon-tab active" data-tab="costs"
             hx-get="{% url 'token_tab_costs' %}?period={{ current_period }}&project={{ current_project }}"
             hx-target="#tab-content"
             hx-swap="innerHTML"
             hx-trigger="click, tokens-refreshed from:body"
             hx-on::after-swap="initTokenCharts()">
-        &#128176; Costs
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/>
+        </svg>
+        Costs
     </button>
-    <button class="glass-tab" data-tab="technical"
+    <button class="neon-tab" data-tab="technical"
             hx-get="{% url 'token_tab_technical' %}?period={{ current_period }}&project={{ current_project }}"
             hx-target="#tab-content"
             hx-swap="innerHTML"
             hx-on::after-swap="initTokenCharts()">
-        &#9889; Technical
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Technical
     </button>
-    <button class="glass-tab" data-tab="sessions"
+    <button class="neon-tab" data-tab="sessions"
             hx-get="{% url 'token_tab_sessions' %}?period={{ current_period }}&project={{ current_project }}"
             hx-target="#tab-content"
             hx-swap="innerHTML">
-        &#128203; Sessions
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        Sessions
     </button>
 </div>
 
@@ -82,9 +84,9 @@
 <script src="{% static 'js/charts.js' %}"></script>
 <script>
 // Tab switching
-document.querySelectorAll('.glass-tab').forEach(function(tab) {
+document.querySelectorAll('.neon-tab').forEach(function(tab) {
     tab.addEventListener('click', function() {
-        document.querySelectorAll('.glass-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.neon-tab').forEach(function(t) { t.classList.remove('active'); });
         this.classList.add('active');
     });
 });
@@ -101,7 +103,7 @@ function initTokenCharts() {
 function updateTokenPeriod(period) {
     var project = document.getElementById('project-select');
     var projVal = project ? project.value : '';
-    var activeTab = document.querySelector('.glass-tab.active');
+    var activeTab = document.querySelector('.neon-tab.active');
     var tabName = activeTab ? activeTab.getAttribute('data-tab') : 'costs';
     var urls = {
         costs: '{% url "token_tab_costs" %}',
@@ -115,7 +117,7 @@ function updateTokenPeriod(period) {
 // Project filter
 function updateTokenProject(project) {
     var period = document.getElementById('period-select').value;
-    var activeTab = document.querySelector('.glass-tab.active');
+    var activeTab = document.querySelector('.neon-tab.active');
     var tabName = activeTab ? activeTab.getAttribute('data-tab') : 'costs';
     var urls = {
         costs: '{% url "token_tab_costs" %}',
