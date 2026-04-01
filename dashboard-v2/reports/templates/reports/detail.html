@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load static dashboard_tags token_filters %}
+
+{% block title %}Report — {{ monday }}{% endblock %}
+
+{% block content %}
+<!-- Back link -->
+<a href="{% url 'report_list' %}" style="display:inline-flex;align-items:center;gap:6px;color:var(--accent-purple-light);font-size:13px;margin-bottom:var(--spacing-md);">
+    &larr; Retour aux reports
+</a>
+
+<!-- Header hero -->
+<div style="background:linear-gradient(135deg,#E63946,#38BDF8);padding:20px 24px;border-radius:var(--radius-md);margin-bottom:var(--spacing-lg);">
+    <div style="font-size:22px;font-weight:bold;color:white;">&#9781; Mugiwara Weekly</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.8);margin-top:4px;">
+        Semaine du {{ monday }} &mdash; {{ sunday }}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
+        <span class="neon-badge neon-badge--{{ report.status|badge_class }}">{{ report.status }}</span>
+        {% if report.generated_at %}
+        <span style="font-size:11px;color:rgba(255,255,255,0.7);">
+            G&eacute;n&eacute;r&eacute; {{ report.generated_at|timeago }}
+        </span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- KPIs -->
+{% include "reports/partials/_report_kpis.html" %}
+
+<!-- Filter bar -->
+<div style="display:flex;gap:8px;margin-bottom:var(--spacing-md);align-items:center;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--text-dimmed);">Cat&eacute;gorie :</span>
+
+    {% if not category %}
+    <span style="background:rgba(139,92,246,0.2);color:#c4b5fd;padding:4px 12px;border-radius:16px;font-size:12px;border:1px solid rgba(139,92,246,0.4);">Toutes</span>
+    {% else %}
+    <a href="{% url 'report_detail_page' report.pk %}" style="background:rgba(139,92,246,0.06);color:var(--text-muted);padding:4px 12px;border-radius:16px;font-size:12px;text-decoration:none;">Toutes</a>
+    {% endif %}
+
+    {% if category == "pro" %}
+    <span style="background:rgba(59,130,246,0.2);color:#93C5FD;padding:4px 12px;border-radius:16px;font-size:12px;border:1px solid rgba(59,130,246,0.4);">Pro</span>
+    {% else %}
+    <a href="?category=pro" style="background:rgba(59,130,246,0.06);color:var(--text-muted);padding:4px 12px;border-radius:16px;font-size:12px;text-decoration:none;">Pro</a>
+    {% endif %}
+
+    {% if category == "poc" %}
+    <span style="background:rgba(245,158,11,0.2);color:#FCD34D;padding:4px 12px;border-radius:16px;font-size:12px;border:1px solid rgba(245,158,11,0.4);">POC</span>
+    {% else %}
+    <a href="?category=poc" style="background:rgba(245,158,11,0.06);color:var(--text-muted);padding:4px 12px;border-radius:16px;font-size:12px;text-decoration:none;">POC</a>
+    {% endif %}
+
+    {% if category == "perso" %}
+    <span style="background:rgba(16,185,129,0.2);color:#6EE7B7;padding:4px 12px;border-radius:16px;font-size:12px;border:1px solid rgba(16,185,129,0.4);">Perso</span>
+    {% else %}
+    <a href="?category=perso" style="background:rgba(16,185,129,0.06);color:var(--text-muted);padding:4px 12px;border-radius:16px;font-size:12px;text-decoration:none;">Perso</a>
+    {% endif %}
+
+    <div style="margin-left:auto;">
+        <button type="button" class="neon-btn neon-btn--sm" id="copy-email-html-btn"
+                data-report-id="{{ report.pk }}" title="Copy email-ready HTML to clipboard">
+            &#128203; Copy HTML for Email
+        </button>
+    </div>
+</div>
+
+<!-- Top agents & Projects -->
+{% include "reports/partials/_report_agents_projects.html" %}
+
+<!-- Sessions table (lazy-loaded via HTMX) -->
+<div id="report-sessions"
+     hx-get="{% url 'report_sessions' report.pk %}{% if category %}?category={{ category }}{% endif %}"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+    <div class="glass-card" style="text-align:center;padding:32px;">
+        <span class="text-dimmed">Loading sessions...</span>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div id="copy-toast" style="display:none;position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;backdrop-filter:blur(16px);border:1px solid rgba(139,92,246,0.3);box-shadow:0 0 20px rgba(139,92,246,0.15);transition:opacity 0.3s ease;"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    const btn = document.getElementById('copy-email-html-btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', async function() {
+        const reportId = this.dataset.reportId;
+        const toast = document.getElementById('copy-toast');
+        const originalText = this.innerHTML;
+        this.innerHTML = '&#8987; Copying...';
+        this.disabled = true;
+
+        try {
+            const resp = await fetch(`/reports/${reportId}/email-html/`);
+            if (!resp.ok) throw new Error('Failed to fetch email HTML');
+            const data = await resp.json();
+            if (!data.html) throw new Error('No HTML content');
+
+            await navigator.clipboard.writeText(data.html);
+            this.innerHTML = '&#10003; Copied!';
+            showToast(toast, 'Email HTML copied to clipboard!', 'success');
+            setTimeout(() => { this.innerHTML = originalText; this.disabled = false; }, 2000);
+        } catch (err) {
+            console.error('Copy failed:', err);
+            this.innerHTML = '&#10007; Error';
+            showToast(toast, 'Failed to copy: ' + err.message, 'error');
+            setTimeout(() => { this.innerHTML = originalText; this.disabled = false; }, 2000);
+        }
+    });
+
+    function showToast(el, message, type) {
+        el.textContent = message;
+        if (type === 'success') {
+            el.style.background = 'rgba(16, 185, 129, 0.15)';
+            el.style.color = '#34D399';
+            el.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        } else {
+            el.style.background = 'rgba(248, 113, 113, 0.15)';
+            el.style.color = '#F87171';
+            el.style.borderColor = 'rgba(248, 113, 113, 0.3)';
+        }
+        el.style.display = 'block';
+        el.style.opacity = '1';
+        setTimeout(() => {
+            el.style.opacity = '0';
+            setTimeout(() => { el.style.display = 'none'; }, 300);
+        }, 3000);
+    }
+})();
+</script>
+{% endblock %}
