@@ -1,0 +1,105 @@
+{% load token_filters %}
+
+<div class="glass-card" style="padding:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:bold;color:var(--text-dimmed);text-transform:uppercase;letter-spacing:1px;">
+            Sessions de la semaine ({{ total_sessions }})
+        </div>
+        <div style="display:flex;gap:6px;">
+            <a href="#" class="table-sort"
+               hx-get="{% url 'report_sessions' report.pk %}?sort=cost&order={% if sort_field == 'cost' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&category={{ category }}"
+               hx-target="#report-sessions" hx-swap="innerHTML"
+               style="font-size:11px;padding:3px 8px;border-radius:4px;text-decoration:none;{% if sort_field == 'cost' %}background:rgba(139,92,246,0.15);color:#a78bfa;{% else %}color:var(--text-dimmed);{% endif %}">
+                Co&ucirc;t {% if sort_field == 'cost' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+            </a>
+            <a href="#" class="table-sort"
+               hx-get="{% url 'report_sessions' report.pk %}?sort=tokens&order={% if sort_field == 'tokens' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&category={{ category }}"
+               hx-target="#report-sessions" hx-swap="innerHTML"
+               style="font-size:11px;padding:3px 8px;border-radius:4px;text-decoration:none;{% if sort_field == 'tokens' %}background:rgba(139,92,246,0.15);color:#a78bfa;{% else %}color:var(--text-dimmed);{% endif %}">
+                Tokens {% if sort_field == 'tokens' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+            </a>
+            <a href="#" class="table-sort"
+               hx-get="{% url 'report_sessions' report.pk %}?sort=date&order={% if sort_field == 'date' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&category={{ category }}"
+               hx-target="#report-sessions" hx-swap="innerHTML"
+               style="font-size:11px;padding:3px 8px;border-radius:4px;text-decoration:none;{% if sort_field == 'date' %}background:rgba(139,92,246,0.15);color:#a78bfa;{% else %}color:var(--text-dimmed);{% endif %}">
+                Date {% if sort_field == 'date' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+            </a>
+            <a href="#" class="table-sort"
+               hx-get="{% url 'report_sessions' report.pk %}?sort=messages&order={% if sort_field == 'messages' and sort_order == 'desc' %}asc{% else %}desc{% endif %}&category={{ category }}"
+               hx-target="#report-sessions" hx-swap="innerHTML"
+               style="font-size:11px;padding:3px 8px;border-radius:4px;text-decoration:none;{% if sort_field == 'messages' %}background:rgba(139,92,246,0.15);color:#a78bfa;{% else %}color:var(--text-dimmed);{% endif %}">
+                Msgs {% if sort_field == 'messages' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
+            </a>
+        </div>
+    </div>
+
+    {% for s in sessions %}
+    <div style="border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:12px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s;"
+         onmouseover="this.style.borderColor='rgba(139,92,246,0.3)'"
+         onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'"
+         hx-get="{% url 'token_session_detail' s.session_id %}"
+         hx-target="#drawer-body"
+         hx-swap="innerHTML"
+         onclick="document.getElementById('drawer').classList.add('open');document.getElementById('drawer-overlay').classList.add('open');document.getElementById('drawer-title').textContent='Session {{ s.session_id|truncatechars:20 }}';">
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="color:var(--text-primary);font-size:13px;font-weight:500;font-family:var(--font-mono);">{{ s.session_id|truncatechars:14 }}</span>
+                <span style="color:var(--text-dimmed);font-size:11px;">{{ s.project }}</span>
+                {% if s.category %}
+                <span style="padding:1px 6px;border-radius:8px;font-size:10px;
+                    {% if s.category == 'pro' %}background:rgba(59,130,246,0.12);color:#93C5FD;
+                    {% elif s.category == 'poc' %}background:rgba(245,158,11,0.12);color:#FCD34D;
+                    {% elif s.category == 'perso' %}background:rgba(16,185,129,0.12);color:#6EE7B7;
+                    {% endif %}">{{ s.category }}</span>
+                {% endif %}
+            </div>
+            <div style="display:flex;gap:16px;align-items:center;">
+                <span style="color:#A78BFA;font-size:12px;">{{ s.total_tokens|format_tokens }} tok</span>
+                <span style="color:#10B981;font-size:12px;font-weight:500;">{{ s.total_cost|format_cost }}</span>
+                <span style="color:var(--text-dimmed);font-size:11px;">{{ s.first_ts|date:"d/m" }}</span>
+            </div>
+        </div>
+
+        {% if s.first_prompt %}
+        <div style="margin-top:6px;color:var(--text-muted);font-size:12px;font-style:italic;border-left:2px solid rgba(139,92,246,0.3);padding-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            {{ s.first_prompt|truncatechars:120 }}
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div style="text-align:center;color:var(--text-dimmed);padding:24px;">
+        Aucune session trouv&eacute;e pour cette semaine.
+    </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+        <span style="color:var(--text-dimmed);font-size:11px;">{{ total_sessions }} sessions &mdash; page {{ page }}/{{ total_pages }}</span>
+        <div style="display:flex;gap:6px;">
+            {% if has_prev %}
+            <a href="#" class="table-sort"
+               hx-get="{% url 'report_sessions' report.pk %}?page={{ prev_page }}&sort={{ sort_field }}&order={{ sort_order }}&category={{ category }}"
+               hx-target="#report-sessions" hx-swap="innerHTML"
+               style="font-size:11px;padding:3px 8px;border-radius:4px;text-decoration:none;color:#a78bfa;">
+                &larr; Prev
+            </a>
+            {% else %}
+            <span style="font-size:11px;padding:3px 8px;color:var(--text-dimmed);">&larr; Prev</span>
+            {% endif %}
+
+            {% if has_next %}
+            <a href="#" class="table-sort"
+               hx-get="{% url 'report_sessions' report.pk %}?page={{ next_page }}&sort={{ sort_field }}&order={{ sort_order }}&category={{ category }}"
+               hx-target="#report-sessions" hx-swap="innerHTML"
+               style="font-size:11px;padding:3px 8px;border-radius:4px;text-decoration:none;background:rgba(139,92,246,0.15);color:#a78bfa;">
+                Next &rarr;
+            </a>
+            {% else %}
+            <span style="font-size:11px;padding:3px 8px;color:var(--text-dimmed);">Next &rarr;</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
