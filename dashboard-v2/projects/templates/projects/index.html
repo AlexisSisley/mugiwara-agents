@@ -15,4 +15,387 @@
 <div id="project-grid">
     {% include "projects/partials/_project_grid.html" %}
 </div>
+
+<!-- Init/Config Mugiwara Modal -->
+<div id="init-modal-overlay" class="modal-overlay" onclick="if(event.target===this) closeInitModal();">
+    <div class="modal-content" style="max-width: 750px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
+            <h3 id="init-modal-title" style="margin: 0; color: var(--text-primary);">&#9813; Init Mugiwara</h3>
+            <button onclick="closeInitModal()" style="background: none; border: none; color: var(--text-dimmed); cursor: pointer; font-size: 18px;">&times;</button>
+        </div>
+
+        <div id="init-loading" style="text-align: center; padding: 24px; color: var(--text-dimmed);">
+            <span class="neon-spinner"></span> Detecting stack...
+        </div>
+
+        <div id="init-content" style="display: none;">
+            <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-md); align-items: flex-end;">
+                <div style="flex: 1;">
+                    <label style="font-size: 11px; color: var(--text-dimmed); text-transform: uppercase; letter-spacing: 0.5px;">Detected Stacks</label>
+                    <div id="init-stacks" style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;"></div>
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 11px; color: var(--text-dimmed); text-transform: uppercase; letter-spacing: 0.5px;">Preset</label>
+                    <select id="init-preset" class="glass-input" style="margin-top: 4px; width: 100%;"></select>
+                </div>
+            </div>
+
+            <label style="font-size: 11px; color: var(--text-dimmed); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: block;">Agents</label>
+            <div class="transfer-list">
+                <div class="transfer-list__col">
+                    <div class="transfer-list__header">
+                        <span>Available</span>
+                        <input type="search" id="init-agent-search" placeholder="Filter..." oninput="filterAvailableAgents()">
+                    </div>
+                    <div class="transfer-list__body" id="init-available-agents"></div>
+                </div>
+                <div class="transfer-list__col">
+                    <div class="transfer-list__header">
+                        <span>Active</span>
+                        <span id="init-active-count" style="font-size: 10px; color: var(--accent-purple-light);"></span>
+                    </div>
+                    <div class="transfer-list__body" id="init-active-agents"></div>
+                </div>
+            </div>
+
+            <label style="font-size: 11px; color: var(--text-dimmed); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; display: block;">Pipelines</label>
+            <div class="transfer-list" style="max-height: none;">
+                <div class="transfer-list__col" style="max-height: 140px;">
+                    <div class="transfer-list__header"><span>Available</span></div>
+                    <div class="transfer-list__body" id="init-available-pipelines"></div>
+                </div>
+                <div class="transfer-list__col" style="max-height: 140px;">
+                    <div class="transfer-list__header"><span>Active</span></div>
+                    <div class="transfer-list__body" id="init-active-pipelines"></div>
+                </div>
+            </div>
+
+            <div class="diff-panel">
+                <button class="diff-panel__toggle" onclick="toggleDiffPreview()">
+                    <span id="diff-toggle-arrow">&#9654;</span>
+                    <span id="diff-toggle-label">Preview CLAUDE.md</span>
+                </button>
+                <div class="diff-panel__content" id="diff-content"></div>
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: var(--spacing-md);">
+                <button onclick="closeInitModal()" class="neon-btn neon-btn--sm" style="opacity: 0.6;">Cancel</button>
+                <button id="init-confirm-btn" class="neon-btn neon-btn--sm" disabled onclick="confirmInit()">
+                    &#9813; Initialize
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var initUrl = '';
+    var previewUrl = '';
+    var diffUrl = '';
+    var allAgents = [];
+    var allPipelines = [];
+    var activeAgents = [];
+    var activePipelines = [];
+    var isInitialized = false;
+    var userModified = false;
+    var diffOpened = false;
+
+    window.openInitModal = function(projectName, initEndpoint, previewEndpoint, diffEndpoint) {
+        initUrl = initEndpoint;
+        previewUrl = previewEndpoint;
+        diffUrl = diffEndpoint;
+        userModified = false;
+        diffOpened = false;
+
+        var overlay = document.getElementById('init-modal-overlay');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        document.getElementById('init-loading').style.display = 'block';
+        document.getElementById('init-content').style.display = 'none';
+        document.getElementById('diff-content').classList.remove('open');
+        document.getElementById('diff-toggle-arrow').innerHTML = '&#9654;';
+        document.getElementById('init-confirm-btn').disabled = true;
+
+        fetch(previewUrl)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                isInitialized = data.is_initialized;
+                allAgents = data.all_agents;
+                allPipelines = data.all_pipelines;
+                activeAgents = data.active_agents.slice();
+                activePipelines = data.active_pipelines.slice();
+
+                document.getElementById('init-modal-title').innerHTML = isInitialized
+                    ? '&#9881; Mugiwara Config — ' + projectName
+                    : '&#9813; Init Mugiwara — ' + projectName;
+                document.getElementById('init-confirm-btn').innerHTML = isInitialized
+                    ? '&#9881; Save Config' : '&#9813; Initialize';
+                document.getElementById('diff-toggle-label').textContent = isInitialized
+                    ? 'Preview Changes' : 'Preview CLAUDE.md';
+
+                renderStacks(data.stacks);
+                renderPresets(data.available_presets, data.suggested_preset);
+                renderTransferLists();
+
+                document.getElementById('init-loading').style.display = 'none';
+                document.getElementById('init-content').style.display = 'block';
+            })
+            .catch(function(err) {
+                document.getElementById('init-loading').innerHTML =
+                    '<span style="color: #F87171;">Error: ' + err.message + '</span>';
+            });
+    };
+
+    window.closeInitModal = function() {
+        document.getElementById('init-modal-overlay').classList.remove('open');
+        document.body.style.overflow = '';
+    };
+
+    function renderStacks(stacks) {
+        var el = document.getElementById('init-stacks');
+        el.innerHTML = stacks.length > 0
+            ? stacks.map(function(s) { return '<span class="neon-badge neon-badge--neutral">' + s + '</span>'; }).join('')
+            : '<span class="text-dimmed" style="font-size: 12px;">No stack detected</span>';
+    }
+
+    function renderPresets(presets, selected) {
+        var sel = document.getElementById('init-preset');
+        sel.innerHTML = presets.map(function(p) {
+            return '<option value="' + p.name + '"' + (p.name === selected ? ' selected' : '') + '>'
+                + p.name + ' — ' + p.description + '</option>';
+        }).join('');
+        sel.onchange = function() {
+            if (userModified && !confirm('Changing preset will reset your agent selection. Continue?')) {
+                sel.value = selected;
+                return;
+            }
+            fetch(previewUrl + '?preset=' + sel.value)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    activeAgents = data.active_agents.slice();
+                    activePipelines = data.active_pipelines.slice();
+                    userModified = false;
+                    diffOpened = false;
+                    document.getElementById('init-confirm-btn').disabled = true;
+                    document.getElementById('diff-content').classList.remove('open');
+                    document.getElementById('diff-toggle-arrow').innerHTML = '&#9654;';
+                    renderTransferLists();
+                });
+        };
+    }
+
+    function renderTransferLists() {
+        renderAgentColumns();
+        renderPipelineColumns();
+    }
+
+    function renderAgentColumns() {
+        var availEl = document.getElementById('init-available-agents');
+        var activeEl = document.getElementById('init-active-agents');
+        var search = (document.getElementById('init-agent-search').value || '').toLowerCase();
+
+        var available = allAgents.filter(function(a) {
+            return activeAgents.indexOf(a.name) < 0
+                && (search === '' || a.name.toLowerCase().indexOf(search) >= 0
+                    || a.description.toLowerCase().indexOf(search) >= 0);
+        });
+
+        availEl.innerHTML = available.map(function(a) {
+            var badge = a.type === 'elevated' ? '<span class="neon-badge neon-badge--subagent">[S]</span>' : '';
+            return '<div class="transfer-item" ondblclick="addAgent(\'' + a.name + '\')">'
+                + '<div class="transfer-item__info">'
+                + '<span class="transfer-item__name">' + a.name + ' ' + badge + '</span>'
+                + '<span class="transfer-item__desc">' + a.description + '</span>'
+                + '</div>'
+                + '<button class="transfer-item__btn" onclick="addAgent(\'' + a.name + '\')">&gt;</button>'
+                + '</div>';
+        }).join('');
+
+        var active = allAgents.filter(function(a) { return activeAgents.indexOf(a.name) >= 0; });
+        var activeNames = active.map(function(a) { return a.name; });
+        activeAgents.forEach(function(name) {
+            if (activeNames.indexOf(name) < 0) {
+                active.push({ name: name, type: 'skill', description: '' });
+            }
+        });
+
+        activeEl.innerHTML = active.map(function(a) {
+            var badge = a.type === 'elevated' ? '<span class="neon-badge neon-badge--subagent">[S]</span>' : '';
+            return '<div class="transfer-item" ondblclick="removeAgent(\'' + a.name + '\')">'
+                + '<button class="transfer-item__btn" onclick="removeAgent(\'' + a.name + '\')">&lt;</button>'
+                + '<div class="transfer-item__info">'
+                + '<span class="transfer-item__name">' + a.name + ' ' + badge + '</span>'
+                + '<span class="transfer-item__desc">' + a.description + '</span>'
+                + '</div>'
+                + '</div>';
+        }).join('');
+
+        document.getElementById('init-active-count').textContent = activeAgents.length + ' selected';
+    }
+
+    function renderPipelineColumns() {
+        var availEl = document.getElementById('init-available-pipelines');
+        var activeEl = document.getElementById('init-active-pipelines');
+
+        var available = allPipelines.filter(function(p) { return activePipelines.indexOf(p.name) < 0; });
+        availEl.innerHTML = available.map(function(p) {
+            return '<div class="transfer-item" ondblclick="addPipeline(\'' + p.name + '\')">'
+                + '<div class="transfer-item__info">'
+                + '<span class="transfer-item__name">/' + p.name + '</span>'
+                + '<span class="transfer-item__desc">' + p.description + '</span>'
+                + '</div>'
+                + '<button class="transfer-item__btn" onclick="addPipeline(\'' + p.name + '\')">&gt;</button>'
+                + '</div>';
+        }).join('');
+
+        var active = allPipelines.filter(function(p) { return activePipelines.indexOf(p.name) >= 0; });
+        activeEl.innerHTML = active.map(function(p) {
+            return '<div class="transfer-item" ondblclick="removePipeline(\'' + p.name + '\')">'
+                + '<button class="transfer-item__btn" onclick="removePipeline(\'' + p.name + '\')">&lt;</button>'
+                + '<div class="transfer-item__info">'
+                + '<span class="transfer-item__name">/' + p.name + '</span>'
+                + '<span class="transfer-item__desc">' + p.description + '</span>'
+                + '</div>'
+                + '</div>';
+        }).join('');
+    }
+
+    window.addAgent = function(name) {
+        if (activeAgents.indexOf(name) < 0) { activeAgents.push(name); userModified = true; }
+        renderAgentColumns();
+        invalidateDiff();
+    };
+    window.removeAgent = function(name) {
+        activeAgents = activeAgents.filter(function(n) { return n !== name; });
+        userModified = true;
+        renderAgentColumns();
+        invalidateDiff();
+    };
+    window.addPipeline = function(name) {
+        if (activePipelines.indexOf(name) < 0) { activePipelines.push(name); userModified = true; }
+        renderPipelineColumns();
+        invalidateDiff();
+    };
+    window.removePipeline = function(name) {
+        activePipelines = activePipelines.filter(function(n) { return n !== name; });
+        userModified = true;
+        renderPipelineColumns();
+        invalidateDiff();
+    };
+
+    window.filterAvailableAgents = function() { renderAgentColumns(); };
+
+    function invalidateDiff() {
+        diffOpened = false;
+        document.getElementById('init-confirm-btn').disabled = true;
+        document.getElementById('diff-content').classList.remove('open');
+        document.getElementById('diff-toggle-arrow').innerHTML = '&#9654;';
+    }
+
+    window.toggleDiffPreview = function() {
+        var content = document.getElementById('diff-content');
+        var arrow = document.getElementById('diff-toggle-arrow');
+
+        if (content.classList.contains('open')) {
+            content.classList.remove('open');
+            arrow.innerHTML = '&#9654;';
+            return;
+        }
+
+        content.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-dimmed);"><span class="neon-spinner"></span></div>';
+        content.classList.add('open');
+        arrow.innerHTML = '&#9660;';
+
+        fetch(diffUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                agents: activeAgents,
+                pipelines: activePipelines,
+                preset: document.getElementById('init-preset').value,
+            }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            diffOpened = true;
+            document.getElementById('init-confirm-btn').disabled = false;
+
+            if (!data.has_changes && isInitialized) {
+                content.innerHTML = '<div class="diff-no-changes">No changes detected</div>';
+                return;
+            }
+
+            if (isInitialized && data.current_md) {
+                content.innerHTML =
+                    '<div class="diff-col diff-col--old">' + highlightDiff(data.current_md, data.new_md, 'old') + '</div>'
+                    + '<div class="diff-col diff-col--new">' + highlightDiff(data.new_md, data.current_md, 'new') + '</div>';
+            } else {
+                content.innerHTML = '<div class="diff-col" style="flex: 1;">' + escapeHtml(data.new_md) + '</div>';
+            }
+        })
+        .catch(function(err) {
+            content.innerHTML = '<div class="diff-no-changes" style="color: #F87171;">Error: ' + err.message + '</div>';
+        });
+    };
+
+    function highlightDiff(text, other, side) {
+        var lines = text.split('\n');
+        var otherLines = other.split('\n');
+        var cls = side === 'old' ? 'diff-line--removed' : 'diff-line--added';
+        return lines.map(function(line) {
+            var escaped = escapeHtml(line);
+            if (otherLines.indexOf(line) < 0) {
+                return '<div class="' + cls + '">' + escaped + '</div>';
+            }
+            return '<div>' + escaped + '</div>';
+        }).join('');
+    }
+
+    function escapeHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    window.confirmInit = function() {
+        var btn = document.getElementById('init-confirm-btn');
+        btn.innerHTML = '&#8987; ' + (isInitialized ? 'Saving...' : 'Initializing...');
+        btn.disabled = true;
+
+        fetch(initUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                preset: document.getElementById('init-preset').value,
+                agents: activeAgents,
+                pipelines: activePipelines,
+            }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                var msg = isInitialized
+                    ? 'Config updated for ' + data.project
+                    : 'Mugiwara initialized for ' + data.project + ' (preset: ' + data.preset + ')';
+                if (window.MugiToast) window.MugiToast(msg);
+                closeInitModal();
+                location.reload();
+            } else {
+                if (window.MugiToast) window.MugiToast(data.error || 'Error', 'error');
+                btn.innerHTML = isInitialized ? '&#9881; Save Config' : '&#9813; Initialize';
+                btn.disabled = false;
+            }
+        })
+        .catch(function() {
+            if (window.MugiToast) window.MugiToast('Network error', 'error');
+            btn.innerHTML = isInitialized ? '&#9881; Save Config' : '&#9813; Initialize';
+            btn.disabled = false;
+        });
+    };
+})();
+</script>
 {% endblock %}

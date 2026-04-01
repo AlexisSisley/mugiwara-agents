@@ -168,7 +168,16 @@
             <div class="session-entry session-entry--claude">
                 <div class="session-entry__header">
                     <span class="session-entry__date">{{ cs.start_time|timeago }}</span>
-                    <span class="session-entry__duration">{{ cs.duration_ms|format_duration }}</span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span class="session-entry__duration">{{ cs.duration_ms|format_duration }}</span>
+                        <button class="btn-resume-session"
+                                onclick="resumeSession('{{ project.name }}', '{{ cs.session_id }}')"
+                                title="Resume this session in PowerShell">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="session-entry__details">
                     <span>{{ cs.user_messages }} msg user / {{ cs.assistant_messages }} msg assistant</span>
@@ -408,6 +417,25 @@ function submitAgentPicker(e) {
     })
     .catch(function() {
         closeAgentPicker();
+        if (window.MugiToast) window.MugiToast('Network error', 'error');
+    });
+}
+
+function resumeSession(projectName, sessionId) {
+    fetch('/projects/' + encodeURIComponent(projectName) + '/resume-session/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            if (window.MugiToast) window.MugiToast('Session resumed in PowerShell');
+        } else {
+            if (window.MugiToast) window.MugiToast(data.error || 'Error', 'error');
+        }
+    })
+    .catch(() => {
         if (window.MugiToast) window.MugiToast('Network error', 'error');
     });
 }

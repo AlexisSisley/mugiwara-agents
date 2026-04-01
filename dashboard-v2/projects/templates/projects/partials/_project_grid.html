@@ -11,15 +11,27 @@
                 <span class="neon-badge neon-badge--{{ project.category|badge_class }}">{{ project.category }}</span>
             </div>
 
-            <div class="flex items-center gap-1" style="margin-bottom: 8px;">
+            <div class="flex items-center gap-1" style="margin-bottom: 8px; flex-wrap: wrap;">
                 {% if project.stack %}
                     <span class="neon-badge neon-badge--neutral">{{ project.stack }}</span>
+                {% endif %}
+                {% if project.has_git %}
+                    <span class="neon-badge neon-badge--subagent" title="Git repository" style="font-size: 10px;">git</span>
                 {% endif %}
                 {% if project.branch %}
                     <span class="text-dimmed" style="font-size: 11px;">&#9741; {{ project.branch }}</span>
                 {% endif %}
                 {% if project.is_dirty %}
                     <span class="neon-badge neon-badge--moyenne" title="Uncommitted changes">dirty</span>
+                {% endif %}
+                {% if project.commits_behind > 0 %}
+                    <span class="neon-badge neon-badge--error" title="Behind remote by {{ project.commits_behind }} commit{{ project.commits_behind|pluralize }}">&#8595; {{ project.commits_behind }} behind</span>
+                {% endif %}
+                {% if project.commits_ahead > 0 %}
+                    <span class="neon-badge neon-badge--haute" title="Ahead of remote by {{ project.commits_ahead }} commit{{ project.commits_ahead|pluralize }}">&#8593; {{ project.commits_ahead }} ahead</span>
+                {% endif %}
+                {% if project.has_git and not project.is_dirty and project.commits_ahead == 0 and project.commits_behind == 0 and project.has_remote %}
+                    <span class="neon-badge neon-badge--success" title="Up to date with remote" style="font-size: 10px;">&#10003; synced</span>
                 {% endif %}
             </div>
 
@@ -42,6 +54,15 @@
         </a>
 
         <div class="card-actions">
+            {% if not project.has_mugiwara %}
+            <button class="btn-action btn-init"
+                    onclick="event.stopPropagation(); openInitModal('{{ project.name }}', '{% url 'project_init' project.name %}', '{% url 'project_init_preview' project.name %}', '{% url 'project_init_diff' project.name %}');"
+                    title="Initialize Mugiwara (CLAUDE.md + config)">Init</button>
+            {% else %}
+            <button class="btn-action btn-config"
+                    onclick="event.stopPropagation(); openInitModal('{{ project.name }}', '{% url 'project_init' project.name %}', '{% url 'project_init_preview' project.name %}', '{% url 'project_init_diff' project.name %}');"
+                    title="Edit Mugiwara config">&#9881; Config</button>
+            {% endif %}
             <button class="btn-action btn-claude"
                     onclick="event.stopPropagation(); projectAction('{% url 'project_open' project.name %}');"
                     title="Open Claude">Claude</button>

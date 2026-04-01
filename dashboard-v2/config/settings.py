@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # Application definition
 INSTALLED_APPS = [
+    'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
     'agents',
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,3 +76,12 @@ LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Europe/Paris'
 USE_I18N = False
 USE_TZ = True
+
+# Use cookie-based message storage (no session middleware needed)
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+# Project scanner — additional directories to scan for projects
+# Default scans ~/Documents/Projet/. Add extra dirs here.
+EXTRA_PROJECT_DIRS = [
+    str(Path.home()),  # catches root-level projects (mon_log_center, NakamaTerminal, etc.)
+]

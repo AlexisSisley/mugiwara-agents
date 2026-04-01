@@ -109,6 +109,7 @@ class WeeklyReport(models.Model):
     week_end = models.DateField()
     generated_at = models.DateTimeField(null=True, blank=True)
     html_path = models.CharField(max_length=500, blank=True, default='')
+    email_html_path = models.CharField(max_length=500, blank=True, default='')
     draft_id = models.CharField(max_length=100, blank=True, default='')
     status = models.CharField(max_length=50, default='generated')
 

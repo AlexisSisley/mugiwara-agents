@@ -14,6 +14,7 @@ from core.category_detector import detect_category
 from core.registry import load_registry
 from .scanner import scan_projects, scan_doc_files, DocFile
 from .claude_sessions import get_claude_sessions, format_duration
+from .initializer import init_project, list_presets, detect_stacks, suggest_preset, load_preset, list_all_agents, list_all_pipelines, read_current_config, diff_claude_md
 
 
 def project_list(request):
@@ -36,6 +37,8 @@ def project_list(request):
 
     # Filtering
     cat_filter = request.GET.get('category', 'all')
+    stack_filter = request.GET.get('stack', 'all')
+    git_filter = request.GET.get('git', 'all')
     search = request.GET.get('search', '').strip().lower()
 
     all_projects = list(projects)
@@ -45,14 +48,43 @@ def project_list(request):
                     if search in p.name.lower() or search in p.stack.lower()]
     if cat_filter != 'all':
         projects = [p for p in projects if p.category == cat_filter]
+    if stack_filter != 'all':
+        projects = [p for p in projects if p.stack == stack_filter]
+    if git_filter == 'git':
+        projects = [p for p in projects if p.has_git]
+    elif git_filter == 'no-git':
+        projects = [p for p in projects if not p.has_git]
+    elif git_filter == 'behind':
+        projects = [p for p in projects if p.commits_behind > 0]
+    elif git_filter == 'ahead':
+        projects = [p for p in projects if p.commits_ahead > 0]
+    elif git_filter == 'dirty':
+        projects = [p for p in projects if p.is_dirty]
+    elif git_filter == 'clean':
+        projects = [p for p in projects if p.has_git and not p.is_dirty
+                    and p.commits_ahead == 0 and p.commits_behind == 0]
 
     # Sort: most used first, then alphabetical
     projects.sort(key=lambda p: (-p.invocations, p.name))
 
-    # Category counts from unfiltered list
+    # Counts from unfiltered list
     cat_counts = {'pro': 0, 'poc': 0, 'perso': 0}
+    stack_counts: dict[str, int] = {}
+    git_count = 0
+    no_git_count = 0
     for p in all_projects:
         cat_counts[p.category] = cat_counts.get(p.category, 0) + 1
+        if p.stack:
+            stack_counts[p.stack] = stack_counts.get(p.stack, 0) + 1
+        if p.has_git:
+            git_count += 1
+        else:
+            no_git_count += 1
+
+    # Build stack options sorted by count desc
+    stack_options = [('all', f'All stacks ({len(all_projects)})')]
+    for stack, count in sorted(stack_counts.items(), key=lambda x: -x[1]):
+        stack_options.append((stack, f'{stack} ({count})'))
 
     filters = [
         {
@@ -67,6 +99,24 @@ def project_list(request):
                 ('pro', f'Pro ({cat_counts["pro"]})'),
                 ('poc', f'PoC ({cat_counts["poc"]})'),
                 ('perso', f'Perso ({cat_counts["perso"]})'),
+            ],
+        },
+        {
+            'name': 'stack', 'type': 'select', 'label': 'Stack',
+            'value': stack_filter,
+            'options': stack_options,
+        },
+        {
+            'name': 'git', 'type': 'select', 'label': 'Git',
+            'value': git_filter,
+            'options': [
+                ('all', f'All ({len(all_projects)})'),
+                ('git', f'Git ({git_count})'),
+                ('no-git', f'No Git ({no_git_count})'),
+                ('dirty', 'Dirty'),
+                ('behind', 'Behind remote'),
+                ('ahead', 'Ahead of remote'),
+                ('clean', 'Clean & synced'),
             ],
         },
     ]
@@ -349,6 +399,39 @@ def project_open_yolo(request, project_name):
 
 @csrf_exempt
 @require_POST
+def project_resume_session(request, project_name):
+    """Resume a Claude Code session in a new PowerShell window."""
+    projects = scan_projects()
+    project = next((p for p in projects if p.name == project_name), None)
+    if not project:
+        return JsonResponse({'error': 'Project not found'}, status=404)
+
+    try:
+        body = json.loads(request.body) if request.body else {}
+    except json.JSONDecodeError:
+        body = {}
+
+    session_id = body.get('session_id', '')
+    if not session_id:
+        return JsonResponse({'error': 'Missing session_id'}, status=400)
+
+    try:
+        subprocess.Popen(
+            ['powershell', '-NoExit', '-Command',
+             f'cd "{project.path}"; claude --resume {session_id}'],
+            creationflags=subprocess.CREATE_NEW_CONSOLE,
+        )
+    except (OSError, FileNotFoundError) as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({
+        'ok': True, 'action': 'resume',
+        'project': project_name, 'session_id': session_id,
+    })
+
+
+@csrf_exempt
+@require_POST
 def project_run_agent(request, project_name):
     """Open PowerShell + Claude with a specific agent/skill."""
     projects = scan_projects()
@@ -401,3 +484,98 @@ def project_explore(request, project_name):
         return JsonResponse({'error': str(e)}, status=500)
 
     return JsonResponse({'ok': True, 'action': 'explore', 'project': project_name})
+
+
+@csrf_exempt
+@require_POST
+def project_init_mugiwara(request, project_name):
+    """Initialize or update Mugiwara config for a project."""
+    projects = scan_projects()
+    project = next((p for p in projects if p.name == project_name), None)
+    if not project:
+        return JsonResponse({'error': 'Project not found'}, status=404)
+
+    try:
+        body = json.loads(request.body) if request.body else {}
+    except json.JSONDecodeError:
+        body = {}
+
+    preset_override = body.get('preset') or None
+    custom_agents = body.get('agents')
+    custom_pipelines = body.get('pipelines')
+    project_path = Path(project.path)
+
+    try:
+        result = init_project(project_path, preset_override=preset_override,
+                              custom_agents=custom_agents, custom_pipelines=custom_pipelines)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({
+        'ok': True,
+        'action': 'init',
+        'project': project_name,
+        **result,
+    })
+
+
+def project_init_preview(request, project_name):
+    """GET — return all agents, pipelines, stacks, presets, and current config if initialized."""
+    projects = scan_projects()
+    project = next((p for p in projects if p.name == project_name), None)
+    if not project:
+        return JsonResponse({'error': 'Project not found'}, status=404)
+
+    project_path = Path(project.path)
+    stacks = detect_stacks(project_path)
+    current_config = read_current_config(project_path)
+    is_initialized = current_config is not None
+
+    preset_name = request.GET.get('preset') or (
+        current_config['preset'] if is_initialized else suggest_preset(stacks)
+    )
+    preset_data = load_preset(preset_name)
+    presets = list_presets()
+    all_agents = list_all_agents()
+    all_pipelines = list_all_pipelines()
+
+    if is_initialized and not request.GET.get('preset'):
+        active_agents = current_config['agents']
+        active_pipelines = current_config['pipelines']
+    else:
+        active_agents = preset_data['agents']
+        active_pipelines = preset_data['pipelines']
+
+    return JsonResponse({
+        'stacks': stacks,
+        'suggested_preset': preset_name,
+        'preset_description': preset_data['description'],
+        'available_presets': presets,
+        'all_agents': all_agents,
+        'all_pipelines': all_pipelines,
+        'active_agents': active_agents,
+        'active_pipelines': active_pipelines,
+        'is_initialized': is_initialized,
+    })
+
+
+@csrf_exempt
+@require_POST
+def project_init_diff(request, project_name):
+    """Return current vs new CLAUDE.md section for diff preview."""
+    projects = scan_projects()
+    project = next((p for p in projects if p.name == project_name), None)
+    if not project:
+        return JsonResponse({'error': 'Project not found'}, status=404)
+
+    try:
+        body = json.loads(request.body) if request.body else {}
+    except json.JSONDecodeError:
+        body = {}
+
+    agents = body.get('agents', [])
+    pipelines = body.get('pipelines', [])
+    preset = body.get('preset', 'minimal')
+
+    result = diff_claude_md(Path(project.path), agents, pipelines, preset)
+    return JsonResponse(result)
