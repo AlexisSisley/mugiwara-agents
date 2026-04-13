@@ -119,3 +119,23 @@ class WeeklyReport(models.Model):
 
     def __str__(self):
         return f'Report {self.week_start} ({self.status})'
+
+
+class CustomReport(models.Model):
+    """User-defined date-range report (coexists with WeeklyReport)."""
+    start_date = models.DateField()
+    end_date = models.DateField()
+    label = models.CharField(max_length=120, blank=True, default='')
+    preset = models.CharField(max_length=30, blank=True, default='')
+    generated_at = models.DateTimeField(null=True, blank=True)
+    html_path = models.CharField(max_length=500, blank=True, default='')
+    email_html_path = models.CharField(max_length=500, blank=True, default='')
+    status = models.CharField(max_length=50, default='generated')
+
+    class Meta:
+        db_table = 'custom_reports'
+        ordering = ['-generated_at', '-start_date']
+        indexes = [models.Index(fields=['start_date', 'end_date'])]
+
+    def __str__(self):
+        return f'CustomReport {self.start_date}..{self.end_date} ({self.status})'
