@@ -4,40 +4,63 @@
 {% block title %}Reports{% endblock %}
 
 {% block content %}
-<!-- Generate button -->
-<div class="flex items-center justify-between" style="margin-bottom: var(--spacing-lg);">
-    <span class="text-muted">Weekly reports generated from Mugiwara activity data.</span>
-    <form method="post" action="{% url 'report_generate' %}">
-        <button type="submit" class="neon-btn">
-            &#9889; Generate Current Week
-        </button>
-    </form>
+<div style="margin-bottom: var(--spacing-lg);">
+    <p class="text-muted" style="margin-bottom: var(--spacing-sm);">
+        Generate reports from Mugiwara activity data.
+    </p>
+
+    <div class="flex items-center gap-1" style="flex-wrap: wrap; gap: var(--spacing-sm);">
+        <form method="post" action="{% url 'report_generate' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="neon-btn">&#9889; Generate Current Week</button>
+        </form>
+
+        {% for p in presets %}
+        <form method="post" action="{% url 'custom_report_generate' %}" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="preset" value="{{ p.0 }}">
+            <button type="submit" class="btn-action">{{ p.1 }}</button>
+        </form>
+        {% endfor %}
+
+        <details style="display:inline-block;">
+            <summary class="btn-action" style="list-style:none; cursor:pointer;">Custom&hellip;</summary>
+            <form method="post" action="{% url 'custom_report_generate' %}"
+                  style="display:flex; gap: var(--spacing-sm); align-items:center; margin-top: var(--spacing-sm);">
+                {% csrf_token %}
+                <input type="hidden" name="preset" value="custom">
+                <input type="date" name="start_date" required class="glass-input" style="width: 160px;">
+                <span>&rarr;</span>
+                <input type="date" name="end_date" required class="glass-input" style="width: 160px;">
+                <button type="submit" class="neon-btn">Generate</button>
+            </form>
+        </details>
+    </div>
 </div>
 
-<!-- Reports grid -->
-{% if reports %}
+{% if items %}
 <div class="card-grid">
-    {% for report in reports %}
-    <a href="{% url 'report_detail_page' report.pk %}" class="glass-card crew-card" style="text-decoration:none;color:inherit;display:block;">
-
+    {% for it in items %}
+    <a href="{% url it.detail_url_name it.pk %}" class="glass-card crew-card" style="text-decoration:none;color:inherit;display:block;">
         <div class="crew-card__header">
-            <span class="crew-card__name">Week of {{ report.week_start }}</span>
-            <span class="neon-badge neon-badge--{{ report.status|badge_class }}">{{ report.status }}</span>
+            <span class="crew-card__name">{{ it.title }}</span>
+            <span class="neon-badge neon-badge--{{ it.status|badge_class }}">{{ it.status }}</span>
         </div>
-
-        <p class="crew-card__desc">
-            {{ report.week_start }} &mdash; {{ report.week_end }}
-        </p>
-
+        <p class="crew-card__desc">{{ it.start_date }} &mdash; {{ it.end_date }}</p>
         <div class="crew-card__footer">
-            {% if report.generated_at %}
-            <span class="crew-card__stat">Generated {{ report.generated_at|timeago }}</span>
+            {% if it.kind == 'weekly' %}
+                <span class="neon-badge neon-badge--subagent">Weekly</span>
+            {% else %}
+                <span class="neon-badge neon-badge--haute">Custom</span>
+            {% endif %}
+            {% if it.generated_at %}
+                <span class="crew-card__stat">Generated {{ it.generated_at|timeago }}</span>
             {% endif %}
         </div>
     </a>
     {% endfor %}
 </div>
 {% else %}
-{% include "components/_empty_state.html" with title="No reports yet" message="Click 'Generate Current Week' to create your first weekly report." icon="empty" %}
+{% include "components/_empty_state.html" with title="No reports yet" message="Click a preset above to create your first report." icon="empty" %}
 {% endif %}
 {% endblock %}

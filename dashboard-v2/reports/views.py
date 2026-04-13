@@ -18,12 +18,51 @@ from .custom_generator import generate_custom_report
 
 
 def report_list(request):
-    reports = WeeklyReport.objects.all()[:20]
+    weekly = list(WeeklyReport.objects.all()[:40])
+    custom = list(CustomReport.objects.all()[:40])
+
+    items = []
+    for w in weekly:
+        items.append({
+            'kind': 'weekly',
+            'pk': w.pk,
+            'title': f'Week of {w.week_start}',
+            'start_date': w.week_start,
+            'end_date': w.week_end,
+            'status': w.status,
+            'generated_at': w.generated_at,
+            'detail_url_name': 'report_detail_page',
+        })
+    for c in custom:
+        items.append({
+            'kind': 'custom',
+            'pk': c.pk,
+            'title': c.label or f'{c.start_date} \u2192 {c.end_date}',
+            'start_date': c.start_date,
+            'end_date': c.end_date,
+            'status': c.status,
+            'generated_at': c.generated_at,
+            'detail_url_name': 'custom_report_detail_page',
+        })
+
+    # Sort by generated_at desc (None last); then start_date desc as tiebreaker.
+    from datetime import datetime, timezone as _tz
+    def sort_key(it):
+        return (it['generated_at'] or datetime.min.replace(tzinfo=_tz.utc), it['start_date'])
+    items.sort(key=sort_key, reverse=True)
+    items = items[:30]
 
     context = {
         'active_page': 'reports',
         'page_title': 'Reports',
-        'reports': reports,
+        'items': items,
+        'presets': [
+            ('last7', 'Last 7 days'),
+            ('last30', 'Last 30 days'),
+            ('this_month', 'This month'),
+            ('last_month', 'Last month'),
+            ('this_quarter', 'This quarter'),
+        ],
     }
     return render(request, 'reports/index.html', context)
 
