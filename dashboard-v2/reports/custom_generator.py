@@ -31,9 +31,6 @@ def generate_custom_report(
         'generated_at': timezone.now(),
     }
 
-    html = render_to_string('reports/report_template.html', context)
-    email_html = render_to_string('reports/email_template.html', context)
-
     report = CustomReport.objects.create(
         start_date=start,
         end_date=end,
@@ -43,14 +40,22 @@ def generate_custom_report(
         status='generated',
     )
 
-    reports_dir = Path.home() / '.mugiwara' / 'reports'
-    reports_dir.mkdir(parents=True, exist_ok=True)
-    filepath = reports_dir / f'custom-{report.pk}.html'
-    email_filepath = reports_dir / f'custom-{report.pk}-email.html'
-    filepath.write_text(html, encoding='utf-8')
-    email_filepath.write_text(email_html, encoding='utf-8')
+    try:
+        html = render_to_string('reports/report_template.html', context)
+        email_html = render_to_string('reports/email_template.html', context)
 
-    report.html_path = str(filepath)
-    report.email_html_path = str(email_filepath)
-    report.save(update_fields=['html_path', 'email_html_path'])
+        reports_dir = Path.home() / '.mugiwara' / 'reports'
+        reports_dir.mkdir(parents=True, exist_ok=True)
+        filepath = reports_dir / f'custom-{report.pk}.html'
+        email_filepath = reports_dir / f'custom-{report.pk}-email.html'
+        filepath.write_text(html, encoding='utf-8')
+        email_filepath.write_text(email_html, encoding='utf-8')
+
+        report.html_path = str(filepath)
+        report.email_html_path = str(email_filepath)
+        report.save(update_fields=['html_path', 'email_html_path'])
+    except Exception:
+        report.delete()
+        raise
+
     return report
