@@ -4,6 +4,10 @@ from . import views
 urlpatterns = [
     path('', views.report_list, name='report_list'),
     path('generate/', views.report_generate, name='report_generate'),
+    path('custom/generate/', views.custom_report_generate, name='custom_report_generate'),
+    path('custom/<int:pk>/detail/', views.custom_report_detail_page, name='custom_report_detail_page'),
+    path('custom/<int:pk>/sessions/', views.custom_report_sessions, name='custom_report_sessions'),
+    path('custom/<int:pk>/email-html/', views.custom_report_email_html, name='custom_report_email_html'),
     path('<int:pk>/', views.report_detail, name='report_detail'),
     path('<int:pk>/detail/', views.report_detail_page, name='report_detail_page'),
     path('<int:pk>/sessions/', views.report_sessions, name='report_sessions'),
