@@ -1,9 +1,8 @@
 """Shared aggregation helpers for weekly and custom-range reports."""
-from calendar import monthrange
 from datetime import date, timedelta
 
 from django.db.models import Count
-from django.db.models.functions import TruncDate, TruncMonth, TruncWeek
+from django.db.models.functions import TruncMonth, TruncWeek
 
 from core.models import DailyStats, Invocation, Memory, Session
 
