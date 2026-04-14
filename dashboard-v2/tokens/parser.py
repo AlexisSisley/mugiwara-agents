@@ -7,6 +7,7 @@ Extracts type:assistant entries that contain message.usage.
 import json
 import logging
 import re
+import socket
 import time
 from datetime import datetime
 from pathlib import Path
@@ -168,7 +169,35 @@ def _derive_project_name(dir_name: str) -> str:
     )
 
 
-def _parse_session_file(filepath: Path, project_name: str) -> list[dict]:
+def _detect_subagent_info(filepath: Path) -> tuple[bool, str]:
+    """
+    Detect if a JSONL file is a subagent log and extract parent session ID.
+
+    Returns:
+        (is_subagent, parent_session_id)
+    """
+    parts = filepath.parts
+    # Look for 'subagents' in the path
+    # Structure: .../<project>/<session-uuid>/subagents/agent-xxx.jsonl
+    try:
+        sa_idx = parts.index('subagents')
+    except ValueError:
+        return False, ''
+
+    # parent_session_id is the directory just before 'subagents'
+    if sa_idx > 0:
+        return True, parts[sa_idx - 1]
+    return False, ''
+
+
+def _parse_session_file(
+    filepath: Path,
+    project_name: str,
+    *,
+    is_subagent: bool = False,
+    parent_session_id: str = '',
+    machine: str = '',
+) -> list[dict]:
     """
     Parse a single .jsonl session file.
     Returns list of dicts ready for TokenUsage model creation.
@@ -232,6 +261,9 @@ def _parse_session_file(filepath: Path, project_name: str) -> list[dict]:
                     'cache_creation_tokens': cache_creation,
                     'cache_read_tokens': cache_read,
                     'cost': cost,
+                    'is_subagent': is_subagent,
+                    'parent_session_id': parent_session_id,
+                    'machine': machine,
                 })
 
     except (OSError, PermissionError) as e:
@@ -262,6 +294,7 @@ def scan_all_sessions(recent_days: int | None = None) -> list[dict]:
     all_records = []
     project_count = 0
     file_count = 0
+    hostname = socket.gethostname()
 
     try:
         for proj_dir in claude_dir.iterdir():
@@ -271,7 +304,7 @@ def scan_all_sessions(recent_days: int | None = None) -> list[dict]:
             project_name = _derive_project_name(proj_dir.name)
             project_count += 1
 
-            for session_file in proj_dir.glob('*.jsonl'):
+            for session_file in proj_dir.rglob('*.jsonl'):
                 # Skip old files if --recent mode
                 if cutoff_time:
                     try:
@@ -282,7 +315,16 @@ def scan_all_sessions(recent_days: int | None = None) -> list[dict]:
                         continue
 
                 file_count += 1
-                records = _parse_session_file(session_file, project_name)
+                is_subagent, parent_session_id = _detect_subagent_info(
+                    session_file,
+                )
+                records = _parse_session_file(
+                    session_file,
+                    project_name,
+                    is_subagent=is_subagent,
+                    parent_session_id=parent_session_id,
+                    machine=hostname,
+                )
                 all_records.extend(records)
 
     except (PermissionError, OSError) as e:

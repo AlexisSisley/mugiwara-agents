@@ -39,6 +39,7 @@
                             Msgs {% if sort_field == 'messages' %}{% if sort_order == 'desc' %}&darr;{% else %}&uarr;{% endif %}{% endif %}
                         </a>
                     </th>
+                    <th>Subagents</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,13 +52,20 @@
                     <td>{{ s.first_ts|date:"d/m/Y H:i" }}</td>
                     <td>{{ s.project }}</td>
                     <td><span class="badge">{{ s.dominant_model }}</span></td>
-                    <td>{{ s.total_tokens|format_tokens }}</td>
-                    <td>{{ s.total_cost|format_cost }}</td>
+                    <td>{{ s.total_tokens_inclusive|format_tokens }}</td>
+                    <td>{{ s.total_cost_inclusive|format_cost }}</td>
                     <td>{{ s.msg_count }}</td>
+                    <td>
+                        {% if s.sub_count > 0 %}
+                            <span class="badge badge--accent">{{ s.sub_count }} agent{{ s.sub_count|pluralize }}</span>
+                        {% else %}
+                            <span style="color:var(--text-muted)">&mdash;</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">
+                    <td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px">
                         No session data found for this period.
                     </td>
                 </tr>

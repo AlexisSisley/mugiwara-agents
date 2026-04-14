@@ -2,10 +2,10 @@
 
 <!-- KPI Cards -->
 <div class="stats-grid">
-    {% include "components/_stat_card.html" with title="Today" value=cost_today|format_cost icon="coin" %}
-    {% include "components/_stat_card.html" with title="This Week" value=cost_week|format_cost icon="chart" %}
-    {% include "components/_stat_card.html" with title="This Month" value=cost_month|format_cost icon="star" %}
-    {% include "components/_stat_card.html" with title=period_label value=cost_total|format_cost icon="zap" %}
+    {% include "components/_stat_card.html" with title="Today" value=cost_today|format_cost icon="coin" subtitle=sub_cost_today|format_cost_sub:"subagents" %}
+    {% include "components/_stat_card.html" with title="This Week" value=cost_week|format_cost icon="chart" subtitle=sub_cost_week|format_cost_sub:"subagents" %}
+    {% include "components/_stat_card.html" with title="This Month" value=cost_month|format_cost icon="star" subtitle=sub_cost_month|format_cost_sub:"subagents" %}
+    {% include "components/_stat_card.html" with title=period_label value=cost_total|format_cost icon="zap" subtitle=sub_cost_total|format_cost_sub:"subagents" %}
 </div>
 
 <!-- Daily cost sparkline -->

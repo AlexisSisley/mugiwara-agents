@@ -35,3 +35,10 @@ def format_pct(value):
     if value is None:
         return '0%'
     return f'{value:.0f}%'
+
+@register.filter
+def format_cost_sub(value, label=''):
+    """Format a cost as 'dont $X.XX label' for subtitle display. Returns '' if zero."""
+    if not value or value == 0:
+        return ''
+    return f'dont ${value:,.2f} {label}'.strip()

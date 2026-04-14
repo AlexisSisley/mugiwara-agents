@@ -1,6 +1,8 @@
 # tokens/views.py
 """Views for Token Usage & Costs dashboard."""
 from datetime import timedelta
+from itertools import groupby
+from operator import attrgetter
 
 from django.db.models import Sum, Count, Min, Max, F, Q
 from django.db.models.functions import TruncDate
@@ -78,6 +80,16 @@ def tab_costs(request):
         s=Sum('cost'))['s'] or 0
     cost_total = qs.aggregate(s=Sum('cost'))['s'] or 0
 
+    # Subagent breakdown
+    sub_qs = qs.filter(is_subagent=True)
+    sub_cost_today = sub_qs.filter(timestamp__gte=today_start).aggregate(
+        s=Sum('cost'))['s'] or 0
+    sub_cost_week = sub_qs.filter(timestamp__gte=week_start).aggregate(
+        s=Sum('cost'))['s'] or 0
+    sub_cost_month = sub_qs.filter(timestamp__gte=month_start).aggregate(
+        s=Sum('cost'))['s'] or 0
+    sub_cost_total = sub_qs.aggregate(s=Sum('cost'))['s'] or 0
+
     # Daily cost chart data
     daily_costs = (
         qs.annotate(date=TruncDate('timestamp'))
@@ -122,6 +134,10 @@ def tab_costs(request):
         'cost_week': cost_week,
         'cost_month': cost_month,
         'cost_total': cost_total,
+        'sub_cost_today': sub_cost_today,
+        'sub_cost_week': sub_cost_week,
+        'sub_cost_month': sub_cost_month,
+        'sub_cost_total': sub_cost_total,
         'period_label': period_label,
         'daily_chart': daily_chart,
         'model_chart': model_chart,
@@ -148,6 +164,26 @@ def tab_technical(request):
     total_cache_creation = agg['total_cache_creation'] or 0
     total_cache_read = agg['total_cache_read'] or 0
     total_all = total_input + total_output + total_cache_creation + total_cache_read
+
+    # Main vs Subagents split
+    sub_agg = qs.filter(is_subagent=True).aggregate(
+        sub_input=Sum('input_tokens'),
+        sub_output=Sum('output_tokens'),
+        sub_cc=Sum('cache_creation_tokens'),
+        sub_cr=Sum('cache_read_tokens'),
+    )
+    sub_total = (
+        (sub_agg['sub_input'] or 0)
+        + (sub_agg['sub_output'] or 0)
+        + (sub_agg['sub_cc'] or 0)
+        + (sub_agg['sub_cr'] or 0)
+    )
+    main_total = total_all - sub_total
+
+    subagent_split_chart = [
+        {'label': 'Main', 'value': main_total},
+        {'label': 'Subagents', 'value': sub_total},
+    ]
 
     # Cache hit rate
     cache_denominator = total_cache_read + total_input
@@ -211,6 +247,7 @@ def tab_technical(request):
         'total_cache_read': total_cache_read,
         'estimated_savings': estimated_savings,
         'composition_chart': composition_chart,
+        'subagent_split_chart': subagent_split_chart,
         'cache_sparkline': cache_sparkline,
         'model_chart': model_chart,
     }
@@ -234,9 +271,10 @@ def tab_sessions(request):
     if order == 'desc':
         db_sort = '-' + db_sort
 
-    # Aggregate by session
+    # Aggregate main sessions only (subagents will be counted separately)
+    main_qs = qs.filter(is_subagent=False)
     sessions_qs = (
-        qs.values('session_id', 'project')
+        main_qs.values('session_id', 'project')
         .annotate(
             total_cost=Sum('cost'),
             total_tokens=Sum(F('input_tokens') + F('output_tokens')
@@ -256,6 +294,22 @@ def tab_sessions(request):
     page = max(1, min(page, total_pages))
     offset = (page - 1) * per_page
     sessions = list(sessions_qs[offset:offset + per_page])
+
+    # Enrich sessions with subagent data
+    for s in sessions:
+        sid = s['session_id']
+        sub = qs.filter(is_subagent=True, parent_session_id=sid)
+        sub_agg = sub.aggregate(
+            sub_cost=Sum('cost'),
+            sub_tokens=Sum(F('input_tokens') + F('output_tokens')
+                          + F('cache_creation_tokens') + F('cache_read_tokens')),
+            sub_count=Count('session_id', distinct=True),
+        )
+        s['sub_count'] = sub_agg['sub_count'] or 0
+        s['sub_cost'] = sub_agg['sub_cost'] or 0
+        s['sub_tokens'] = sub_agg['sub_tokens'] or 0
+        s['total_cost_inclusive'] = s['total_cost'] + s['sub_cost']
+        s['total_tokens_inclusive'] = s['total_tokens'] + s['sub_tokens']
 
     # Model filter options
     models_list = (
@@ -280,19 +334,48 @@ def tab_sessions(request):
 
 
 def session_detail(request, session_id):
-    """Drawer content — detail of a single session."""
-    messages = (
-        TokenUsage.objects.filter(session_id=session_id)
+    """Drawer content — detail of a single session with subagent breakdown."""
+    # Main session messages
+    main_messages = list(
+        TokenUsage.objects.filter(session_id=session_id, is_subagent=False)
         .order_by('timestamp')
     )
-    total_cost = sum(m.cost for m in messages)
-    total_tokens = sum(m.total_tokens for m in messages)
+
+    # Subagent messages grouped by their session_id
+    sub_messages = list(
+        TokenUsage.objects.filter(parent_session_id=session_id, is_subagent=True)
+        .order_by('session_id', 'timestamp')
+    )
+
+    # Group subagent messages by session_id for display
+    subagent_groups = []
+    for sid, msgs in groupby(sub_messages, key=attrgetter('session_id')):
+        msgs_list = list(msgs)
+        group_cost = sum(m.cost for m in msgs_list)
+        group_tokens = sum(m.total_tokens for m in msgs_list)
+        subagent_groups.append({
+            'session_id': sid,
+            'short_id': sid[:12],
+            'messages': msgs_list,
+            'cost': group_cost,
+            'tokens': group_tokens,
+        })
+
+    all_msgs = main_messages + sub_messages
+    total_cost = sum(m.cost for m in all_msgs)
+    total_tokens = sum(m.total_tokens for m in all_msgs)
+    main_cost = sum(m.cost for m in main_messages)
+    main_tokens = sum(m.total_tokens for m in main_messages)
 
     context = {
         'session_id': session_id,
-        'messages': messages,
+        'main_messages': main_messages,
+        'subagent_groups': subagent_groups,
+        'subagent_count': len(subagent_groups),
         'total_cost': total_cost,
         'total_tokens': total_tokens,
+        'main_cost': main_cost,
+        'main_tokens': main_tokens,
     }
     return render(request, 'tokens/partials/_session_detail.html', context)
 

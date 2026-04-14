@@ -14,6 +14,15 @@ class TokenUsage(models.Model):
     model = models.CharField(max_length=50)
     project = models.CharField(max_length=200, db_index=True)
 
+    # Subagent tracking
+    is_subagent = models.BooleanField(default=False, db_index=True)
+    parent_session_id = models.CharField(
+        max_length=100, blank=True, default='', db_index=True,
+    )
+
+    # Machine identification (prepares multi-PC)
+    machine = models.CharField(max_length=100, blank=True, default='')
+
     # Token metrics
     input_tokens = models.IntegerField(default=0)
     output_tokens = models.IntegerField(default=0)
@@ -29,6 +38,8 @@ class TokenUsage(models.Model):
         indexes = [
             models.Index(fields=['project', 'timestamp'], name='idx_token_proj_ts'),
             models.Index(fields=['model', 'timestamp'], name='idx_token_model_ts'),
+            models.Index(fields=['is_subagent'], name='idx_token_subagent'),
+            models.Index(fields=['parent_session_id'], name='idx_token_parent_sess'),
         ]
 
     def __str__(self):

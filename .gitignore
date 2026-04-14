@@ -1,6 +1,11 @@
 .DS_Store
 Thumbs.db
 *.log
+__pycache__/
+*.pyc
+*.pyo
+dashboard-v2/venv/
+dashboard-v2/db.sqlite3
 /.claude/settings.local.json
 /logs/
 /tests/functional/results/

@@ -34,6 +34,17 @@
     {% endif %}
 </div>
 
+<!-- Main vs Subagents split -->
+{% if subagent_split_chart %}
+<div class="glass-card" style="margin-top: var(--spacing-lg);">
+    <h3 class="card-title">Main vs Subagents</h3>
+    <div id="chart-subagent-split" style="height:220px"
+         data-chart="donut"
+         data-chart-data='{{ subagent_split_chart|to_json }}'>
+    </div>
+</div>
+{% endif %}
+
 <!-- Tokens by model -->
 {% if model_chart %}
 <div class="glass-card" style="margin-top: var(--spacing-lg);">

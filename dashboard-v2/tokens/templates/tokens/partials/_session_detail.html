@@ -8,12 +8,13 @@
             <span class="mini-stat__value" style="color:var(--neon-green)">{{ total_cost|format_cost }}</span>
         </div>
         <div class="mini-stat">
-            <span class="mini-stat__label">Total Tokens</span>
+            <span class="mini-stat__label">Total Tokens{% if subagent_count > 0 %} (main + {{ subagent_count }} agent{{ subagent_count|pluralize }}){% endif %}</span>
             <span class="mini-stat__value">{{ total_tokens|format_tokens }}</span>
         </div>
     </div>
 
-    <h4 style="margin-top:16px;color:var(--text-secondary)">Messages ({{ messages|length }})</h4>
+    <!-- Main session messages -->
+    <h4 style="margin-top:16px;color:var(--text-secondary)">Main Session ({{ main_messages|length }} msgs &bull; {{ main_cost|format_cost }})</h4>
     <div class="table-responsive">
         <table class="glass-table glass-table--compact">
             <thead>
@@ -28,7 +29,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for m in messages %}
+                {% for m in main_messages %}
                 <tr>
                     <td>{{ m.timestamp|date:"H:i:s" }}</td>
                     <td><span class="badge badge--sm">{{ m.model }}</span></td>
@@ -38,8 +39,53 @@
                     <td>{{ m.cache_creation_tokens|format_tokens }}</td>
                     <td>{{ m.cost|format_cost }}</td>
                 </tr>
+                {% empty %}
+                <tr><td colspan="7" style="text-align:center;color:var(--text-muted)">No main session messages</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <!-- Subagent messages -->
+    {% if subagent_groups %}
+    <h4 style="margin-top:24px;color:var(--text-secondary)">Subagents ({{ subagent_count }})</h4>
+    {% for group in subagent_groups %}
+    <div style="background:rgba(139,92,246,0.06);border-radius:8px;padding:12px;margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span class="badge badge--accent">{{ group.short_id }}</span>
+            <span style="font-size:0.85rem;color:var(--text-muted)">
+                {{ group.tokens|format_tokens }} tokens &bull; {{ group.cost|format_cost }}
+            </span>
+        </div>
+        <div class="table-responsive">
+            <table class="glass-table glass-table--compact">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Model</th>
+                        <th>In</th>
+                        <th>Out</th>
+                        <th>Cache R</th>
+                        <th>Cache W</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in group.messages %}
+                    <tr>
+                        <td>{{ m.timestamp|date:"H:i:s" }}</td>
+                        <td><span class="badge badge--sm">{{ m.model }}</span></td>
+                        <td>{{ m.input_tokens|format_tokens }}</td>
+                        <td>{{ m.output_tokens|format_tokens }}</td>
+                        <td>{{ m.cache_read_tokens|format_tokens }}</td>
+                        <td>{{ m.cache_creation_tokens|format_tokens }}</td>
+                        <td>{{ m.cost|format_cost }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
 </div>
