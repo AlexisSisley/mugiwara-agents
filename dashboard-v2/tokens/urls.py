@@ -10,4 +10,7 @@ urlpatterns = [
     path('sessions/<str:session_id>/', views.session_detail, name='token_session_detail'),
     path('refresh/', views.refresh_tokens, name='token_refresh'),
     path('project-summary/<str:project_name>/', views.project_summary, name='token_project_summary'),
+    path('limits/', views.tab_limits, name='token_tab_limits'),
+    path('limits/config/', views.update_limits_config, name='token_limits_config'),
+    path('limits/autodetect/', views.autodetect_limits, name='token_limits_autodetect'),
 ]

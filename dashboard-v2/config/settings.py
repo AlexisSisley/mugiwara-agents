@@ -85,3 +85,16 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 EXTRA_PROJECT_DIRS = [
     str(Path.home()),  # catches root-level projects (mon_log_center, NakamaTerminal, etc.)
 ]
+
+# Token usage limits — defaults for TokenLimit singleton.
+# Values are 0 by default because Anthropic doesn't publish exact limits.
+# Users configure their observed limits via the dashboard UI.
+TOKEN_LIMITS_DEFAULTS = {
+    'plan_name': 'Pro Team',
+    'limit_5h_tokens': 0,
+    'limit_weekly_tokens': 0,
+    'alert_5h_tokens': None,
+    'alert_weekly_tokens': None,
+    'alert_5h_cost': None,
+    'alert_weekly_cost': None,
+}

@@ -79,6 +79,27 @@
     </div>
     {% endfor %}
 </div>
+
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<nav class="pagination" style="display: flex; gap: var(--spacing-sm); align-items: center; justify-content: center; margin-top: var(--spacing-md); color: var(--text-muted); font-size: 13px;">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+           hx-get="?page={{ page_obj.previous_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+           hx-target="#project-grid"
+           hx-swap="innerHTML"
+           class="btn-action">&larr; Prev</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        &middot; {{ page_obj.paginator.count }} total</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+           hx-get="?page={{ page_obj.next_page_number }}{% if qs %}&{{ qs }}{% endif %}"
+           hx-target="#project-grid"
+           hx-swap="innerHTML"
+           class="btn-action">Next &rarr;</a>
+    {% endif %}
+</nav>
+{% endif %}
 {% else %}
-{% include "components/_empty_state.html" with title="No projects found" message="No projects found in the scanned directories." icon="folder" %}
+{% include "components/_empty_state.html" with title="No projects found" message="No projects found in the scanned directories. Click Rescan to refresh." icon="folder" %}
 {% endif %}

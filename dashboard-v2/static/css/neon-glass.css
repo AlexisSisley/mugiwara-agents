@@ -2111,3 +2111,124 @@ select.glass-input option:checked {
   outline: 2px solid var(--accent-purple);
   outline-offset: 2px;
 }
+
+/* ── Limits Tab — Gauges & Progress Bars ───────────────────── */
+
+.limits-gauges {
+  display: flex;
+  gap: var(--spacing-lg);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-lg);
+}
+
+.limits-gauge-card {
+  text-align: center;
+  min-width: 220px;
+}
+
+.limits-gauge-card .gauge-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.limits-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.limits-alert-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.limits-alert-row .alert-label {
+  min-width: 140px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.limits-alert-row .alert-bar-track {
+  flex: 1;
+  height: 12px;
+  background: #2a2a3e;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.limits-alert-row .alert-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s ease;
+}
+
+.limits-alert-row .alert-bar-fill--green  { background: #22c55e; }
+.limits-alert-row .alert-bar-fill--orange { background: #f59e0b; }
+.limits-alert-row .alert-bar-fill--red    { background: #ef4444; }
+.limits-alert-row .alert-bar-fill--none   { background: #4a4a6a; }
+
+.limits-alert-row .alert-value {
+  min-width: 160px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.limits-config {
+  border-top: 1px solid var(--glass-border);
+  padding-top: var(--spacing-lg);
+}
+
+.limits-config .config-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.limits-config .config-grid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--spacing-sm) var(--spacing-md);
+  align-items: center;
+  max-width: 500px;
+}
+
+.limits-config .config-grid label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.limits-config .config-row-dual {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.limits-config .config-row-dual .glass-input {
+  flex: 1;
+}
+
+.limits-config .config-help {
+  margin-top: var(--spacing-md);
+  font-size: 0.8rem;
+  color: var(--text-dimmed);
+  max-width: 500px;
+}
+
+.limits-empty-state {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-dimmed);
+  font-size: 0.9rem;
+}
+
+.limits-empty-state a {
+  color: var(--accent-purple-light);
+  text-decoration: underline;
+  cursor: pointer;
+}

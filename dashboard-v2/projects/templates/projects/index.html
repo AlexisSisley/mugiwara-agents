@@ -7,8 +7,18 @@
 <!-- Filters -->
 {% include "components/_filters.html" with filters=filters hx_target="#project-grid" hx_url="/projects/" %}
 
-<div style="margin: var(--spacing-sm) 0; color: var(--text-muted); font-size: 13px;">
-    {{ total_count }} project{{ total_count|pluralize }} found
+<div style="margin: var(--spacing-sm) 0; color: var(--text-muted); font-size: 13px; display: flex; align-items: center; gap: var(--spacing-sm);">
+    <span>{{ total_count }} project{{ total_count|pluralize }} found</span>
+    <button type="button"
+            class="btn-action"
+            hx-post="{% url 'project_rescan' %}"
+            hx-target="#project-grid"
+            hx-swap="innerHTML"
+            hx-indicator="#rescan-spinner"
+            title="Re-scan filesystem (slow, ~5-10s)">&#8635; Rescan</button>
+    <span id="rescan-spinner" class="htmx-indicator" style="font-size: 12px;">
+        <span class="neon-spinner"></span> Scanning&hellip;
+    </span>
 </div>
 
 <!-- Project grid -->

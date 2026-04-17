@@ -49,3 +49,39 @@ class TokenUsage(models.Model):
     def total_tokens(self):
         return (self.input_tokens + self.output_tokens
                 + self.cache_creation_tokens + self.cache_read_tokens)
+
+
+class TokenLimit(models.Model):
+    """Singleton configuration for token usage limits and personal alerts."""
+
+    plan_name = models.CharField(max_length=50, default='Pro Team')
+    limit_5h_tokens = models.BigIntegerField(default=0)
+    limit_weekly_tokens = models.BigIntegerField(default=0)
+    alert_5h_tokens = models.BigIntegerField(null=True, blank=True)
+    alert_weekly_tokens = models.BigIntegerField(null=True, blank=True)
+    alert_5h_cost = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+    )
+    alert_weekly_cost = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True,
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'token_limit'
+        verbose_name = 'Token Limit Configuration'
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_instance(cls):
+        """Return the singleton, creating it with defaults if needed."""
+        from django.conf import settings
+        defaults = getattr(settings, 'TOKEN_LIMITS_DEFAULTS', {})
+        obj, _ = cls.objects.get_or_create(pk=1, defaults=defaults)
+        return obj
+
+    def __str__(self):
+        return f'{self.plan_name} limits'

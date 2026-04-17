@@ -1,6 +1,7 @@
 # tokens/views.py
 """Views for Token Usage & Costs dashboard."""
 from datetime import timedelta
+from decimal import Decimal
 from itertools import groupby
 from operator import attrgetter
 
@@ -11,7 +12,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import TokenUsage
+from .models import TokenUsage, TokenLimit
 from .parser import scan_all_sessions
 from .pricing import get_rates
 
@@ -378,6 +379,267 @@ def session_detail(request, session_id):
         'main_tokens': main_tokens,
     }
     return render(request, 'tokens/partials/_session_detail.html', context)
+
+
+def _get_alert_level(current, limit):
+    """Return alert level string based on percentage of limit consumed."""
+    if not limit or limit == 0:
+        return 'none'
+    pct = current / limit * 100
+    if pct >= 90:
+        return 'red'
+    if pct >= 70:
+        return 'orange'
+    return 'green'
+
+
+def _format_tokens_short(value):
+    """Format token count as short string (e.g., 180K, 1.2M)."""
+    if not value or value == 0:
+        return '0'
+    if value >= 1_000_000:
+        return f'{value / 1_000_000:.1f}M'
+    if value >= 1_000:
+        return f'{value / 1_000:.0f}K'
+    return str(value)
+
+
+def tab_limits(request):
+    """HTMX partial — Limits tab with gauges and config."""
+    # Auto-ingest recent data so the current session is always up to date
+    records = scan_all_sessions(recent_days=1)
+    if records:
+        instances = [TokenUsage(**r) for r in records]
+        TokenUsage.objects.bulk_create(
+            instances, batch_size=500, ignore_conflicts=True,
+        )
+
+    config = TokenLimit.get_instance()
+    now = timezone.now()
+
+    # --- Session 5h: find the active session ---
+    five_hours_ago = now - timedelta(hours=5)
+    latest_msg = (
+        TokenUsage.objects.filter(timestamp__gte=five_hours_ago)
+        .order_by('-timestamp')
+        .values('session_id')
+        .first()
+    )
+
+    session_tokens = 0
+    session_cost = 0.0
+    session_start = None
+    active_session_id = None
+
+    if latest_msg:
+        active_session_id = latest_msg['session_id']
+        session_agg = TokenUsage.objects.filter(
+            session_id=active_session_id,
+        ).aggregate(
+            total=Sum(
+                F('input_tokens') + F('output_tokens')
+                + F('cache_creation_tokens') + F('cache_read_tokens')
+            ),
+            cost=Sum('cost'),
+            start=Min('timestamp'),
+        )
+        session_tokens = session_agg['total'] or 0
+        session_cost = session_agg['cost'] or 0.0
+        session_start = session_agg['start']
+
+    # --- Weekly: Monday 00:00 to now ---
+    monday = (now - timedelta(days=now.weekday())).replace(
+        hour=0, minute=0, second=0, microsecond=0,
+    )
+    week_agg = TokenUsage.objects.filter(timestamp__gte=monday).aggregate(
+        total=Sum(
+            F('input_tokens') + F('output_tokens')
+            + F('cache_creation_tokens') + F('cache_read_tokens')
+        ),
+        cost=Sum('cost'),
+    )
+    weekly_tokens = week_agg['total'] or 0
+    weekly_cost = week_agg['cost'] or 0.0
+
+    # --- Percentages ---
+    session_pct = (
+        round(session_tokens / config.limit_5h_tokens * 100)
+        if config.limit_5h_tokens > 0 else 0
+    )
+    weekly_pct = (
+        round(weekly_tokens / config.limit_weekly_tokens * 100)
+        if config.limit_weekly_tokens > 0 else 0
+    )
+
+    # --- Alert levels ---
+    session_level = _get_alert_level(session_tokens, config.limit_5h_tokens)
+    weekly_level = _get_alert_level(weekly_tokens, config.limit_weekly_tokens)
+
+    # Personal alert levels
+    alert_5h_token_level = _get_alert_level(session_tokens, config.alert_5h_tokens)
+    alert_5h_token_pct = (
+        round(session_tokens / config.alert_5h_tokens * 100)
+        if config.alert_5h_tokens and config.alert_5h_tokens > 0 else 0
+    )
+    alert_weekly_token_level = _get_alert_level(weekly_tokens, config.alert_weekly_tokens)
+    alert_weekly_token_pct = (
+        round(weekly_tokens / config.alert_weekly_tokens * 100)
+        if config.alert_weekly_tokens and config.alert_weekly_tokens > 0 else 0
+    )
+    alert_5h_cost_level = _get_alert_level(
+        session_cost,
+        float(config.alert_5h_cost) if config.alert_5h_cost else 0,
+    )
+    alert_5h_cost_pct = (
+        round(session_cost / float(config.alert_5h_cost) * 100)
+        if config.alert_5h_cost and config.alert_5h_cost > 0 else 0
+    )
+    alert_weekly_cost_level = _get_alert_level(
+        weekly_cost,
+        float(config.alert_weekly_cost) if config.alert_weekly_cost else 0,
+    )
+    alert_weekly_cost_pct = (
+        round(weekly_cost / float(config.alert_weekly_cost) * 100)
+        if config.alert_weekly_cost and config.alert_weekly_cost > 0 else 0
+    )
+
+    # --- Gauge data for D3 ---
+    session_gauge = {
+        'pct': min(session_pct, 100) if config.limit_5h_tokens > 0 else 0,
+        'level': session_level,
+        'subtitle': '{} / {}'.format(
+            _format_tokens_short(session_tokens),
+            _format_tokens_short(config.limit_5h_tokens),
+        ),
+        'annotation': 'depuis {}'.format(
+            session_start.strftime('%H:%M') if session_start else '--:--'
+        ),
+    }
+    weekly_gauge = {
+        'pct': min(weekly_pct, 100) if config.limit_weekly_tokens > 0 else 0,
+        'level': weekly_level,
+        'subtitle': '{} / {}'.format(
+            _format_tokens_short(weekly_tokens),
+            _format_tokens_short(config.limit_weekly_tokens),
+        ),
+        'annotation': 'lun. \u2192 dim.',
+    }
+
+    context = {
+        'config': config,
+        # Session 5h
+        'session_tokens': session_tokens,
+        'session_cost': session_cost,
+        'session_pct': min(session_pct, 100),
+        'session_level': session_level,
+        'session_start': session_start,
+        'has_session': active_session_id is not None,
+        # Weekly
+        'weekly_tokens': weekly_tokens,
+        'weekly_cost': weekly_cost,
+        'weekly_pct': min(weekly_pct, 100),
+        'weekly_level': weekly_level,
+        'monday': monday,
+        # Gauge data for D3
+        'session_gauge': session_gauge,
+        'weekly_gauge': weekly_gauge,
+        # Personal alerts — session 5h
+        'alert_5h_token_pct': min(alert_5h_token_pct, 100),
+        'alert_5h_token_level': alert_5h_token_level,
+        'alert_5h_cost_pct': min(alert_5h_cost_pct, 100),
+        'alert_5h_cost_level': alert_5h_cost_level,
+        # Personal alerts — weekly
+        'alert_weekly_token_pct': min(alert_weekly_token_pct, 100),
+        'alert_weekly_token_level': alert_weekly_token_level,
+        'alert_weekly_cost_pct': min(alert_weekly_cost_pct, 100),
+        'alert_weekly_cost_level': alert_weekly_cost_level,
+    }
+    return render(request, 'tokens/partials/_tab_limits.html', context)
+
+
+@csrf_exempt
+def update_limits_config(request):
+    """POST — save token limits configuration, return refreshed limits tab."""
+    if request.method != 'POST':
+        return HttpResponse(status=405)
+
+    config = TokenLimit.get_instance()
+    config.plan_name = request.POST.get('plan_name', config.plan_name)
+    config.limit_5h_tokens = int(request.POST.get('limit_5h_tokens', 0) or 0)
+    config.limit_weekly_tokens = int(request.POST.get('limit_weekly_tokens', 0) or 0)
+
+    val = request.POST.get('alert_5h_tokens', '').strip()
+    config.alert_5h_tokens = int(val) if val else None
+
+    val = request.POST.get('alert_weekly_tokens', '').strip()
+    config.alert_weekly_tokens = int(val) if val else None
+
+    val = request.POST.get('alert_5h_cost', '').strip().replace(',', '.')
+    config.alert_5h_cost = Decimal(val) if val else None
+
+    val = request.POST.get('alert_weekly_cost', '').strip().replace(',', '.')
+    config.alert_weekly_cost = Decimal(val) if val else None
+
+    config.save()
+
+    return tab_limits(request)
+
+
+def autodetect_limits(request):
+    """GET — analyze historical data to estimate plan limits as JSON."""
+    import json
+    from django.db.models.functions import TruncDate
+
+    all_msgs = TokenUsage.objects.order_by('timestamp').values(
+        'session_id', 'timestamp',
+        'input_tokens', 'output_tokens',
+        'cache_creation_tokens', 'cache_read_tokens',
+    )
+
+    if not all_msgs.exists():
+        return HttpResponse(
+            json.dumps({'limit_5h': 0, 'limit_weekly': 0}),
+            content_type='application/json',
+        )
+
+    # --- Max tokens in any 5h window (per session) ---
+    # Group by session, sum total tokens per session
+    session_totals = (
+        TokenUsage.objects
+        .values('session_id')
+        .annotate(total=Sum(
+            F('input_tokens') + F('output_tokens')
+            + F('cache_creation_tokens') + F('cache_read_tokens')
+        ))
+        .order_by('-total')
+    )
+    max_session = session_totals.first()
+    peak_5h = max_session['total'] if max_session else 0
+
+    # --- Max tokens in any ISO week ---
+    from django.db.models.functions import ExtractIsoYear, ExtractWeek
+
+    weekly_totals = (
+        TokenUsage.objects
+        .annotate(iso_year=ExtractIsoYear('timestamp'), iso_week=ExtractWeek('timestamp'))
+        .values('iso_year', 'iso_week')
+        .annotate(total=Sum(
+            F('input_tokens') + F('output_tokens')
+            + F('cache_creation_tokens') + F('cache_read_tokens')
+        ))
+        .order_by('-total')
+    )
+    max_week = weekly_totals.first()
+    peak_weekly = max_week['total'] if max_week else 0
+
+    # Add 10% margin (round to nearest 1000)
+    limit_5h = round(peak_5h * 1.1 / 1000) * 1000
+    limit_weekly = round(peak_weekly * 1.1 / 1000) * 1000
+
+    return HttpResponse(
+        json.dumps({'limit_5h': limit_5h, 'limit_weekly': limit_weekly}),
+        content_type='application/json',
+    )
 
 
 @csrf_exempt

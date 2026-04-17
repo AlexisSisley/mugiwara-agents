@@ -1,10 +1,18 @@
-"""Views for Projects page — filesystem scanner + Mugiwara stats + actions."""
+"""Views for Projects page — DB-backed index + Mugiwara stats + actions.
+
+Hot path (project_list, filters, search) reads from the cached `Project` model.
+Heavy filesystem scan is run by the `scan_projects` management command (or via
+the rescan endpoint), not on every request.
+"""
 import json
 import subprocess
 from pathlib import Path
+from urllib.parse import urlencode
 
-from django.db.models import Count, Max
-from django.http import JsonResponse, HttpResponse
+from django.core.management import call_command
+from django.core.paginator import Paginator
+from django.db.models import Count, Max, Q
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -12,79 +20,74 @@ from django.views.decorators.http import require_POST
 from core.models import Invocation, Session
 from core.category_detector import detect_category
 from core.registry import load_registry
-from .scanner import scan_projects, scan_doc_files, DocFile
+from .models import Project
+from .scanner import DocFile
 from .claude_sessions import get_claude_sessions, format_duration
 from .initializer import init_project, list_presets, detect_stacks, suggest_preset, load_preset, list_all_agents, list_all_pipelines, read_current_config, diff_claude_md
 
 
-def project_list(request):
-    """List all projects with filtering and sorting."""
-    projects = scan_projects()
+PAGE_SIZE = 30
 
-    # Merge with DB stats
-    project_stats = {
-        row['project']: row
-        for row in Invocation.objects.exclude(project='')
-        .values('project')
-        .annotate(count=Count('id'), last_used=Max('timestamp'))
-    }
 
-    for proj in projects:
-        db = project_stats.get(proj.name, {})
-        proj.invocations = db.get('count', 0)
-        proj.last_used = db.get('last_used')
-        proj.category = detect_category(project=proj.name, cwd=proj.path)
+def _get_project(project_name):
+    """Lookup a cached project by display name. Returns None if absent."""
+    return Project.objects.filter(name=project_name).first()
 
-    # Filtering
-    cat_filter = request.GET.get('category', 'all')
-    stack_filter = request.GET.get('stack', 'all')
-    git_filter = request.GET.get('git', 'all')
-    search = request.GET.get('search', '').strip().lower()
 
-    all_projects = list(projects)
+def _ensure_indexed():
+    """Run the scan once if the cache is empty (first launch)."""
+    if not Project.objects.exists():
+        call_command('scan_projects')
+
+
+def _filter_projects(request):
+    """Apply query filters to the Project queryset. Returns (queryset, filters_meta)."""
+    qs = Project.objects.all()
+    base = qs  # for unfiltered counts
+
+    search = request.GET.get('search', '').strip()
+    cat = request.GET.get('category', 'all')
+    stack = request.GET.get('stack', 'all')
+    git = request.GET.get('git', 'all')
 
     if search:
-        projects = [p for p in projects
-                    if search in p.name.lower() or search in p.stack.lower()]
-    if cat_filter != 'all':
-        projects = [p for p in projects if p.category == cat_filter]
-    if stack_filter != 'all':
-        projects = [p for p in projects if p.stack == stack_filter]
-    if git_filter == 'git':
-        projects = [p for p in projects if p.has_git]
-    elif git_filter == 'no-git':
-        projects = [p for p in projects if not p.has_git]
-    elif git_filter == 'behind':
-        projects = [p for p in projects if p.commits_behind > 0]
-    elif git_filter == 'ahead':
-        projects = [p for p in projects if p.commits_ahead > 0]
-    elif git_filter == 'dirty':
-        projects = [p for p in projects if p.is_dirty]
-    elif git_filter == 'clean':
-        projects = [p for p in projects if p.has_git and not p.is_dirty
-                    and p.commits_ahead == 0 and p.commits_behind == 0]
+        qs = qs.filter(Q(name__icontains=search) | Q(stack__icontains=search))
+    if cat != 'all':
+        qs = qs.filter(category=cat)
+    if stack != 'all':
+        qs = qs.filter(stack=stack)
 
-    # Sort: most used first, then alphabetical
-    projects.sort(key=lambda p: (-p.invocations, p.name))
+    git_filters = {
+        'git': Q(has_git=True),
+        'no-git': Q(has_git=False),
+        'dirty': Q(is_dirty=True),
+        'behind': Q(commits_behind__gt=0),
+        'ahead': Q(commits_ahead__gt=0),
+        'clean': Q(has_git=True, is_dirty=False, commits_ahead=0, commits_behind=0),
+    }
+    if git in git_filters:
+        qs = qs.filter(git_filters[git])
 
-    # Counts from unfiltered list
-    cat_counts = {'pro': 0, 'poc': 0, 'perso': 0}
-    stack_counts: dict[str, int] = {}
-    git_count = 0
-    no_git_count = 0
-    for p in all_projects:
-        cat_counts[p.category] = cat_counts.get(p.category, 0) + 1
-        if p.stack:
-            stack_counts[p.stack] = stack_counts.get(p.stack, 0) + 1
-        if p.has_git:
-            git_count += 1
-        else:
-            no_git_count += 1
+    qs = qs.order_by('-invocations', 'name')
 
-    # Build stack options sorted by count desc
-    stack_options = [('all', f'All stacks ({len(all_projects)})')]
-    for stack, count in sorted(stack_counts.items(), key=lambda x: -x[1]):
-        stack_options.append((stack, f'{stack} ({count})'))
+    # Counts on unfiltered base — single aggregate query each.
+    cat_counts = dict(
+        base.values_list('category').annotate(c=Count('id'))
+    )
+    cat_counts.setdefault('pro', 0)
+    cat_counts.setdefault('poc', 0)
+    cat_counts.setdefault('perso', 0)
+
+    stack_counts = dict(
+        base.exclude(stack='').values_list('stack').annotate(c=Count('id'))
+    )
+    git_count = base.filter(has_git=True).count()
+    no_git_count = base.filter(has_git=False).count()
+    total = base.count()
+
+    stack_options = [('all', f'All stacks ({total})')]
+    for s, c in sorted(stack_counts.items(), key=lambda x: -x[1]):
+        stack_options.append((s, f'{s} ({c})'))
 
     filters = [
         {
@@ -93,9 +96,9 @@ def project_list(request):
         },
         {
             'name': 'category', 'type': 'select', 'label': 'Category',
-            'value': cat_filter,
+            'value': cat,
             'options': [
-                ('all', f'All ({len(all_projects)})'),
+                ('all', f'All ({total})'),
                 ('pro', f'Pro ({cat_counts["pro"]})'),
                 ('poc', f'PoC ({cat_counts["poc"]})'),
                 ('perso', f'Perso ({cat_counts["perso"]})'),
@@ -103,14 +106,14 @@ def project_list(request):
         },
         {
             'name': 'stack', 'type': 'select', 'label': 'Stack',
-            'value': stack_filter,
+            'value': stack,
             'options': stack_options,
         },
         {
             'name': 'git', 'type': 'select', 'label': 'Git',
-            'value': git_filter,
+            'value': git,
             'options': [
-                ('all', f'All ({len(all_projects)})'),
+                ('all', f'All ({total})'),
                 ('git', f'Git ({git_count})'),
                 ('no-git', f'No Git ({no_git_count})'),
                 ('dirty', 'Dirty'),
@@ -121,11 +124,31 @@ def project_list(request):
         },
     ]
 
+    return qs, filters, total
+
+
+def _build_qs_string(request):
+    """Querystring with current filters but stripped of `page` (for pagination links)."""
+    params = {k: v for k, v in request.GET.items() if k != 'page' and v}
+    return urlencode(params)
+
+
+def project_list(request):
+    """List all projects with filtering, search and pagination (DB-backed)."""
+    _ensure_indexed()
+
+    qs, filters, total_unfiltered = _filter_projects(request)
+
+    paginator = Paginator(qs, PAGE_SIZE)
+    page_obj = paginator.get_page(request.GET.get('page', 1))
+
     context = {
         'active_page': 'projects',
         'page_title': 'Projects',
-        'projects': projects,
-        'total_count': len(projects),
+        'projects': page_obj.object_list,
+        'page_obj': page_obj,
+        'qs': _build_qs_string(request),
+        'total_count': paginator.count,
         'filters': filters,
     }
 
@@ -135,11 +158,34 @@ def project_list(request):
     return render(request, 'projects/index.html', context)
 
 
+@csrf_exempt
+@require_POST
+def rescan_projects(request):
+    """Run the scan command synchronously then re-render the grid (HTMX)."""
+    call_command('scan_projects')
+    qs, filters, _ = _filter_projects(request)
+    paginator = Paginator(qs, PAGE_SIZE)
+    page_obj = paginator.get_page(request.GET.get('page', 1))
+    context = {
+        'projects': page_obj.object_list,
+        'page_obj': page_obj,
+        'qs': _build_qs_string(request),
+        'total_count': paginator.count,
+        'filters': filters,
+    }
+    return render(request, 'projects/partials/_project_grid.html', context)
+
+
+def _hydrate_doc_files(project):
+    """Convert JSONField list[dict] back into DocFile dataclasses for templates/python access."""
+    raw = project.doc_files or []
+    project.doc_files = [DocFile(**d) for d in raw if isinstance(d, dict)]
+
+
 def project_page(request, project_name):
     """Full-page project detail with 2-column layout, sessions, and files."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
-
+    _ensure_indexed()
+    project = _get_project(project_name)
     if not project:
         return render(request, 'projects/index.html', {
             'active_page': 'projects',
@@ -149,7 +195,9 @@ def project_page(request, project_name):
             'filters': [],
         })
 
-    # DB stats
+    _hydrate_doc_files(project)
+
+    # Live invocation stats (cheap, indexed)
     db = (
         Invocation.objects.filter(project=project_name)
         .values('project')
@@ -157,39 +205,30 @@ def project_page(request, project_name):
         .order_by('project')
         .first()
     ) or {}
-    project.invocations = db.get('count', 0)
-    project.last_used = db.get('last_used')
+    project.invocations = db.get('count', project.invocations)
+    project.last_used = db.get('last_used', project.last_used)
+    # Refresh category live (cheap; reads JSON rules)
     project.category = detect_category(project=project.name, cwd=project.path)
 
-    # Top agents for this project
     top_agents = list(
         Invocation.objects.filter(project=project_name)
         .values('agent')
         .annotate(count=Count('id'))
         .order_by('-count')[:10]
     )
-
-    # Calculate relative bar widths
     max_count = top_agents[0]['count'] if top_agents else 1
     for a in top_agents:
         a['width'] = min(100, int((a['count'] / max_count) * 100))
 
-    # Session count
     session_count = Session.objects.filter(project=project_name).count()
 
-    # Mugiwara sessions (grouped by session_id)
     mugi_sessions = list(
         Invocation.objects.filter(project=project_name)
         .exclude(session_id='')
         .values('session_id')
-        .annotate(
-            count=Count('id'),
-            start=Max('timestamp'),
-        )
+        .annotate(count=Count('id'), start=Max('timestamp'))
         .order_by('-start')[:20]
     )
-
-    # Enrich mugiwara sessions with agent list and pipeline info
     for sess in mugi_sessions:
         invocations = Invocation.objects.filter(
             session_id=sess['session_id'], project=project_name
@@ -202,15 +241,12 @@ def project_page(request, project_name):
         ).first()
         sess['pipeline'] = pipeline or ''
 
-    # Claude Code sessions
     claude_sessions = get_claude_sessions(project_name)
     claude_total_messages = sum(
         s.user_messages + s.assistant_messages for s in claude_sessions
     )
 
-    # Enriched doc files
     doc_files = project.doc_files
-    # Group by category
     doc_categories = {}
     category_order = ['doc', 'sql', 'schema', 'config', 'ci', 'other']
     category_labels = {
@@ -222,9 +258,7 @@ def project_page(request, project_name):
         'config': '\u2699\uFE0F', 'ci': '\U0001F680', 'other': '\U0001F4CE',
     }
     for df in doc_files:
-        if df.category not in doc_categories:
-            doc_categories[df.category] = []
-        doc_categories[df.category].append(df)
+        doc_categories.setdefault(df.category, []).append(df)
 
     ordered_doc_cats = [
         {
@@ -237,7 +271,6 @@ def project_page(request, project_name):
         if cat in doc_categories
     ]
 
-    # Agent registry for agent picker
     registry = load_registry()
     agent_names = sorted(registry.keys())
 
@@ -255,19 +288,18 @@ def project_page(request, project_name):
         'agent_names': agent_names,
         'format_duration': format_duration,
     }
-
     return render(request, 'projects/detail.html', context)
 
 
 def project_detail(request, project_name):
     """Drawer partial for project detail (kept for backward compat)."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
-
+    project = _get_project(project_name)
     if not project:
         return render(request, 'components/_empty_state.html', {
             'title': 'Not found', 'message': f'Project "{project_name}" not found.',
         })
+
+    _hydrate_doc_files(project)
 
     db = (
         Invocation.objects.filter(project=project_name)
@@ -276,8 +308,8 @@ def project_detail(request, project_name):
         .order_by('project')
         .first()
     ) or {}
-    project.invocations = db.get('count', 0)
-    project.last_used = db.get('last_used')
+    project.invocations = db.get('count', project.invocations)
+    project.last_used = db.get('last_used', project.last_used)
     project.category = detect_category(project=project.name, cwd=project.path)
 
     top_agents = list(
@@ -286,7 +318,6 @@ def project_detail(request, project_name):
         .annotate(count=Count('id'))
         .order_by('-count')[:10]
     )
-
     recent = Invocation.objects.filter(project=project_name).order_by('-timestamp')[:10]
 
     return render(request, 'projects/partials/_project_detail.html', {
@@ -302,13 +333,10 @@ def project_file(request, project_name):
     if not file_path:
         return JsonResponse({'error': 'Missing path parameter'}, status=400)
 
-    # Find project
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
-    # Resolve and validate path (prevent directory traversal)
     project_root = Path(project.path)
     try:
         full_path = (project_root / file_path).resolve()
@@ -320,7 +348,6 @@ def project_file(request, project_name):
     if not full_path.is_file():
         return JsonResponse({'error': 'File not found'}, status=404)
 
-    # Check file size
     try:
         size = full_path.stat().st_size
     except OSError:
@@ -329,7 +356,6 @@ def project_file(request, project_name):
     if size > 500 * 1024:
         return JsonResponse({'error': 'File too large (max 500KB)'}, status=413)
 
-    # Detect language from extension
     ext = full_path.suffix.lower()
     lang_map = {
         '.md': 'markdown', '.sql': 'sql', '.py': 'python', '.js': 'javascript',
@@ -359,8 +385,7 @@ def project_file(request, project_name):
 @require_POST
 def project_open(request, project_name):
     """Open PowerShell + Claude in the project directory."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -380,8 +405,7 @@ def project_open(request, project_name):
 @require_POST
 def project_open_yolo(request, project_name):
     """Open PowerShell + Claude --dangerously-skip-permissions."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -401,8 +425,7 @@ def project_open_yolo(request, project_name):
 @require_POST
 def project_resume_session(request, project_name):
     """Resume a Claude Code session in a new PowerShell window."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -434,8 +457,7 @@ def project_resume_session(request, project_name):
 @require_POST
 def project_run_agent(request, project_name):
     """Open PowerShell + Claude with a specific agent/skill."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -473,8 +495,7 @@ def project_run_agent(request, project_name):
 @require_POST
 def project_explore(request, project_name):
     """Open File Explorer in the project directory."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -490,8 +511,7 @@ def project_explore(request, project_name):
 @require_POST
 def project_init_mugiwara(request, project_name):
     """Initialize or update Mugiwara config for a project."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -511,6 +531,10 @@ def project_init_mugiwara(request, project_name):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+    # has_mugiwara likely changed; refresh the single project row.
+    project.has_mugiwara = (project_path / '.claude').exists() or (project_path / 'CLAUDE.md').exists()
+    project.save(update_fields=['has_mugiwara', 'scanned_at'])
+
     return JsonResponse({
         'ok': True,
         'action': 'init',
@@ -521,8 +545,7 @@ def project_init_mugiwara(request, project_name):
 
 def project_init_preview(request, project_name):
     """GET — return all agents, pipelines, stacks, presets, and current config if initialized."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 
@@ -563,8 +586,7 @@ def project_init_preview(request, project_name):
 @require_POST
 def project_init_diff(request, project_name):
     """Return current vs new CLAUDE.md section for diff preview."""
-    projects = scan_projects()
-    project = next((p for p in projects if p.name == project_name), None)
+    project = _get_project(project_name)
     if not project:
         return JsonResponse({'error': 'Project not found'}, status=404)
 

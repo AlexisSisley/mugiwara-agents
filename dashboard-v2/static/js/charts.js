@@ -291,6 +291,100 @@
     };
 
     /* ------------------------------------------------------------------ */
+    /*  Gauge (270° arc)                                                   */
+    /* ------------------------------------------------------------------ */
+
+    MugiCharts.renderGauge = function (selector, data) {
+        var container = document.querySelector(selector);
+        if (!container || !data) return;
+
+        container.innerHTML = '';
+        var size = Math.min(container.getBoundingClientRect().width || 200, 200);
+        var radius = size / 2;
+        var thickness = 16;
+        var pct = Math.min(data.pct || 0, 100);
+
+        var colorMap = { green: '#22c55e', orange: '#f59e0b', red: '#ef4444', none: '#4a4a6a' };
+        var fillColor = colorMap[data.level] || colorMap.none;
+
+        var svg = d3.select(selector)
+            .append('svg')
+            .attr('width', size)
+            .attr('height', size)
+            .append('g')
+            .attr('transform', 'translate(' + radius + ',' + radius + ')');
+
+        // 270° arc: from -225° to +45° (in radians)
+        var startAngle = -5 * Math.PI / 4;
+        var endAngle = Math.PI / 4;
+        var totalAngle = endAngle - startAngle;
+
+        // Background arc
+        var bgArc = d3.arc()
+            .innerRadius(radius - thickness)
+            .outerRadius(radius - 2)
+            .startAngle(startAngle)
+            .endAngle(endAngle)
+            .cornerRadius(thickness / 2);
+
+        svg.append('path')
+            .attr('d', bgArc())
+            .attr('fill', '#2a2a3e');
+
+        // Foreground arc (animated)
+        var fgEndAngle = startAngle + (totalAngle * pct / 100);
+
+        var fgArc = d3.arc()
+            .innerRadius(radius - thickness)
+            .outerRadius(radius - 2)
+            .startAngle(startAngle)
+            .cornerRadius(thickness / 2);
+
+        var fgPath = svg.append('path')
+            .attr('fill', fillColor)
+            .attr('d', fgArc({ endAngle: startAngle }));
+
+        fgPath.transition()
+            .duration(800)
+            .attrTween('d', function () {
+                var interp = d3.interpolate(startAngle, fgEndAngle);
+                return function (t) {
+                    return fgArc({ endAngle: interp(t) });
+                };
+            });
+
+        // Center percentage text
+        svg.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('y', -8)
+            .attr('fill', fillColor !== colorMap.none ? fillColor : 'var(--text-primary)')
+            .attr('font-size', Math.round(size / 5) + 'px')
+            .attr('font-weight', 'bold')
+            .text(pct + '%');
+
+        // Subtitle (e.g., "180K / 250K")
+        if (data.subtitle) {
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('y', 16)
+                .attr('fill', 'var(--text-muted)')
+                .attr('font-size', '12px')
+                .text(data.subtitle);
+        }
+
+        // Annotation (e.g., "depuis 14:32")
+        if (data.annotation) {
+            svg.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('y', 34)
+                .attr('fill', 'var(--text-dimmed)')
+                .attr('font-size', '11px')
+                .text(data.annotation);
+        }
+    };
+
+    /* ------------------------------------------------------------------ */
     /*  Re-init charts in container (after HTMX swap)                      */
     /* ------------------------------------------------------------------ */
 
@@ -307,6 +401,7 @@
                 if (type === 'heatmap') MugiCharts.renderHeatmap('#' + el.id, chartData);
                 if (type === 'donut') MugiCharts.renderDonut('#' + el.id, chartData);
                 if (type === 'barh') MugiCharts.renderBarH('#' + el.id, chartData, color);
+                if (type === 'gauge') MugiCharts.renderGauge('#' + el.id, chartData);
             } catch (e) { /* ignore parse errors */ }
         });
     };

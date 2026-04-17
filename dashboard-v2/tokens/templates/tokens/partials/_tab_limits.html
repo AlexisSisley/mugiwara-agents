@@ -1,0 +1,184 @@
+{% load token_filters %}
+
+<div id="limits-container"
+     hx-get="{% url 'token_tab_limits' %}"
+     hx-trigger="every 60s"
+     hx-target="#limits-container"
+     hx-swap="outerHTML"
+     hx-on::after-swap="initTokenCharts()">
+
+    <!-- Official Gauges -->
+    <div class="glass-card">
+        <h3 class="card-title">Limites du plan &mdash; {{ config.plan_name }}</h3>
+
+        {% if config.limit_5h_tokens > 0 or config.limit_weekly_tokens > 0 %}
+        <div class="limits-gauges">
+            {% if config.limit_5h_tokens > 0 %}
+            <div class="limits-gauge-card">
+                <div class="gauge-title">Session 5h</div>
+                <div id="gauge-session"
+                     style="width:200px;height:200px;margin:0 auto"
+                     data-chart="gauge"
+                     data-chart-data='{{ session_gauge|to_json }}'>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if config.limit_weekly_tokens > 0 %}
+            <div class="limits-gauge-card">
+                <div class="gauge-title">Semaine</div>
+                <div id="gauge-weekly"
+                     style="width:200px;height:200px;margin:0 auto"
+                     data-chart="gauge"
+                     data-chart-data='{{ weekly_gauge|to_json }}'>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="limits-empty-state">
+            <p>Aucune limite configur&eacute;e.</p>
+            <p>Renseignez vos limites dans la section <a onclick="document.getElementById('limits-config-section').scrollIntoView({behavior:'smooth'})">Configuration</a> ci-dessous.</p>
+            <p style="margin-top:var(--spacing-sm)">Les limites varient selon votre plan Claude Code et le mod&egrave;le utilis&eacute;.<br>Anthropic ne publie pas de chiffres exacts &mdash; renseignez les valeurs observ&eacute;es dans votre usage.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Personal Alerts -->
+    {% if config.alert_5h_tokens or config.alert_weekly_tokens or config.alert_5h_cost or config.alert_weekly_cost %}
+    <div class="glass-card" style="margin-top: var(--spacing-lg);">
+        <h3 class="card-title">Seuils personnels</h3>
+        <div class="limits-alerts">
+            {% if config.alert_5h_tokens %}
+            <div class="limits-alert-row">
+                <span class="alert-label">Session 5h (tokens)</span>
+                <div class="alert-bar-track">
+                    <div class="alert-bar-fill alert-bar-fill--{{ alert_5h_token_level }}"
+                         style="width: {{ alert_5h_token_pct }}%"></div>
+                </div>
+                <span class="alert-value">{{ session_tokens|format_tokens }} / {{ config.alert_5h_tokens|format_tokens }}</span>
+            </div>
+            {% endif %}
+
+            {% if config.alert_5h_cost %}
+            <div class="limits-alert-row">
+                <span class="alert-label">Session 5h (co&ucirc;t)</span>
+                <div class="alert-bar-track">
+                    <div class="alert-bar-fill alert-bar-fill--{{ alert_5h_cost_level }}"
+                         style="width: {{ alert_5h_cost_pct }}%"></div>
+                </div>
+                <span class="alert-value">{{ session_cost|format_cost }} / {{ config.alert_5h_cost|format_cost }}</span>
+            </div>
+            {% endif %}
+
+            {% if config.alert_weekly_tokens %}
+            <div class="limits-alert-row">
+                <span class="alert-label">Semaine (tokens)</span>
+                <div class="alert-bar-track">
+                    <div class="alert-bar-fill alert-bar-fill--{{ alert_weekly_token_level }}"
+                         style="width: {{ alert_weekly_token_pct }}%"></div>
+                </div>
+                <span class="alert-value">{{ weekly_tokens|format_tokens }} / {{ config.alert_weekly_tokens|format_tokens }}</span>
+            </div>
+            {% endif %}
+
+            {% if config.alert_weekly_cost %}
+            <div class="limits-alert-row">
+                <span class="alert-label">Semaine (co&ucirc;t)</span>
+                <div class="alert-bar-track">
+                    <div class="alert-bar-fill alert-bar-fill--{{ alert_weekly_cost_level }}"
+                         style="width: {{ alert_weekly_cost_pct }}%"></div>
+                </div>
+                <span class="alert-value">{{ weekly_cost|format_cost }} / {{ config.alert_weekly_cost|format_cost }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Configuration -->
+    <div class="glass-card limits-config" id="limits-config-section" style="margin-top: var(--spacing-lg);">
+        <h3 class="config-title">Configuration</h3>
+        <form hx-post="{% url 'token_limits_config' %}"
+              hx-target="#limits-container"
+              hx-swap="outerHTML"
+              hx-on::after-swap="initTokenCharts()">
+            <div class="config-grid">
+                <label for="plan_name">Plan</label>
+                <input type="text" id="plan_name" name="plan_name"
+                       class="glass-input" value="{{ config.plan_name }}">
+
+                <label for="limit_5h_tokens">Limite 5h</label>
+                <input type="number" id="limit_5h_tokens" name="limit_5h_tokens"
+                       class="glass-input" value="{{ config.limit_5h_tokens }}"
+                       placeholder="tokens" min="0">
+
+                <label for="limit_weekly_tokens">Limite semaine</label>
+                <input type="number" id="limit_weekly_tokens" name="limit_weekly_tokens"
+                       class="glass-input" value="{{ config.limit_weekly_tokens }}"
+                       placeholder="tokens" min="0">
+
+                <label for="alert_5h_tokens">Alerte 5h (tokens)</label>
+                <input type="number" id="alert_5h_tokens" name="alert_5h_tokens"
+                       class="glass-input" value="{{ config.alert_5h_tokens|default_if_none:'' }}"
+                       placeholder="optionnel" min="0">
+
+                <label for="alert_5h_cost">Alerte 5h (co&ucirc;t)</label>
+                <input type="text" id="alert_5h_cost" name="alert_5h_cost"
+                       class="glass-input" inputmode="decimal"
+                       value="{{ config.alert_5h_cost|default_if_none:'' }}"
+                       placeholder="$ optionnel">
+
+                <label for="alert_weekly_tokens">Alerte semaine (tokens)</label>
+                <input type="number" id="alert_weekly_tokens" name="alert_weekly_tokens"
+                       class="glass-input" value="{{ config.alert_weekly_tokens|default_if_none:'' }}"
+                       placeholder="optionnel" min="0">
+
+                <label for="alert_weekly_cost">Alerte semaine (co&ucirc;t)</label>
+                <input type="text" id="alert_weekly_cost" name="alert_weekly_cost"
+                       class="glass-input" inputmode="decimal"
+                       value="{{ config.alert_weekly_cost|default_if_none:'' }}"
+                       placeholder="$ optionnel">
+            </div>
+
+            <div style="margin-top: var(--spacing-md); display: flex; gap: var(--spacing-sm); align-items: center;">
+                <button type="submit" class="neon-btn">Enregistrer</button>
+                <button type="button" class="neon-btn neon-btn--sm" id="btn-autodetect"
+                        onclick="autodetectLimits()">
+                    &#9881; Auto-detect
+                </button>
+                <span id="autodetect-status" style="font-size: 0.8rem; color: var(--text-dimmed);"></span>
+            </div>
+            <script>
+            function autodetectLimits() {
+                var btn = document.getElementById('btn-autodetect');
+                var status = document.getElementById('autodetect-status');
+                btn.disabled = true;
+                status.textContent = 'Analyse en cours...';
+                fetch('{% url "token_limits_autodetect" %}')
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.limit_5h > 0) {
+                            document.getElementById('limit_5h_tokens').value = data.limit_5h;
+                        }
+                        if (data.limit_weekly > 0) {
+                            document.getElementById('limit_weekly_tokens').value = data.limit_weekly;
+                        }
+                        status.textContent = 'Limites estimees depuis vos donnees (pic + 10%)';
+                        btn.disabled = false;
+                    })
+                    .catch(function() {
+                        status.textContent = 'Erreur lors de la detection';
+                        btn.disabled = false;
+                    });
+            }
+            </script>
+
+            <p class="config-help">
+                Les limites varient selon votre plan et le mod&egrave;le utilis&eacute;. Anthropic ne publie pas de chiffres exacts.
+                Renseignez les valeurs observ&eacute;es dans votre usage Claude Code. Les seuils personnels d&eacute;clenchent
+                les indicateurs orange (70%) et rouge (90%) sur les barres ci-dessus.
+            </p>
+        </form>
+    </div>
+</div>
