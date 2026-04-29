@@ -2232,3 +2232,84 @@ select.glass-input option:checked {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* ── Session Cards ─────────────────────────────────────── */
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.session-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.session-card__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.session-card__date {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dimmed);
+}
+
+.session-card__topic {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: var(--spacing-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.session-card__id {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--text-dimmed);
+  opacity: 0.6;
+}
+
+.session-card__actions {
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .session-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .session-card__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

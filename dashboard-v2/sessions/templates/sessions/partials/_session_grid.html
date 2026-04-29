@@ -1,0 +1,53 @@
+{% load dashboard_tags %}
+
+{% if sessions %}
+<div class="session-list">
+    {% for s in sessions %}
+    <div class="glass-card session-card">
+        <div class="session-card__main">
+            <div class="session-card__header">
+                <span class="neon-badge neon-badge--purple">{{ s.project_name }}</span>
+                {% if s.git_branch %}
+                <span class="neon-badge neon-badge--outline" style="font-family: var(--font-mono, monospace); font-size: 11px;">
+                    &#9738; {{ s.git_branch }}
+                </span>
+                {% endif %}
+                <span class="session-card__date" title="{{ s.start_time|date:'d/m/Y H:i' }}">
+                    {{ s.start_time|timeago }}
+                </span>
+            </div>
+
+            <div class="session-card__topic">
+                {% if s.first_user_message %}
+                    {{ s.first_user_message|truncatewords:25 }}
+                {% else %}
+                    <span style="opacity: 0.5; font-style: italic;">Session sans message</span>
+                {% endif %}
+            </div>
+
+            <div class="session-card__meta">
+                <span title="Messages utilisateur">&#128100; {{ s.user_messages }}</span>
+                <span title="Messages assistant">&#129302; {{ s.assistant_messages }}</span>
+                <span title="Duree">&#9201; {{ s.duration_ms|format_duration }}</span>
+                {% if s.tools_used %}
+                <span title="Outils: {{ s.tools_used|join:', ' }}">&#128295; {{ s.tools_used|length }}</span>
+                {% endif %}
+                <span class="session-card__id" title="{{ s.session_id }}">
+                    {{ s.session_id|truncate_id:8 }}
+                </span>
+            </div>
+        </div>
+
+        <div class="session-card__actions">
+            <button class="neon-btn neon-btn--outline neon-btn--sm"
+                    onclick="resumeSession('{{ s.session_id }}', this)"
+                    title="Reprendre cette session (claude --resume)">
+                &#9654; Resume
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+{% include "components/_empty_state.html" with title="Aucune session trouvee" message="Les sessions Claude Code apparaitront ici une fois que vous aurez utilise Claude dans vos projets." icon="chat" %}
+{% endif %}

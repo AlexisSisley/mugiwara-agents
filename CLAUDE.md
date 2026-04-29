@@ -39,6 +39,10 @@ chopper, franky, nami, jinbe, robin, zorro, sanji, luffy, brook, usopp, vivi, mo
 
 Le routeur `one_piece` sait quand utiliser Agent vs Skill — laisse-le decider.
 
+## Dashboard
+
+Le projet utilise exclusivement le **dashboard Django v2** (`dashboard-v2/`). Le dashboard v1 est obsolete et ne doit plus etre utilise, modifie ni reference. Toute intervention sur le dashboard doit cibler la v2.
+
 ## Exceptions (ne PAS router vers one_piece)
 
 - Questions simples sur le projet Mugiwara lui-meme (structure des skills, config des hooks) → repondre directement

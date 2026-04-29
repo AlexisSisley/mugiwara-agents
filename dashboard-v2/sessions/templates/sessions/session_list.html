@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}Sessions Claude{% endblock %}
+
+{% block content %}
+<!-- KPIs -->
+<div class="stats-grid" style="margin-bottom: var(--spacing-lg);">
+    {% include "components/_stat_card.html" with title="Total Sessions" value=total_count icon="chat" %}
+    {% include "components/_stat_card.html" with title="Projets" value=unique_projects icon="folder" %}
+    {% include "components/_stat_card.html" with title="Messages" value=total_messages|format_number icon="zap" %}
+    {% include "components/_stat_card.html" with title="Temps Total" value=total_duration icon="clock" %}
+</div>
+
+<!-- Toolbar: search + filter + refresh -->
+<div class="filter-bar" style="margin-bottom: var(--spacing-md);">
+    <form id="sessions-filter"
+          hx-get="{% url 'session_list' %}"
+          hx-target="#sessions-grid"
+          hx-swap="innerHTML"
+          hx-trigger="change from:#project-select, keyup changed delay:300ms from:#search-input"
+          style="display: flex; gap: var(--spacing-sm); flex-wrap: wrap; align-items: center; flex: 1;">
+
+        <input type="text"
+               id="search-input"
+               name="search"
+               value="{{ search }}"
+               placeholder="Rechercher par sujet, projet, branche..."
+               class="glass-input"
+               style="flex: 1; min-width: 200px;">
+
+        <select name="project" id="project-select" class="glass-input">
+            <option value="">Tous les projets</option>
+            {% for p in project_names %}
+            <option value="{{ p }}" {% if project_filter == p %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <button class="neon-btn neon-btn--sm"
+            hx-get="{% url 'session_list' %}"
+            hx-target="#sessions-grid"
+            hx-swap="innerHTML">
+        &#x21BB; Rafraichir
+    </button>
+</div>
+
+<!-- Sessions Grid -->
+<div id="sessions-grid">
+    {% include "sessions/partials/_session_grid.html" %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Resume session via POST
+function resumeSession(sessionId, btn) {
+    btn.disabled = true;
+    btn.textContent = '...';
+    fetch('{% url "session_list" %}' + sessionId + '/resume/', {
+        method: 'POST',
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            window.MugiToast && window.MugiToast('Session reprise dans PowerShell', 'success');
+        } else {
+            window.MugiToast && window.MugiToast('Erreur: ' + (data.error || 'inconnue'), 'error');
+        }
+    })
+    .catch(() => {
+        window.MugiToast && window.MugiToast('Erreur reseau', 'error');
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.textContent = 'Resume';
+    });
+}
+</script>
+{% endblock %}

@@ -18,6 +18,9 @@ class ClaudeSession:
     assistant_messages: int = 0
     git_branch: str = ''
     tools_used: list = field(default_factory=list)
+    first_user_message: str = ''
+    project_name: str = ''
+    project_slug: str = ''
 
 
 def _parse_session_file(filepath: Path) -> ClaudeSession | None:
@@ -28,6 +31,7 @@ def _parse_session_file(filepath: Path) -> ClaudeSession | None:
     tools = set()
     user_count = 0
     assistant_count = 0
+    first_user_msg = ''
 
     try:
         with open(filepath, 'r', encoding='utf-8', errors='replace') as f:
@@ -57,6 +61,16 @@ def _parse_session_file(filepath: Path) -> ClaudeSession | None:
                 msg_type = entry.get('type', '')
                 if role in ('human', 'user') or msg_type in ('human', 'user'):
                     user_count += 1
+                    if not first_user_msg:
+                        msg = entry.get('message', {})
+                        content = msg.get('content', '')
+                        if isinstance(content, str):
+                            first_user_msg = content[:200]
+                        elif isinstance(content, list):
+                            for block in content:
+                                if isinstance(block, dict) and block.get('type') == 'text':
+                                    first_user_msg = block.get('text', '')[:200]
+                                    break
                 elif role == 'assistant' or msg_type == 'assistant':
                     assistant_count += 1
 
@@ -89,6 +103,7 @@ def _parse_session_file(filepath: Path) -> ClaudeSession | None:
     session.user_messages = user_count
     session.assistant_messages = assistant_count
     session.tools_used = sorted(tools)[:20]  # Limit to 20
+    session.first_user_message = first_user_msg
 
     if first_ts:
         session.start_time = first_ts
@@ -136,6 +151,60 @@ def get_claude_sessions(project_name: str, limit: int = 20) -> list[ClaudeSessio
         reverse=True,
     )
     return sessions[:limit]
+
+
+def _slug_to_project_name(slug: str) -> str:
+    """Derive a readable project name from a .claude/projects slug."""
+    parts = slug.split('-')
+    # Filter out common path prefixes (drive letters, Users, Documents, etc.)
+    skip = {'c', 'd', 'e', 'users', 'documents', 'projet', 'projects', 'home', ''}
+    meaningful = [p for p in parts if p.lower() not in skip]
+    return meaningful[-1] if meaningful else slug
+
+
+def get_all_claude_sessions() -> tuple[list[ClaudeSession], list[str]]:
+    """
+    Get ALL Claude Code sessions across every project in ~/.claude/projects/.
+    Returns (sessions sorted by date desc, sorted unique project names).
+    """
+    claude_dir = Path.home() / '.claude' / 'projects'
+    if not claude_dir.exists():
+        return [], []
+
+    all_sessions: list[ClaudeSession] = []
+    project_names_set: set[str] = set()
+
+    try:
+        for proj_dir in claude_dir.iterdir():
+            if not proj_dir.is_dir():
+                continue
+
+            slug = proj_dir.name
+            project_name = _slug_to_project_name(slug)
+
+            for session_file in proj_dir.glob('*.jsonl'):
+                # Skip tiny files (< 100 bytes = empty/corrupt)
+                try:
+                    if session_file.stat().st_size < 100:
+                        continue
+                except OSError:
+                    continue
+
+                session = _parse_session_file(session_file)
+                if session:
+                    session.project_name = project_name
+                    session.project_slug = slug
+                    all_sessions.append(session)
+                    project_names_set.add(project_name)
+
+    except (PermissionError, OSError):
+        pass
+
+    all_sessions.sort(
+        key=lambda s: s.start_time or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    return all_sessions, sorted(project_names_set)
 
 
 def format_duration(ms: int) -> str:
